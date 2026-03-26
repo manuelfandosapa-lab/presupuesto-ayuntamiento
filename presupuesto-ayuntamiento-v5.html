@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tugesto · Gestión Presupuestaria Cap. I</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#151e2e;--s1:#1c2840;--s2:#223050;--s3:#2a3a60;--s4:#324570;
+  --b1:#3d5280;--b2:#4a6298;--b3:#5a74b0;
+  --acc:#f59332;--acc2:#ffaa55;--acc3:rgba(245,147,50,0.18);
+  --red:#ff5a5a;--red2:rgba(255,90,90,0.20);--red3:rgba(255,90,90,0.10);
+  --green:#2eea8a;--green2:rgba(46,234,138,0.18);
+  --yellow:#ffd033;--yellow2:rgba(255,208,51,0.18);
+  --blue:#60aaff;--blue2:rgba(96,170,255,0.18);
+  --purple:#c090ff;--purple2:rgba(192,144,255,0.18);
+  --t1:#f4f7ff;--t2:#b8cce8;--t3:#7a98c8;--t4:#4a6090;
+  --mono:'JetBrains Mono',monospace;--sans:'Plus Jakarta Sans',sans-serif;
+  --r:10px;--sidebar:248px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--sans);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;font-size:15px;line-height:1.55;}
+.sidebar{width:var(--sidebar);height:100vh;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;overflow:hidden;}
+.logo{padding:22px 20px 18px;border-bottom:1px solid var(--b1);}
+.logo-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.logo-sq{width:34px;height:34px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:700;color:#000;flex-shrink:0;}
+.logo-name{font-size:20px;font-weight:800;letter-spacing:-.03em;color:var(--t1);}
+.logo-tag{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.06em;}
+.ente{background:var(--s3);border:1px solid var(--b2);border-radius:8px;padding:9px 13px;display:flex;align-items:center;gap:10px;}
+.ente-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0;}
+.ente-name{font-size:13px;font-weight:700;}
+.ente-sub{font-family:var(--mono);font-size:11px;color:var(--t3);}
+.nav{padding:10px 0;flex:1;overflow-y:auto;}
+.nav-sec{padding:16px 20px 6px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--t4);}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-size:14px;font-weight:500;color:var(--t2);transition:all .12s;border-left:2px solid transparent;}
+.ni:hover{color:var(--t1);background:rgba(255,255,255,.04);}
+.ni.active{color:var(--acc);background:var(--acc3);border-left-color:var(--acc);font-weight:700;}
+.nbadge{margin-left:auto;font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--s3);border:1px solid var(--b2);color:var(--t3);}
+.nbadge.r{background:var(--red2);border-color:var(--red);color:var(--red);}
+.nbadge.y{background:var(--yellow2);border-color:var(--yellow);color:var(--yellow);}
+.sidebar-ft{padding:14px 20px;border-top:1px solid var(--b1);}
+.sidebar-ft-txt{font-family:var(--mono);font-size:10px;color:var(--t4);line-height:1.8;}
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;}
+.topbar{height:56px;background:var(--s1);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 26px;gap:14px;position:sticky;top:0;z-index:50;}
+.tb-t{font-size:15px;font-weight:700;flex:1;}
+.tb-chip{font-family:var(--mono);font-size:11px;padding:4px 11px;border-radius:5px;}
+.tc-acc{color:var(--acc);background:var(--acc3);border:1px solid rgba(245,147,50,.3);}
+.tc-red{color:var(--red);background:var(--red2);border:1px solid rgba(255,90,90,.35);}
+.btn{font-family:var(--sans);font-size:13px;font-weight:700;padding:7px 16px;border-radius:7px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .12s;white-space:nowrap;}
+.btn-acc{background:var(--acc);color:#000;}
+.btn-acc:hover{background:var(--acc2);}
+.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--b2);}
+.btn-ghost:hover{color:var(--t1);border-color:var(--b3);background:rgba(255,255,255,.04);}
+.btn-red{background:var(--red2);color:var(--red);border:1px solid rgba(255,90,90,.35);}
+.btn-green{background:var(--green2);color:var(--green);border:1px solid rgba(46,234,138,.35);}
+.btn-sm{padding:5px 11px;font-size:12px;}
+.content{padding:24px;}
+.view{display:none;}
+.view.active{display:block;animation:fadeIn .15s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
+.risk-block{background:linear-gradient(135deg,rgba(255,90,90,.14),rgba(255,90,90,.05));border:1px solid rgba(255,90,90,.4);border-radius:12px;padding:24px 26px;margin-bottom:22px;position:relative;overflow:hidden;}
+.risk-block::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),rgba(255,90,90,.2));}
+.risk-label{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.risk-pulse{width:9px;height:9px;border-radius:50%;background:var(--red);animation:pulse 1.5s ease-in-out infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,90,90,.6);}50%{box-shadow:0 0 0 7px rgba(255,90,90,0);}}
+.risk-grid{display:grid;grid-template-columns:1fr 1fr 1fr 2fr;gap:18px;}
+.risk-stat-lbl{font-family:var(--mono);font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.risk-stat-val{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1;}
+.risk-stat-sub{font-size:12px;color:var(--t2);margin-top:5px;}
+.risk-actions{background:rgba(0,0,0,.25);border-radius:10px;padding:16px 18px;}
+.risk-actions-title{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+.risk-action{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer;gap:10px;transition:all .12s;}
+.risk-action:last-child{border-bottom:none;}
+.risk-action:hover{background:rgba(255,255,255,.04);margin:0 -10px;padding:8px 10px;border-radius:6px;}
+.risk-action-txt{font-size:13px;font-weight:500;flex:1;}
+.risk-action-impact{font-family:var(--mono);font-size:12px;font-weight:700;}
+.risk-action-btn{background:rgba(255,255,255,.09);border:1px solid var(--b2);border-radius:5px;padding:4px 10px;font-size:12px;font-family:var(--sans);font-weight:600;color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .12s;}
+.risk-action-btn:hover{background:var(--acc3);color:var(--acc);border-color:rgba(245,147,50,.4);}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;}
+.kpi{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--b2));}
+.kpi-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:9px;}
+.kpi-val{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1;}
+.kpi-sub{font-size:12px;color:var(--t2);margin-top:5px;}
+.kpi-delta{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;padding:3px 7px;border-radius:4px;margin-top:8px;}
+.kd-r{background:var(--red2);color:var(--red);}
+.kd-g{background:var(--green2);color:var(--green);}
+.kd-y{background:var(--yellow2);color:var(--yellow);}
+.kd-b{background:var(--blue2);color:var(--blue);}
+.credito-ajustado{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:20px 22px;margin-bottom:18px;}
+.ca-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.ca-row{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--b1);}
+.ca-row:last-child{border-bottom:none;}
+.ca-desc{flex:1;font-size:13px;color:var(--t1);}
+.ca-desc-sub{font-size:11px;color:var(--t3);margin-top:2px;}
+.ca-amount{font-family:var(--mono);font-size:14px;font-weight:700;min-width:110px;text-align:right;}
+.ca-bar-wrap{width:100px;margin:0 14px;}
+.ca-bar{height:6px;border-radius:3px;}
+.ca-total{background:var(--s3);border-radius:8px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:12px;}
+.ca-semaforo{width:14px;height:14px;border-radius:50%;margin-right:12px;flex-shrink:0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:18px;}
+.card{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;margin-bottom:18px;}
+.card-hd{padding:14px 20px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:12px;}
+.card-t{font-size:15px;font-weight:700;flex:1;}
+.card-acts{display:flex;gap:10px;align-items:center;}
+.tbl-scroll{overflow-x:auto;overflow-y:auto;max-height:520px;}
+table{width:100%;border-collapse:collapse;}
+th{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);padding:11px 18px;text-align:left;border-bottom:1px solid var(--b1);background:var(--s3);position:sticky;top:0;z-index:2;white-space:nowrap;}
+td{padding:12px 18px;font-size:14px;border-bottom:1px solid var(--b1);vertical-align:middle;color:var(--t1);}
+tr:last-child td{border-bottom:none;}
+tbody tr{cursor:pointer;}
+tbody tr:hover td{background:rgba(255,255,255,.03);}
+.tr-total td{background:rgba(245,147,50,.06);font-weight:700;}
+.badge{font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;display:inline-block;white-space:nowrap;}
+.b-r{background:var(--red2);color:var(--red);border:1px solid rgba(255,90,90,.35);}
+.b-g{background:var(--green2);color:var(--green);border:1px solid rgba(46,234,138,.35);}
+.b-y{background:var(--yellow2);color:var(--yellow);border:1px solid rgba(255,208,51,.35);}
+.b-b{background:var(--blue2);color:var(--blue);border:1px solid rgba(96,170,255,.35);}
+.b-p{background:var(--purple2);color:var(--purple);border:1px solid rgba(192,144,255,.35);}
+.b-a{background:var(--acc3);color:var(--acc);border:1px solid rgba(245,147,50,.35);}
+.b-x{background:var(--s3);color:var(--t2);border:1px solid var(--b2);}
+.prog{background:var(--s3);border-radius:4px;height:6px;}
+.prog-fill{height:6px;border-radius:4px;}
+.pr{background:var(--red);}
+.py{background:var(--yellow);}
+.pg{background:var(--green);}
+.pa{background:var(--acc);}
+.mono{font-family:var(--mono);}
+.c-r{color:var(--red);}
+.c-g{color:var(--green);}
+.c-y{color:var(--yellow);}
+.c-a{color:var(--acc);}
+.c-p{color:var(--purple);}
+.c-b{color:var(--blue);}
+.c2{color:var(--t2);}
+.c3{color:var(--t3);}
+.alert{border-radius:8px;padding:13px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px;font-size:14px;border-left:3px solid;line-height:1.55;}
+.alert-body{flex:1;}
+.alert-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.al-r{background:var(--red3);border-color:var(--red);color:#ffaaaa;}
+.al-y{background:var(--yellow2);border-color:var(--yellow);color:#ffe680;}
+.al-g{background:var(--green2);border-color:var(--green);color:#a0ffcc;}
+.al-b{background:var(--blue2);border-color:var(--blue);color:#a8d8ff;}
+.al-a{background:var(--acc3);border-color:var(--acc);color:var(--acc2);}
+.a-btn{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);border-radius:5px;padding:5px 12px;font-size:12px;font-family:var(--sans);font-weight:700;cursor:pointer;color:inherit;transition:all .12s;}
+.a-btn:hover{background:rgba(0,0,0,.55);}
+.chart-wrap{padding:10px 16px 24px;display:flex;align-items:flex-end;gap:4px;height:150px;overflow:visible;}
+.cbar{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;}
+.cbar-lbl{font-family:var(--mono);font-size:10px;color:var(--t3);}
+.chart-leg{display:flex;gap:16px;padding:0 18px 14px;}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2);}
+.leg-dot{width:9px;height:9px;border-radius:3px;}
+.sim-hd{padding:18px 22px;border-bottom:1px solid var(--b1);background:linear-gradient(135deg,rgba(245,147,50,.1),rgba(0,0,0,0));display:flex;align-items:center;gap:12px;}
+.sim-title{font-size:16px;font-weight:800;flex:1;}
+.sim-body{padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+.sim-ctrl{margin-bottom:18px;}
+.sim-ctrl-lbl{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:9px;display:flex;justify-content:space-between;}
+.sim-ctrl-val{font-family:var(--mono);font-size:13px;color:var(--acc);font-weight:700;}
+.sim-range{width:100%;accent-color:var(--acc);cursor:pointer;height:5px;border-radius:3px;}
+.sim-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b1);}
+.sim-toggle:last-child{border-bottom:none;}
+.sim-toggle-lbl{font-size:14px;color:var(--t1);}
+.toggle-sw{position:relative;width:38px;height:22px;cursor:pointer;}
+.toggle-sw input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--b2);border-radius:11px;transition:.2s;}
+.toggle-track::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:var(--t3);transition:.2s;}
+.toggle-sw input:checked+.toggle-track{background:var(--acc);}
+.toggle-sw input:checked+.toggle-track::before{transform:translateX(16px);background:#000;}
+.sim-results{background:var(--s3);border-radius:10px;padding:20px;}
+.sim-res-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--b1);}
+.sim-res-item:last-child{border-bottom:none;}
+.sim-res-lbl{font-size:14px;color:var(--t2);}
+.sim-res-val{font-family:var(--mono);font-size:15px;font-weight:700;}
+.sim-ruptura{margin-top:14px;padding:14px;background:rgba(0,0,0,.3);border-radius:8px;text-align:center;}
+.sim-ruptura-lbl{font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em;}
+.sim-ruptura-val{font-size:24px;font-weight:800;}
+.proy-escenarios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.proy-esc{background:var(--s3);border-radius:8px;padding:14px;text-align:center;}
+.proy-esc-lbl{font-family:var(--mono);font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;}
+.proy-esc-val{font-size:18px;font-weight:800;}
+.proy-esc-sub{font-size:12px;color:var(--t2);margin-top:4px;}
+.ig-hd{background:linear-gradient(135deg,rgba(96,170,255,.12),rgba(0,0,0,0));padding:18px 22px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:12px;}
+.ig-doc{background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:22px;font-size:13px;line-height:1.9;color:var(--t2);max-height:260px;overflow-y:auto;}
+.ig-doc strong{color:var(--t1);}
+.ig-titulo{font-size:16px;font-weight:800;color:var(--t1);margin-bottom:14px;}
+.fg{margin-bottom:15px;}
+.fg label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:6px;}
+.fi{width:100%;background:var(--s3);border:1px solid var(--b2);border-radius:7px;padding:9px 13px;font-size:14px;color:var(--t1);font-family:var(--sans);outline:none;transition:border-color .12s;}
+.fi:focus{border-color:var(--acc);}
+.fi::placeholder{color:var(--t4);}
+select.fi option{background:var(--s2);color:var(--t1);}
+select option{background:var(--s2);color:var(--t1);}
+textarea.fi{resize:vertical;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+.modal-ov.open{display:flex;}
+.modal{background:var(--s2);border:1px solid var(--b2);border-radius:14px;width:620px;max-height:88vh;overflow-y:auto;box-shadow:0 28px 90px rgba(0,0,0,.7);}
+.modal-lg{width:780px;}
+.modal-hd{padding:20px 24px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--s2);z-index:1;}
+.modal-t{font-size:16px;font-weight:700;}
+.modal-x{background:none;border:none;color:var(--t3);cursor:pointer;font-size:22px;line-height:1;}
+.modal-x:hover{color:var(--t1);}
+.modal-body{padding:24px;}
+.modal-ft{padding:16px 24px;border-top:1px solid var(--b1);display:flex;justify-content:flex-end;gap:10px;background:var(--s2);position:sticky;bottom:0;}
+.search-inp{background:var(--s3);border:1px solid var(--b2);border-radius:7px;padding:8px 13px;font-size:13px;font-family:var(--mono);color:var(--t1);outline:none;width:200px;}
+.search-inp:focus{border-color:var(--acc);}
+.search-inp::placeholder{color:var(--t4);}
+.sec-t{font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--t1);margin-bottom:4px;}
+.sec-sub{font-size:13px;color:var(--t2);margin-bottom:20px;}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+
+.view-header{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:var(--s3);border:1px solid var(--b2);border-radius:7px;padding:6px 13px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .12s;white-space:nowrap;font-family:var(--sans);}
+.back-btn:hover{background:var(--b1);color:var(--t1);border-color:var(--b3);}
+
+.narrative{font-size:14px;line-height:1.75;color:var(--t2);background:var(--s3);border-radius:10px;padding:18px 20px;border-left:4px solid var(--acc);margin-bottom:18px;}
+.narrative strong{color:var(--t1);}
+.bloqueo-row{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--b1);}
+.bloqueo-row:last-child{border-bottom:none;}
+.coste-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;}
+
+/* ── PASSWORD OVERLAY ─────────────────────────────────── */
+#pw-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;}
+#pw-overlay.hidden{display:none;}
+.pw-box{background:var(--s1);border:1px solid var(--b1);border-radius:16px;
+  padding:48px 44px;width:380px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.5);}
+.pw-logo{font-family:var(--sans);font-size:22px;font-weight:800;color:var(--acc);
+  letter-spacing:-.01em;margin-bottom:4px;}
+.pw-sub{font-size:12px;color:var(--t3);margin-bottom:32px;font-family:var(--mono);}
+.pw-title{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:6px;}
+.pw-hint{font-size:11px;color:var(--t3);margin-bottom:20px;}
+.pw-input{width:100%;box-sizing:border-box;background:var(--s2);border:1.5px solid var(--b1);
+  border-radius:8px;padding:12px 16px;font-size:15px;color:var(--t1);
+  font-family:var(--mono);letter-spacing:.08em;text-align:center;outline:none;
+  transition:border-color .2s;}
+.pw-input:focus{border-color:var(--acc);}
+.pw-input.error{border-color:#ff5a5a;animation:shake .3s;}
+.pw-btn{margin-top:16px;width:100%;background:var(--acc);border:none;border-radius:8px;
+  padding:13px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;
+  font-family:var(--sans);transition:opacity .2s;}
+.pw-btn:hover{opacity:.85;}
+.pw-error{color:#ff5a5a;font-size:12px;margin-top:10px;min-height:16px;}
+.pw-footer{font-size:10px;color:var(--t3);margin-top:28px;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+</style>
+</head>
+<body>
+
+<div id="pw-overlay">
+  <div class="pw-box">
+    <div class="pw-logo">tugesto</div>
+    <div class="pw-sub">gestión presupuestaria · cap. i</div>
+    <div class="pw-title">Acceso restringido</div>
+    <div class="pw-hint">Introduce la contraseña para acceder al módulo</div>
+    <input class="pw-input" type="password" id="pw-input"
+      placeholder="••••••••••"
+      onkeydown="if(event.key==='Enter')checkPw()"
+      autocomplete="off"/>
+    <button class="pw-btn" onclick="checkPw()">Entrar</button>
+    <div class="pw-error" id="pw-error"></div>
+    <div class="pw-footer">tugesto · Módulo demo · Uso restringido</div>
+  </div>
+</div>
+
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-top"><div class="logo-sq" style="background:var(--acc);border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0"><img src="https://www.tugesto.com/wp-content/uploads/2022/03/tugesto-icono.png" style="width:22px;height:22px;object-fit:contain" onerror="this.style.display='none';this.parentNode.innerHTML='t'"></div><div><div class="logo-name">tugesto</div><div class="logo-tag">gestión presupuestaria · cap. i</div></div></div>
+    <div class="ente"><div class="ente-dot"></div><div><div class="ente-name">Ayto. Villanueva del Río</div><div class="ente-sub">2025 · 47 puestos · mes 9/12</div></div></div>
+  </div>
+  <div class="nav">
+    <div class="nav-sec">Decisión</div>
+    <div class="ni active" onclick="nav(this,'dashboard')">⬡ Dashboard <span class="nbadge r" title="3 alertas activas">3 ⚠</span></div>
+    <div class="ni" onclick="nav(this,'simulador')">◎ Simulador</div>
+    <div class="nav-sec">Personal</div>
+    <div class="ni" onclick="nav(this,'empleados')">◈ Empleados <span class="nbadge y" title="4 empleados con trienio próximo en Q4">4 T</span></div>
+    <div class="ni" onclick="nav(this,'plantilla')">◧ Plantilla</div>
+    <div class="ni" onclick="nav(this,'rpt')">◪ RPT</div>
+    <div class="ni" onclick="nav(this,'trienios')">◉ Trienios <span class="nbadge y" title="4 trienios consolidan en Q4">4 T</span></div>
+    <div class="ni" onclick="nav(this,'atrasos')">◐ Atrasos <span class="nbadge r" title="3 expedientes pendientes de liquidar">3 €</span></div>
+    <div class="nav-sec">Presupuesto</div>
+    <div class="ni" onclick="nav(this,'consignaciones')">◫ Consignaciones <span class="nbadge r" title="1 partida en alerta crítica (150.00)">1 !</span></div>
+    <div class="ni" onclick="nav(this,'nominas')">◑ Nóminas</div>
+    <div class="nav-sec">Control</div>
+    <div class="ni" onclick="nav(this,'control')">◒ Control crédito</div>
+    <div class="ni" onclick="nav(this,'bloqueo')">◩ Bloqueo de gasto</div>
+    <div class="ni" onclick="nav(this,'informes')">◓ Informes</div>
+    <div class="ni" onclick="nav(this,'onboarding')">◔ Alta ayuntamiento</div>
+  </div>
+  <div class="sidebar-ft"><div class="sidebar-ft-txt">TRLRHL 2/2004 · RD 500/1990<br>LO 2/2012 · EBEP · LPGE 2025</div><div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b1);display:flex;align-items:center;gap:8px"><div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--acc))"></div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3)">powered by</div><div style="font-family:var(--sans);font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--acc);text-shadow:0 0 16px rgba(245,147,50,.5)">tugesto</div><div style="flex:1;height:1px;background:linear-gradient(90deg,var(--acc),transparent)"></div></div></div>
+</nav>
+
+<div class="main">
+<div class="topbar">
+  <div class="tb-t" id="tb-title">Dashboard · Sistema de Decisión Presupuestaria</div>
+  <div style="display:flex;align-items:center;gap:6px;background:var(--s3);border:1px solid var(--b2);border-radius:6px;padding:4px 10px">
+    <span style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Mes</span>
+    <select id="sel-mes" onchange="setMes(parseInt(this.value))" style="background:var(--s2);border:none;color:var(--t1);font-family:var(--mono);font-size:12px;font-weight:700;outline:none;cursor:pointer;border-radius:4px;padding:2px 4px">
+      <option value="12">📅 Año completo 2025</option>
+      <option value="0">Enero 2025</option>
+      <option value="1">Febrero 2025</option>
+      <option value="2">Marzo 2025</option>
+      <option value="3">Abril 2025</option>
+      <option value="4">Mayo 2025</option>
+      <option value="5">Junio 2025</option>
+      <option value="6">Julio 2025</option>
+      <option value="7">Agosto 2025</option>
+      <option value="8" selected>Septiembre 2025</option>
+      <option value="9">Octubre 2025</option>
+      <option value="10">Noviembre 2025</option>
+      <option value="11">Diciembre 2025</option>
+    </select>
+  </div>
+  <span class="tb-chip tc-red" id="tb-chip-estado">⚠ RIESGO ACTIVO</span>
+  <span class="tb-chip tc-acc">Ejercicio 2025</span>
+  <button class="btn btn-ghost btn-sm" onclick="generarInforme()">📄 Informe</button>
+  <button class="btn btn-acc btn-sm" onclick="openM('m-accion-rapida')">⚡ Acción rápida</button>
+</div>
+<div class="content">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="view active" id="view-dashboard">
+
+  <!-- 1. RIESGO CRÍTICO full-width -->
+  <div class="risk-block" id="risk-block">
+    <div class="risk-label" id="risk-label"><div class="risk-pulse"></div> <span id="risk-label-txt">RIESGO PRESUPUESTARIO ACTIVO · REQUIERE DECISIÓN ANTES DEL 15/10</span></div>
+    <div class="risk-grid">
+      <div>
+        <div class="risk-stat-lbl">Déficit previsto</div>
+        <div class="risk-stat-val" id="risk-deficit" style="color:var(--red)">−17.290 €</div>
+        <div class="risk-stat-sub" id="risk-deficit-sub">Si no se actúa en octubre</div>
+      </div>
+      <div>
+        <div class="risk-stat-lbl">Fecha de ruptura</div>
+        <div class="risk-stat-val" id="risk-ruptura" style="color:var(--yellow)">Octubre</div>
+        <div class="risk-stat-sub" id="risk-ruptura-sub">Partida 150.00 · semana 2</div>
+      </div>
+      <div>
+        <div class="risk-stat-lbl">Crédito real disponible</div>
+        <div class="risk-stat-val" id="risk-credito" style="color:var(--yellow)">289.670 €</div>
+        <div class="risk-stat-sub" id="risk-credito-sub">Ajustado por trienios + atrasos</div>
+      </div>
+      <div class="risk-actions" id="risk-actions">
+        <div class="risk-actions-title">⚡ ACCIONES RECOMENDADAS · impacto inmediato</div>
+        <div class="risk-action" onclick="openM('m-mod-credito')">
+          <span class="risk-action-txt">🔧 Modificación de crédito 150.00 (productividad)</span>
+          <span class="risk-action-impact" style="color:var(--green)">+8.400 €</span>
+          <button class="risk-action-btn">Tramitar →</button>
+        </div>
+        <div class="risk-action" onclick="openM('m-bloquear-vacante')">
+          <span class="risk-action-txt">🚫 No cubrir vacante F-003 este ejercicio</span>
+          <span class="risk-action-impact" style="color:var(--green)">+12.150 €</span>
+          <button class="risk-action-btn">Bloquear →</button>
+        </div>
+        <div class="risk-action" onclick="openM('m-restringir-prod')">
+          <span class="risk-action-txt">📉 Restringir devengos productividad pendientes</span>
+          <span class="risk-action-impact" style="color:var(--green)">+5.200 €</span>
+          <button class="risk-action-btn">Restringir →</button>
+        </div>
+        <div class="risk-action" onclick="navTo('simulador')">
+          <span class="risk-action-txt">◎ Simular combinación de acciones</span>
+          <span class="risk-action-impact" style="color:var(--blue)">Ver escenarios</span>
+          <button class="risk-action-btn">Simular →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. KPI REALES -->
+  <div class="kpi-row">
+    <div class="kpi" id="kpi-ejec" style="--kc:var(--red)">
+      <div class="kpi-lbl">% Ejec. real vs ideal</div>
+      <div class="kpi-val" id="kpi-ejec-val" style="color:var(--yellow)">+6,0 pp</div>
+      <div class="kpi-sub" id="kpi-ejec-sub">81% real · 75% esperado mes 9</div>
+      <div class="kpi-delta kd-r" id="kpi-ejec-delta">↑ Por encima del ritmo</div>
+    </div>
+    <div class="kpi" id="kpi-desv" style="--kc:var(--yellow)">
+      <div class="kpi-lbl">Desviación anual est.</div>
+      <div class="kpi-val" id="kpi-desv-val" style="color:var(--yellow)">−17.290 €</div>
+      <div class="kpi-sub" id="kpi-desv-sub">Proyección cierre sin acción</div>
+      <div class="kpi-delta kd-r" id="kpi-desv-delta">⚠ Requiere acción</div>
+    </div>
+    <div class="kpi" style="--kc:var(--purple)">
+      <div class="kpi-lbl">Coste estructural</div>
+      <div class="kpi-val">1.215.000 €</div>
+      <div class="kpi-sub">Plantilla + trienios fijos</div>
+      <div class="kpi-delta kd-b">96% del Cap. I</div>
+    </div>
+    <div class="kpi" id="kpi-oblig" style="--kc:var(--acc)">
+      <div class="kpi-lbl">Obligado acumulado</div>
+      <div class="kpi-val" id="kpi-oblig-val">947.090 €</div>
+      <div class="kpi-sub" id="kpi-oblig-sub">Mes 9 · 74,9% del cap.</div>
+      <div class="kpi-delta kd-y" id="kpi-oblig-delta">Dato real</div>
+    </div>
+    <div class="kpi" id="kpi-prob" style="--kc:var(--red)">
+      <div class="kpi-lbl">Prob. desviación a cierre</div>
+      <div class="kpi-val" id="kpi-prob-val" style="color:var(--red)">87%</div>
+      <div class="kpi-sub" id="kpi-prob-sub">Si no se actúa este mes</div>
+      <div class="kpi-delta kd-r" id="kpi-prob-delta">Alta certeza</div>
+    </div>
+  </div>
+
+  <!-- 3. FILA PRINCIPAL: 2 columnas -->
+  <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:18px;margin-bottom:18px;align-items:start">
+
+    <!-- Columna izquierda: Crédito ajustado -->
+    <div class="credito-ajustado" style="margin-bottom:0">
+      <div class="ca-title">💰 Crédito disponible real <span class="badge b-y">DATO CLAVE</span></div>
+      <div class="ca-row">
+        <div class="ca-desc"><div>Disponible bruto (oficial)</div><div class="ca-desc-sub">Dato sin ajustar</div></div>
+        <div class="ca-bar-wrap"><div class="ca-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="ca-amount c-g" id="ca-bruto">317.910 €</div>
+      </div>
+      <div class="ca-row">
+        <div class="ca-desc"><div id="ca-tri-lbl">— Trienios Q4</div><div class="ca-desc-sub" id="ca-tri-sub">4 trienios oct–dic · obligatorio</div></div>
+        <div class="ca-bar-wrap"><div class="ca-bar" id="ca-tri-bar" style="width:2%;background:var(--red)"></div></div>
+        <div class="ca-amount c-r" id="ca-tri-val">−1.453 €</div>
+      </div>
+      <div class="ca-row">
+        <div class="ca-desc"><div>— Atrasos aprobados</div><div class="ca-desc-sub">3 expedientes habilitados</div></div>
+        <div class="ca-bar-wrap"><div class="ca-bar" style="width:5%;background:var(--red)"></div></div>
+        <div class="ca-amount c-r" id="ca-atr-val">−12.650 €</div>
+      </div>
+      <div class="ca-row" id="ca-deficit-row">
+        <div class="ca-desc"><div>— Déficit 150.00</div><div class="ca-desc-sub">Agotamiento productividad · oct</div></div>
+        <div class="ca-bar-wrap"><div class="ca-bar" style="width:3%;background:var(--red)"></div></div>
+        <div class="ca-amount c-r" id="ca-deficit-val">−8.400 €</div>
+      </div>
+      <div class="ca-row">
+        <div class="ca-desc"><div>— Revisión salarial</div><div class="ca-desc-sub">Impacto estimado 2025</div></div>
+        <div class="ca-bar-wrap"><div class="ca-bar" style="width:2%;background:var(--yellow)"></div></div>
+        <div class="ca-amount c-y">−5.737 €</div>
+      </div>
+      <div class="ca-total">
+        <div style="display:flex;align-items:center">
+          <div class="ca-semaforo" id="ca-semaforo" style="background:var(--yellow);box-shadow:0 0 8px var(--yellow)"></div>
+          <strong>Crédito real ajustado</strong>
+        </div>
+        <div class="mono" id="ca-total-val" style="font-size:20px;font-weight:800;color:var(--yellow)">289.670 €</div>
+      </div>
+      <div style="margin-top:6px;font-size:10px;color:var(--t3);font-family:var(--mono);text-align:right" id="ca-nota">Sobreestimación oficial: 28.240 €</div>
+    </div>
+
+    <!-- Columna derecha: Narrativa + gráfico evolución -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="narrative" id="narrativa" style="margin-bottom:0">El análisis del mes se cargará automáticamente.</div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hd"><div class="card-t">Evolución mensual · gasto real</div></div>
+        <div class="chart-wrap" id="chart-main"></div>
+        <div class="chart-leg">
+          <div class="leg"><div class="leg-dot" style="background:var(--acc)"></div>Real</div>
+          <div class="leg"><div class="leg-dot" style="background:var(--purple)"></div>Trienios</div>
+          <div class="leg"><div class="leg-dot" style="background:var(--red);opacity:.5"></div>Proyección</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3b. FILA SECUNDARIA: Escenarios + Estado por partida -->
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:18px;margin-bottom:18px;align-items:start">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-hd"><div class="card-t">Escenarios a cierre de diciembre</div></div>
+      <div style="padding:14px 16px" id="chart-proy-wrap"></div>
+      <div class="proy-escenarios" style="padding:0 14px 14px">
+        <div class="proy-esc">
+          <div class="proy-esc-lbl">Peor caso</div>
+          <div class="proy-esc-val c-r" style="font-size:15px">−17.290 €</div>
+          <div class="proy-esc-sub">Sin acción · 87%</div>
+        </div>
+        <div class="proy-esc">
+          <div class="proy-esc-lbl">Escenario base</div>
+          <div class="proy-esc-val c-y" style="font-size:15px">+8.650 €</div>
+          <div class="proy-esc-sub">Mod. crédito · 60%</div>
+        </div>
+        <div class="proy-esc">
+          <div class="proy-esc-lbl">Óptimo</div>
+          <div class="proy-esc-val c-g" style="font-size:15px">+38.200 €</div>
+          <div class="proy-esc-sub">Todas acciones · 35%</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-hd"><div class="card-t">Estado por partida</div><span class="badge b-r" id="badge-criticas">1 crítica</span></div>
+      <div id="tabla-partidas-dash"></div>
+    </div>
+  </div>
+
+    <!-- 4. ALERTAS EN FILA (3 columnas) -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:4px" id="alertas-row">
+    <div class="alert al-r" style="margin-bottom:0" id="alerta-150">
+      <div>⛔</div>
+      <div class="alert-body">
+        <strong>150.00 Productividad al 93%</strong> — Déficit proyectado: 8.400 €. Sin acción antes del 15/10.
+        <div class="alert-actions">
+          <button class="a-btn" onclick="openM('m-mod-credito')">Modificar crédito</button>
+          <button class="a-btn" onclick="navTo('simulador')">Simular</button>
+        </div>
+      </div>
+    </div>
+    <div class="alert al-y" style="margin-bottom:0" id="alerta-trienios">
+      <div>⏰</div>
+      <div class="alert-body">
+        <strong>4 trienios consolidan en Q4</strong> — Oct–Dic. Impacto: +1.453 € en 120.00.
+        <div class="alert-actions">
+          <button class="a-btn" onclick="navTo('trienios')">Ver trienios</button>
+          <button class="a-btn" onclick="openM('m-impacto-trienios')">Ver impacto</button>
+        </div>
+      </div>
+    </div>
+    <div class="alert al-y" style="margin-bottom:0" id="alerta-atrasos">
+      <div>📋</div>
+      <div class="alert-body">
+        <strong>12.650 € en atrasos pendientes</strong> — 3 expedientes sin liquidar. 120.00 sin margen suficiente.
+        <div class="alert-actions">
+          <button class="a-btn" onclick="navTo('atrasos')">Ver atrasos</button>
+          <button class="a-btn" onclick="generarInforme()">Informe</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /view-dashboard -->
+<!-- ═══ SIMULADOR ═══ -->
+<div class="view" id="view-simulador">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Simulador de escenarios</div>
+  </div>
+  <div class="sec-sub">Modifica parámetros en tiempo real · resultado inmediato sobre crédito disponible y fecha de agotamiento</div>
+  <div class="card">
+    <div class="sim-hd">
+      <span style="font-size:20px">◎</span>
+      <div class="sim-title">Simulación en tiempo real · Capítulo I 2025</div>
+      <button class="btn btn-ghost btn-sm" onclick="resetSim()">↺ Resetear</button>
+      <button class="btn btn-acc btn-sm" onclick="toast('↓ Exportando escenario...')">↓ Exportar</button>
+    </div>
+    <div class="sim-body">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--acc);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--b1)">Plantilla</div>
+        <div class="sim-ctrl">
+          <div class="sim-ctrl-lbl">Empleados activos <span class="sim-ctrl-val" id="sv-emp">39</span></div>
+          <input type="range" class="sim-range" min="30" max="47" value="39" id="si-emp" oninput="updateSim()">
+          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--t4);margin-top:3px"><span>30</span><span>47 (máx.)</span></div>
+        </div>
+        <div class="sim-toggle"><span class="sim-toggle-lbl">Cubrir vacante F-003 (A1 · 48.600 €)</span><label class="toggle-sw"><input type="checkbox" id="si-v1" onchange="updateSim()"><span class="toggle-track"></span></label></div>
+        <div class="sim-toggle"><span class="sim-toggle-lbl">Cubrir vacante L-002 (A2 · 44.200 €)</span><label class="toggle-sw"><input type="checkbox" id="si-v2" onchange="updateSim()"><span class="toggle-track"></span></label></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--acc);text-transform:uppercase;letter-spacing:.12em;margin:16px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--b1)">Retribuciones</div>
+        <div class="sim-ctrl">
+          <div class="sim-ctrl-lbl">Subida salarial adicional <span class="sim-ctrl-val" id="sv-sal">0%</span></div>
+          <input type="range" class="sim-range" min="0" max="5" step="0.1" value="0" id="si-sal" oninput="updateSim()">
+          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--t4);margin-top:3px"><span>0%</span><span>+5% adicional</span></div>
+        </div>
+        <div class="sim-toggle"><span class="sim-toggle-lbl">Incluir trienios Q4 comprometidos</span><label class="toggle-sw"><input type="checkbox" id="si-tri" checked onchange="updateSim()"><span class="toggle-track"></span></label></div>
+        <div class="sim-toggle"><span class="sim-toggle-lbl">Liquidar atrasos pendientes (12.650 €)</span><label class="toggle-sw"><input type="checkbox" id="si-atr" onchange="updateSim()"><span class="toggle-track"></span></label></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--acc);text-transform:uppercase;letter-spacing:.12em;margin:16px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--b1)">Acciones presupuestarias</div>
+        <div class="sim-ctrl">
+          <div class="sim-ctrl-lbl">Modificación crédito 150.00 <span class="sim-ctrl-val" id="sv-mod">0 €</span></div>
+          <input type="range" class="sim-range" min="0" max="15000" step="500" value="0" id="si-mod" oninput="updateSim()">
+          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--t4);margin-top:3px"><span>0 €</span><span>+15.000 €</span></div>
+        </div>
+        <div class="sim-toggle"><span class="sim-toggle-lbl">Restricción devengos productividad</span><label class="toggle-sw"><input type="checkbox" id="si-res" onchange="updateSim()"><span class="toggle-track"></span></label></div>
+      </div>
+      <div class="sim-results">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px">Resultado del escenario</div>
+        <div class="sim-res-item"><span class="sim-res-lbl">Crédito disponible ajustado</span><span class="sim-res-val" id="sr-credito" style="color:var(--yellow)">289.670 €</span></div>
+        <div class="sim-res-item"><span class="sim-res-lbl">Gasto estimado Q4 (oct–dic)</span><span class="sim-res-val" id="sr-gasto">298.470 €</span></div>
+        <div class="sim-res-item"><span class="sim-res-lbl">Resultado final estimado</span><span class="sim-res-val" id="sr-res" style="color:var(--red)">−8.800 €</span></div>
+        <div class="sim-res-item"><span class="sim-res-lbl">Coste plantilla/mes</span><span class="sim-res-val" id="sr-men">97.860 €</span></div>
+        <div class="sim-res-item"><span class="sim-res-lbl">Impacto trienios Q4</span><span class="sim-res-val" id="sr-tri" style="color:var(--purple)">−1.453 €</span></div>
+        <div class="sim-res-item"><span class="sim-res-lbl">Impacto atrasos</span><span class="sim-res-val" id="sr-atr">0 €</span></div>
+        <div class="sim-ruptura">
+          <div class="sim-ruptura-lbl">Fecha proyectada de agotamiento</div>
+          <div class="sim-ruptura-val" id="sr-ruptura" style="color:var(--red)">Octubre 2025</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:4px" id="sr-ruptdet">Partida 150.00 · semana 2</div>
+        </div>
+        <div style="margin-top:14px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">Probabilidad cierre en positivo</div>
+          <div class="prog" style="height:10px;border-radius:5px"><div class="prog-fill" id="sr-prob-bar" style="width:13%;height:10px;border-radius:5px;background:var(--red);transition:width .4s,background .4s"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--t3)">0%</span>
+            <span style="font-family:var(--mono);font-size:14px;font-weight:700" id="sr-prob">13%</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--t3)">100%</span>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px">
+          <button class="btn btn-acc" style="flex:1;justify-content:center" onclick="toast('✓ Escenario aplicado · actualizando proyecciones')">Aplicar escenario</button>
+        </div>
+        <div style="margin-top:6px">
+          <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="generarInforme()">📄 Informe del escenario</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="card-t">Comparativa de escenarios</div><button class="btn btn-ghost btn-sm" onclick="toast('✓ Escenario guardado')">+ Guardar actual</button></div>
+    <table>
+      <thead><tr><th>Escenario</th><th>Empleados</th><th>Subida</th><th>Mod. crédito</th><th>Trienios</th><th>Atrasos</th><th>Resultado</th><th>Prob.</th><th>Ruptura</th></tr></thead>
+      <tbody>
+        <tr><td>Base (sin acción)</td><td class="mono">39</td><td class="mono">0%</td><td class="mono">0 €</td><td><span class="badge b-p">Sí</span></td><td><span class="badge b-x">No</span></td><td class="mono c-r">−17.290 €</td><td class="mono c-r">13%</td><td class="mono c-r">Oct 2025</td></tr>
+        <tr><td>Mod. crédito mínima</td><td class="mono">39</td><td class="mono">0%</td><td class="mono">8.400 €</td><td><span class="badge b-p">Sí</span></td><td><span class="badge b-x">No</span></td><td class="mono c-y">+8.650 €</td><td class="mono c-y">58%</td><td class="mono c-g">Sin ruptura</td></tr>
+        <tr><td>Óptimo (todas acciones)</td><td class="mono">39</td><td class="mono">0%</td><td class="mono">8.400 €</td><td><span class="badge b-p">Sí</span></td><td><span class="badge b-g">Sí</span></td><td class="mono c-g">+38.200 €</td><td class="mono c-g">85%</td><td class="mono c-g">Sin ruptura</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><!-- /view-simulador -->
+
+<!-- ═══ EMPLEADOS ═══ -->
+<div class="view" id="view-empleados">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Empleados</div>
+  </div>
+  <div class="sec-sub">Registro de personal activo con antigüedad, trienios y situación administrativa</div>
+  <div class="g4">
+    <div class="kpi" style="--kc:var(--acc)"><div class="kpi-lbl">Empleados activos</div><div class="kpi-val">39</div><div class="kpi-sub">De 47 puestos en plantilla</div></div>
+    <div class="kpi" style="--kc:var(--purple)"><div class="kpi-lbl">Coste trienios/año</div><div class="kpi-val">12.640 €</div><div class="kpi-sub">Imputado a 120.00 / 130.00</div></div>
+    <div class="kpi" style="--kc:var(--yellow)"><div class="kpi-lbl">Trienios Q4</div><div class="kpi-val">4</div><div class="kpi-sub">+4.840 €/año desde Q4</div></div>
+    <div class="kpi" style="--kc:var(--blue)"><div class="kpi-lbl">Antigüedad media</div><div class="kpi-val">11,4 años</div><div class="kpi-sub">3,8 trienios/empleado</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-t">Registro de empleados · Antigüedad y trienios</div>
+      <div class="card-acts">
+        <input class="search-inp" placeholder="Buscar..." oninput="filterTable(this,'t-emp')">
+        <button class="btn btn-acc btn-sm" onclick="openM('m-nuevo-emp')">+ Nuevo</button>
+      </div>
+    </div>
+    <div class="tbl-scroll">
+    <table id="t-emp">
+      <thead><tr><th>Empleado</th><th>Puesto / Grupo</th><th>F. Ingreso</th><th>Antigüedad</th><th>Trienios</th><th>Próx. trienio</th><th>€/año</th><th>Partida</th><th>Sit.</th><th></th></tr></thead>
+      <tbody id="emp-tbody"></tbody>
+    </table>
+    </div>
+    <div style="padding:10px 16px;border-top:1px solid var(--b1);display:flex;justify-content:space-between">
+      <span class="mono c3" style="font-size:12px" id="emp-footer">Cargando...</span>
+      <span class="mono c-p" style="font-size:12px" id="emp-footer-coste"></span>
+    </div>
+  </div>
+</div><!-- /view-empleados -->
+
+<!-- ═══ PLANTILLA ═══ -->
+<div class="view" id="view-plantilla">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Plantilla Orgánica</div>
+  </div>
+  <div class="sec-sub">47 puestos · Art. 126 TRLRHL y art. 90 EBEP</div>
+  <div class="alert al-y"><div>⚠</div><div class="alert-body">8 vacantes con crédito retenido total de 119.200 €. No disponible para reasignación sin expediente de modificación.
+    <div class="alert-actions"><button class="a-btn" onclick="navTo('simulador')">Simular impacto cubrir vacantes</button><button class="a-btn" onclick="openM('m-bloquear-vacante')">Bloquear cobertura</button></div></div></div>
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-t">Plantilla · 47 puestos</div>
+      <div class="card-acts"><input class="search-inp" placeholder="Buscar puesto..." oninput="filterTable(this,'t-plant')"><button class="btn btn-acc btn-sm" onclick="openM('m-nuevo-puesto')">+ Nuevo puesto</button></div>
+    </div>
+    <div class="tbl-scroll">
+    <table id="t-plant">
+      <thead><tr><th>Código</th><th>Denominación</th><th>Grupo</th><th>Nivel</th><th>Tipo</th><th>Estado</th><th>Empleado</th><th>Coste est.</th><th></th></tr></thead>
+      <tbody>
+        <tr onclick="verPuesto('F-001','Secretario/a General','A1','30','Func. Habil.','Cubierto','M. García López','62.400','120.00','Concurso','8 trienios · 440€/mes')"><td class="mono">F-001</td><td>Secretario/a General</td><td><span class="badge b-b">A1</span></td><td class="mono">30</td><td><span class="badge b-p">Func. Habil.</span></td><td><span class="badge b-g">Cubierto</span></td><td>M. García López</td><td class="mono c-a">62.400 €</td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();verPuesto('F-001','Secretario/a General','A1','30','Func. Habil.','Cubierto','M. García López','62.400','120.00','Concurso','8 trienios · 440€/mes')">Ver</button></td></tr>
+        <tr onclick="verPuesto('F-002','Interventor/a','A1','29','Func. Habil.','Cubierto','J. Rodríguez','58.200','120.00','Concurso','6 trienios · 330€/mes')"><td class="mono">F-002</td><td>Interventor/a</td><td><span class="badge b-b">A1</span></td><td class="mono">29</td><td><span class="badge b-p">Func. Habil.</span></td><td><span class="badge b-g">Cubierto</span></td><td>J. Rodríguez</td><td class="mono c-a">58.200 €</td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();verPuesto('F-002','Interventor/a','A1','29','Func. Habil.','Cubierto','J. Rodríguez','58.200','120.00','Concurso','6 trienios · 330€/mes')">Ver</button></td></tr>
+        <tr onclick="verPuesto('F-003','Técnico/a Admin. Gral.','A1','26','Funcionario','Vacante','— Proceso select.','48.600','120.00','Concurso-opos.','Vacante · proceso selectivo')"><td class="mono">F-003</td><td>Técnico/a Admin. Gral.</td><td><span class="badge b-b">A1</span></td><td class="mono">26</td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-y">Vacante</span></td><td style="color:var(--t4)">— Proceso selectivo</td><td class="mono c3">48.600 €</td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();verPuesto('F-003','Técnico/a Admin. Gral.','A1','26','Funcionario','Vacante','— Proceso select.','48.600','120.00','Concurso-opos.','Vacante · proceso selectivo')">Ver</button></td></tr>
+        <tr onclick="verPuesto('F-005','Administrativo/a','C1','20','Funcionario','Cubierto','C. Moreno Díaz','32.800','120.00','Concurso-opos.','4 trienios · 140€/mes')"><td class="mono">F-005</td><td>Administrativo/a</td><td><span class="badge b-g">C1</span></td><td class="mono">20</td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-g">Cubierto</span></td><td>C. Moreno Díaz</td><td class="mono c-a">32.800 €</td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();verPuesto('F-005','Administrativo/a','C1','20','Funcionario','Cubierto','C. Moreno Díaz','32.800','120.00','Concurso-opos.','4 trienios · 140€/mes')">Ver</button></td></tr>
+        <tr onclick="verPuesto('L-001','Técnico/a Informática','A2','22','Laboral fijo','Cubierto','L. Martínez','38.400','130.00','Concurso','1 trienio · 44€/mes')"><td class="mono">L-001</td><td>Técnico/a Informática</td><td><span class="badge b-b">A2</span></td><td class="mono">22</td><td><span class="badge b-a">Laboral</span></td><td><span class="badge b-g">Cubierto</span></td><td>L. Martínez</td><td class="mono c-a">38.400 €</td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();verPuesto('L-001','Técnico/a Informática','A2','22','Laboral fijo','Cubierto','L. Martínez','38.400','130.00','Concurso','1 trienio · 44€/mes')">Ver</button></td></tr>
+        <tr onclick="verPuesto('L-002','Arquitecto/a Técnico','A2','24','Laboral fijo','Vacante','— Proc. selectivo','44.200','130.00','Concurso','Vacante')"><td class="mono">L-002</td><td>Arquitecto/a Técnico</td><td><span class="badge b-b">A2</span></td><td class="mono">24</td><td><span class="badge b-a">Laboral</span></td><td><span class="badge b-y">Vacante</span></td><td style="color:var(--t4)">— Proc. selectivo</td><td class="mono c3">44.200 €</td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();verPuesto('L-002','Arquitecto/a Técnico','A2','24','Laboral fijo','Vacante','— Proc. selectivo','44.200','130.00','Concurso','Vacante')">Ver</button></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div><!-- /view-plantilla -->
+
+<!-- ═══ RPT ═══ -->
+<div class="view" id="view-rpt">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Relación de Puestos de Trabajo (RPT)</div>
+  </div>
+  <div class="sec-sub">Condiciones retributivas por puesto · Art. 74 EBEP · LPGE 2025</div>
+  <div class="g4">
+    <div class="kpi" style="--kc:var(--acc)"><div class="kpi-lbl">Puestos en RPT</div><div class="kpi-val">47</div><div class="kpi-sub">Todos los puestos del ente</div></div>
+    <div class="kpi" style="--kc:var(--blue)"><div class="kpi-lbl">Masa salarial bruta</div><div class="kpi-val">1.265.000 €</div><div class="kpi-sub">Crédito definitivo Cap. I 2025</div></div>
+    <div class="kpi" style="--kc:var(--purple)"><div class="kpi-lbl">Compl. específico medio</div><div class="kpi-val">9.840 €</div><div class="kpi-sub">Media ponderada por puesto</div></div>
+    <div class="kpi" style="--kc:var(--green)"><div class="kpi-lbl">Última aprobación RPT</div><div class="kpi-val">Pleno 03/2024</div><div class="kpi-sub">Pendiente revisión 2025</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-t">RPT · Condiciones retributivas por puesto</div>
+      <div class="card-acts">
+        <input class="search-inp" placeholder="Buscar puesto..." oninput="filterTable(this,'t-rpt')">
+        <button class="btn btn-ghost btn-sm" onclick="toast('📄 Generando informe RPT en PDF...')">📄 Exportar RPT</button>
+        <button class="btn btn-acc btn-sm" onclick="openM('m-modificar-rpt')">✎ Modificar RPT</button>
+      </div>
+    </div>
+    <div class="tbl-scroll">
+    <table id="t-rpt">
+      <thead><tr><th>Código</th><th>Denominación</th><th>Tipo</th><th>Grupo</th><th>Nivel CD</th><th>Compl. Destino</th><th>Compl. Específico</th><th>Retrib. básicas/año</th><th>Total retrib./año</th><th>Partida</th><th>Jornada</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">F-001</td><td><strong>Secretario/a General</strong></td><td><span class="badge b-p">Func. Habil.</span></td><td><span class="badge b-b">A1</span></td><td class="mono">30</td><td class="mono">11.712,60 €</td><td class="mono">18.420,00 €</td><td class="mono">23.548,80 €</td><td class="mono c-a">62.400 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-002</td><td><strong>Interventor/a</strong></td><td><span class="badge b-p">Func. Habil.</span></td><td><span class="badge b-b">A1</span></td><td class="mono">29</td><td class="mono">11.049,00 €</td><td class="mono">16.840,00 €</td><td class="mono">23.548,80 €</td><td class="mono c-a">58.200 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-003</td><td><strong>Técnico/a Admin. Gral.</strong> <span class="badge b-y">Vacante</span></td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-b">A1</span></td><td class="mono">26</td><td class="mono">8.745,00 €</td><td class="mono">10.280,00 €</td><td class="mono">23.548,80 €</td><td class="mono c3">48.600 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-004</td><td><strong>Técnico/a Admin. Gral.</strong> <span class="badge b-y">Vacante</span></td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-b">A1</span></td><td class="mono">26</td><td class="mono">8.745,00 €</td><td class="mono">10.280,00 €</td><td class="mono">23.548,80 €</td><td class="mono c3">48.600 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-005</td><td><strong>Administrativo/a</strong></td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-g">C1</span></td><td class="mono">20</td><td class="mono">6.201,00 €</td><td class="mono">7.140,00 €</td><td class="mono">16.392,00 €</td><td class="mono c-a">32.800 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-006</td><td><strong>Administrativo/a</strong></td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-g">C1</span></td><td class="mono">20</td><td class="mono">6.201,00 €</td><td class="mono">7.140,00 €</td><td class="mono">16.392,00 €</td><td class="mono c-a">32.800 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-007</td><td><strong>Auxiliar Administrativo/a</strong></td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-x">C2</span></td><td class="mono">16</td><td class="mono">4.713,00 €</td><td class="mono">5.480,00 €</td><td class="mono">13.956,00 €</td><td class="mono c-a">28.200 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-008</td><td><strong>Auxiliar Administrativo/a</strong> <span class="badge b-y">Vacante</span></td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-x">C2</span></td><td class="mono">16</td><td class="mono">4.713,00 €</td><td class="mono">5.480,00 €</td><td class="mono">13.956,00 €</td><td class="mono c3">26.400 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-009</td><td><strong>Policía Local (Oficial)</strong></td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-g">C1</span></td><td class="mono">22</td><td class="mono">6.864,00 €</td><td class="mono">8.640,00 €</td><td class="mono">16.392,00 €</td><td class="mono c-a">36.200 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">F-010</td><td><strong>Policía Local (Agente)</strong></td><td><span class="badge b-b">Funcionario</span></td><td><span class="badge b-g">C1</span></td><td class="mono">20</td><td class="mono">6.201,00 €</td><td class="mono">7.260,00 €</td><td class="mono">16.392,00 €</td><td class="mono c-a">33.600 €</td><td class="mono">120.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">L-001</td><td><strong>Técnico/a Informática</strong></td><td><span class="badge b-a">Laboral fijo</span></td><td><span class="badge b-b">A2</span></td><td class="mono">22</td><td class="mono">6.864,00 €</td><td class="mono">9.200,00 €</td><td class="mono">20.136,00 €</td><td class="mono c-a">38.400 €</td><td class="mono">130.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">L-002</td><td><strong>Arquitecto/a Técnico</strong> <span class="badge b-y">Vacante</span></td><td><span class="badge b-a">Laboral fijo</span></td><td><span class="badge b-b">A2</span></td><td class="mono">24</td><td class="mono">7.527,60 €</td><td class="mono">11.200,00 €</td><td class="mono">20.136,00 €</td><td class="mono c3">44.200 €</td><td class="mono">130.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">L-003</td><td><strong>Oficial 1ª Mantenimiento</strong></td><td><span class="badge b-a">Laboral fijo</span></td><td><span class="badge b-x">C2</span></td><td class="mono">14</td><td class="mono">4.050,00 €</td><td class="mono">5.100,00 €</td><td class="mono">13.956,00 €</td><td class="mono c-a">27.800 €</td><td class="mono">130.00</td><td class="mono">100%</td></tr>
+        <tr><td class="mono">E-001</td><td><strong>Asesor/a de Alcaldía</strong></td><td><span class="badge b-r">Eventual</span></td><td><span class="badge b-x">—</span></td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td class="mono c-a">42.000 €</td><td class="mono">121.00</td><td class="mono">100%</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div style="padding:10px 16px;border-top:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center">
+      <span class="mono c3" style="font-size:12px">Mostrando 14 de 47 puestos · Datos según acuerdo Pleno 03/2024</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="badge b-y">4 vacantes visibles</span>
+        <span class="mono c-a" style="font-size:12px">Masa salarial visible: 559.400 €/año</span>
+      </div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><div class="card-t">Tablas retributivas LPGE 2025 · Funcionarios</div></div>
+      <table>
+        <thead><tr><th>Grupo</th><th>Sueldo/mes</th><th>Sueldo/año ×14</th><th>Trienio/mes</th><th>Trienio/año</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge b-b">A1</span></td><td class="mono">1.676,96 €</td><td class="mono c-a">23.477,44 €</td><td class="mono c-p">55,00 €</td><td class="mono c-p">660,00 €</td></tr>
+          <tr><td><span class="badge b-b">A2</span></td><td class="mono">1.438,47 €</td><td class="mono c-a">20.138,58 €</td><td class="mono c-p">44,00 €</td><td class="mono c-p">528,00 €</td></tr>
+          <tr><td><span class="badge b-g">C1</span></td><td class="mono">1.171,00 €</td><td class="mono c-a">16.394,00 €</td><td class="mono c-p">35,00 €</td><td class="mono c-p">420,00 €</td></tr>
+          <tr><td><span class="badge b-x">C2</span></td><td class="mono">997,00 €</td><td class="mono c-a">13.958,00 €</td><td class="mono c-p">26,00 €</td><td class="mono c-p">312,00 €</td></tr>
+          <tr><td><span class="badge b-x">E/AP</span></td><td class="mono">848,00 €</td><td class="mono c-a">11.872,00 €</td><td class="mono c-p">21,00 €</td><td class="mono c-p">252,00 €</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-t">Niveles de Complemento de Destino · Art. 76 EBEP</div></div>
+      <table>
+        <thead><tr><th>Nivel</th><th>CD/mes</th><th>CD/año</th><th>Grupos habituales</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">30</td><td class="mono">976,05 €</td><td class="mono c-a">11.712,60 €</td><td><span class="badge b-b">A1</span></td></tr>
+          <tr><td class="mono">29</td><td class="mono">920,75 €</td><td class="mono c-a">11.049,00 €</td><td><span class="badge b-b">A1</span></td></tr>
+          <tr><td class="mono">26</td><td class="mono">728,75 €</td><td class="mono c-a">8.745,00 €</td><td><span class="badge b-b">A1 · A2</span></td></tr>
+          <tr><td class="mono">24</td><td class="mono">627,30 €</td><td class="mono c-a">7.527,60 €</td><td><span class="badge b-b">A2</span></td></tr>
+          <tr><td class="mono">22</td><td class="mono">572,00 €</td><td class="mono c-a">6.864,00 €</td><td><span class="badge b-g">A2 · C1</span></td></tr>
+          <tr><td class="mono">20</td><td class="mono">516,75 €</td><td class="mono c-a">6.201,00 €</td><td><span class="badge b-g">C1</span></td></tr>
+          <tr><td class="mono">16</td><td class="mono">392,75 €</td><td class="mono c-a">4.713,00 €</td><td><span class="badge b-x">C2</span></td></tr>
+          <tr><td class="mono">14</td><td class="mono">337,50 €</td><td class="mono c-a">4.050,00 €</td><td><span class="badge b-x">C2 · E</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /view-rpt -->
+
+<!-- ═══ TRIENIOS ═══ -->
+<div class="view" id="view-trienios">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Trienios · Antigüedad</div>
+  </div>
+  <div class="sec-sub">Devengados, próximos a consolidar e impacto económico · LPGE 2025</div>
+  <div class="g4">
+    <div class="kpi" style="--kc:var(--purple)"><div class="kpi-lbl">Masa salarial trienios</div><div class="kpi-val">48.640 €</div><div class="kpi-sub">3,84% masa salarial total</div></div>
+    <div class="kpi" style="--kc:var(--yellow)"><div class="kpi-lbl">Trienios Q4 (90 días)</div><div class="kpi-val">4</div><div class="kpi-sub">+4.840 €/año adicional</div></div>
+    <div class="kpi" style="--kc:var(--acc)"><div class="kpi-lbl">Impacto 120.00</div><div class="kpi-val">38.240 €</div><div class="kpi-sub">Trienios funcionarios 2025</div></div>
+    <div class="kpi" style="--kc:var(--blue)"><div class="kpi-lbl">Impacto 130.00</div><div class="kpi-val">10.400 €</div><div class="kpi-sub">Trienios laborales 2025</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><div class="card-t">Próximos trienios Q4 · 90 días</div><span class="badge b-y">4 trienios</span></div>
+      <table>
+        <thead><tr><th>Empleado</th><th>Puesto</th><th>Grupo</th><th>Trienio nº</th><th>Fecha consol.</th><th>+€/año</th><th>Partida</th><th>Días</th></tr></thead>
+        <tbody>
+          <tr><td><strong>C. Moreno Díaz</strong></td><td>F-005 · Admin.</td><td><span class="badge b-g">C1</span></td><td class="mono">5º</td><td class="mono c-y">15/10/2025</td><td class="mono c-p">+420 €</td><td class="mono">120.00</td><td><span class="badge b-r">20 días</span></td></tr>
+          <tr><td><strong>P. González Ruiz</strong></td><td>F-009 · Policía</td><td><span class="badge b-g">C1</span></td><td class="mono">6º</td><td class="mono c-y">02/11/2025</td><td class="mono c-p">+420 €</td><td class="mono">120.00</td><td><span class="badge b-y">38 días</span></td></tr>
+          <tr><td><strong>R. Fernández Gil</strong></td><td>F-006 · Admin.</td><td><span class="badge b-g">C1</span></td><td class="mono">6º</td><td class="mono c-y">18/11/2025</td><td class="mono c-p">+420 €</td><td class="mono">120.00</td><td><span class="badge b-y">54 días</span></td></tr>
+          <tr><td><strong>M. Torres Blanco</strong></td><td>L-003 · Mant.</td><td><span class="badge b-x">C2</span></td><td class="mono">5º</td><td class="mono c-y">01/12/2025</td><td class="mono c-p">+312 €</td><td class="mono">130.00</td><td><span class="badge b-x">67 días</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-t">Cuantías LPGE 2025 por grupo</div></div>
+      <table>
+        <thead><tr><th>Grupo al consolidar</th><th>€/trienio/año</th><th>€/trienio/mes</th><th>Nota</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge b-b">A1</span></td><td class="mono c-p">660 €</td><td class="mono">55 €</td><td style="font-size:11px;color:var(--t3)">Trienio consolidado siendo A1 → siempre 55€/mes</td></tr>
+          <tr><td><span class="badge b-b">A2</span></td><td class="mono c-p">528 €</td><td class="mono">44 €</td><td style="font-size:11px;color:var(--t3)">Trienio consolidado siendo A2 → siempre 44€/mes</td></tr>
+          <tr><td><span class="badge b-g">C1</span></td><td class="mono c-p">420 €</td><td class="mono">35 €</td><td style="font-size:11px;color:var(--t3)">Trienio consolidado siendo C1 → siempre 35€/mes</td></tr>
+          <tr><td><span class="badge b-x">C2</span></td><td class="mono c-p">312 €</td><td class="mono">26 €</td><td style="font-size:11px;color:var(--t3)">Trienio consolidado siendo C2 → siempre 26€/mes</td></tr>
+          <tr><td><span class="badge b-x">E/AP</span></td><td class="mono c-p">252 €</td><td class="mono">21 €</td><td style="font-size:11px;color:var(--t3)">Trienio consolidado siendo E → siempre 21€/mes</td></tr>
+          <tr style="background:var(--s3)"><td colspan="4" style="font-size:11px;color:var(--yellow);padding:8px 16px"><b>⚠ Regla LPGE:</b> cada trienio se paga a la cuantía del grupo en que se consolidó, independientemente del grupo actual del empleado. Un empleado que ascendió de C2 a C1 cobra sus trienios C2 a 26€/mes y sus trienios C1 a 35€/mes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /view-trienios -->
+
+<!-- ═══ ATRASOS ═══ -->
+<div class="view" id="view-atrasos">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Atrasos</div>
+  </div>
+  <div class="sec-sub">Devengos pendientes de liquidación · Trienios, revisiones salariales, convenio</div>
+  <div class="alert al-r"><div>⛔</div><div class="alert-body">12.650 € en atrasos aprobados sin crédito suficiente para liquidar en octubre. La partida 120.00 con trienios Q4 no absorbe el total sin modificación.
+    <div class="alert-actions"><button class="a-btn" onclick="generarInforme()">Informe justificativo para Intervención</button><button class="a-btn" onclick="openM('m-mod-credito')">Tramitar modificación crédito</button></div></div></div>
+  <div class="g4">
+    <div class="kpi" style="--kc:var(--yellow)"><div class="kpi-lbl">Pendiente liquidar</div><div class="kpi-val">12.650 €</div><div class="kpi-sub">3 expedientes</div></div>
+    <div class="kpi" style="--kc:var(--purple)"><div class="kpi-lbl">Por trienios</div><div class="kpi-val">990 €</div><div class="kpi-sub">Reconocimiento servicios previos</div></div>
+    <div class="kpi" style="--kc:var(--green)"><div class="kpi-lbl">Liquidados 2025</div><div class="kpi-val">6.840 €</div><div class="kpi-sub">4 expedientes cerrados</div></div>
+    <div class="kpi" style="--kc:var(--red)"><div class="kpi-lbl">Sin crédito actual</div><div class="kpi-val">2.450 €</div><div class="kpi-sub">Margen 150.00</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="card-t">Expedientes de atrasos</div><button class="btn btn-acc btn-sm" onclick="openM('m-nuevo-atraso')">+ Nuevo</button></div>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Expediente</th><th>Concepto</th><th>Tipo</th><th>Período</th><th>Empleados</th><th>Importe</th><th>Partida</th><th>Estado</th><th></th></tr></thead>
+      <tbody>
+        <tr style="background:rgba(240,190,32,.03)">
+          <td class="mono">ATR-2025-001</td>
+          <td><strong>Revisión salarial LPGE 2025</strong><div style="font-size:11px;color:var(--t3)">+2,5% · Acuerdo 15/01/2025</div></td>
+          <td><span class="badge b-a">Revisión sal.</span></td>
+          <td class="mono" style="font-size:11px">Ene–Ago 2025</td><td class="mono">39</td>
+          <td class="mono c-y">8.420 €</td><td class="mono">120/130</td>
+          <td><span class="badge b-y">Pendiente</span></td>
+          <td><button class="btn btn-green btn-sm" onclick="openM('m-liquidar-atraso')">Liquidar</button></td>
+        </tr>
+        <tr style="background:rgba(240,190,32,.03)">
+          <td class="mono">ATR-2025-002</td>
+          <td><strong>Trienio C. Moreno Díaz (T-3 reconocido)</strong><div style="font-size:11px;color:var(--t3)">Servicios previos CCAA · Resol. 22/07/2025</div></td>
+          <td><span class="badge b-p">Trienio retro.</span></td>
+          <td class="mono" style="font-size:11px">Oct 2022–Sep 2025</td><td class="mono">1</td>
+          <td class="mono c-y">990 €</td><td class="mono">120.00</td>
+          <td><span class="badge b-y">Pendiente</span></td>
+          <td><button class="btn btn-green btn-sm" onclick="openM('m-liquidar-atraso')">Liquidar</button></td>
+        </tr>
+        <tr style="background:rgba(240,190,32,.03)">
+          <td class="mono">ATR-2025-003</td>
+          <td><strong>Complemento convenio colectivo</strong><div style="font-size:11px;color:var(--t3)">Mesa Negociación 08/06/2025 · Personal laboral</div></td>
+          <td><span class="badge b-b">Convenio col.</span></td>
+          <td class="mono" style="font-size:11px">Ene–Jun 2025</td><td class="mono">12</td>
+          <td class="mono c-y">3.240 €</td><td class="mono">131.00</td>
+          <td><span class="badge b-y">Pendiente</span></td>
+          <td><button class="btn btn-green btn-sm" onclick="toast('✓ Atraso incluido en nómina oct.')">Liquidar</button></td>
+        </tr>
+        <tr style="opacity:.55">
+          <td class="mono">ATR-2024-008</td>
+          <td><strong>Trienio J. Pérez Ruiz (T-1 reconocido)</strong></td>
+          <td><span class="badge b-p">Trienio retro.</span></td>
+          <td class="mono" style="font-size:11px">Mar 2021–Mar 2024</td><td class="mono">1</td>
+          <td class="mono">1.260 €</td><td class="mono">120.00</td>
+          <td><span class="badge b-g">Liquidado</span></td>
+          <td><button class="btn btn-ghost btn-sm" onclick="openM('m-liquidar-atraso')">Ver</button></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div><!-- /view-atrasos -->
+<!-- ═══ CONSIGNACIONES ═══ -->
+<div class="view" id="view-consignaciones">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Consignaciones Presupuestarias</div>
+  </div>
+  <div class="sec-sub">Capítulo I · Gastos de personal · Arts. 120–169 TRLRHL</div>
+  <div class="alert al-r"><div>⛔</div><div class="alert-body"><strong>150.00 Productividad al 93%.</strong> Déficit proyectado: 8.400 €. Tramitar suplemento urgente antes del 15/10.
+    <div class="alert-actions"><button class="a-btn" onclick="openM('m-mod-credito')">Tramitar modificación crédito</button><button class="a-btn" onclick="navTo('simulador')">Simular alternativas</button></div></div></div>
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-t">Estado por partida · Ejercicio 2025</div>
+      <div class="card-acts"><button class="btn btn-ghost btn-sm" onclick="openM('m-mod-credito')">✎ Modificación crédito</button></div>
+    </div>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Partida</th><th>Descripción</th><th>Créd. inicial</th><th>Modif.</th><th>Créd. definitivo</th><th>Obligado</th><th>Disponible</th><th>Ejec.</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">120.00</td><td>Retrib. básicas func. <span class="coste-badge" style="background:var(--purple2);color:var(--purple);border:1px solid rgba(160,112,240,.25);font-size:9px">incl. trienios</span></td><td class="mono">420.000 €</td><td class="mono c-g">+12.000 €</td><td class="mono">432.000 €</td><td class="mono">349.920 €</td><td class="mono c-y">82.080 €</td><td><div class="prog"><div class="prog-fill py" style="width:81%"></div></div><span class="mono" style="font-size:11px">81%</span></td><td><span class="badge b-y">ATENCIÓN</span></td></tr>
+        <tr><td class="mono">121.00</td><td>Retrib. complementarias func.</td><td class="mono">210.000 €</td><td class="mono c3">0 €</td><td class="mono">210.000 €</td><td class="mono">142.800 €</td><td class="mono c-g">67.200 €</td><td><div class="prog"><div class="prog-fill pg" style="width:68%"></div></div><span class="mono" style="font-size:11px">68%</span></td><td><span class="badge b-g">OK</span></td></tr>
+        <tr><td class="mono">130.00</td><td>Retrib. básicas lab. <span class="coste-badge" style="background:var(--purple2);color:var(--purple);border:1px solid rgba(160,112,240,.25);font-size:9px">incl. trienios</span></td><td class="mono">180.000 €</td><td class="mono c3">0 €</td><td class="mono">180.000 €</td><td class="mono">129.600 €</td><td class="mono c-g">50.400 €</td><td><div class="prog"><div class="prog-fill pg" style="width:72%"></div></div><span class="mono" style="font-size:11px">72%</span></td><td><span class="badge b-g">OK</span></td></tr>
+        <tr><td class="mono">131.00</td><td>Retrib. complement. lab.</td><td class="mono">86.000 €</td><td class="mono c-r">−6.000 €</td><td class="mono">80.000 €</td><td class="mono">56.000 €</td><td class="mono c-g">24.000 €</td><td><div class="prog"><div class="prog-fill pg" style="width:70%"></div></div><span class="mono" style="font-size:11px">70%</span></td><td><span class="badge b-g">OK</span></td></tr>
+        <tr style="background:rgba(240,64,64,.04)"><td class="mono c-r">150.00</td><td>Productividad</td><td class="mono">30.000 €</td><td class="mono c-g">+5.000 €</td><td class="mono">35.000 €</td><td class="mono">32.550 €</td><td class="mono c-r">2.450 €</td><td><div class="prog"><div class="prog-fill pr" style="width:93%"></div></div><span class="mono" style="font-size:11px;color:var(--red)">93%</span></td><td><span class="badge b-r">ALERTA</span></td></tr>
+        <tr><td class="mono">151.00</td><td>Gratificaciones / h. extra</td><td class="mono">18.000 €</td><td class="mono c3">0 €</td><td class="mono">18.000 €</td><td class="mono">9.900 €</td><td class="mono c-g">8.100 €</td><td><div class="prog"><div class="prog-fill pg" style="width:55%"></div></div><span class="mono" style="font-size:11px">55%</span></td><td><span class="badge b-g">OK</span></td></tr>
+        <tr><td class="mono">160.00</td><td>Seg. Social empresa</td><td class="mono">280.000 €</td><td class="mono c-g">+8.000 €</td><td class="mono">288.000 €</td><td class="mono">213.120 €</td><td class="mono c-g">74.880 €</td><td><div class="prog"><div class="prog-fill pg" style="width:74%"></div></div><span class="mono" style="font-size:11px">74%</span></td><td><span class="badge b-g">OK</span></td></tr>
+        <tr><td class="mono">161.00</td><td>Prestaciones sociales</td><td class="mono">22.000 €</td><td class="mono c3">0 €</td><td class="mono">22.000 €</td><td class="mono">13.200 €</td><td class="mono c-g">8.800 €</td><td><div class="prog"><div class="prog-fill pg" style="width:60%"></div></div><span class="mono" style="font-size:11px">60%</span></td><td><span class="badge b-g">OK</span></td></tr>
+        <tr class="tr-total"><td class="mono">TOTAL</td><td>Capítulo I</td><td class="mono">1.246.000 €</td><td class="mono c-a">+19.000 €</td><td class="mono">1.265.000 €</td><td class="mono">947.090 €</td><td class="mono c-g">317.910 €</td><td><div class="prog"><div class="prog-fill pa" style="width:75%"></div></div><span class="mono" style="font-size:11px">75%</span></td><td><span class="badge b-a">EN PLAZO</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div><!-- /view-consignaciones -->
+
+<!-- ═══ NÓMINAS ═══ -->
+<div class="view" id="view-nominas">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Nóminas · Liquidación mensual</div>
+  </div>
+  <div class="sec-sub">Septiembre 2025 · 39 empleados activos</div>
+  <div class="g4">
+    <div class="kpi" style="--kc:var(--acc)"><div class="kpi-lbl">Total bruto sept.</div><div class="kpi-val">136.862 €</div><div class="kpi-sub">39 empleados</div></div>
+    <div class="kpi" style="--kc:var(--blue)"><div class="kpi-lbl">IRPF · Mod. 111</div><div class="kpi-val">26.820 €</div><div class="kpi-sub">Vence 20/10/2025</div></div>
+    <div class="kpi" style="--kc:var(--blue)"><div class="kpi-lbl">SS empresa · TC2</div><div class="kpi-val">30.912 €</div><div class="kpi-sub">Vence 31/10/2025</div></div>
+    <div class="kpi" style="--kc:var(--purple)"><div class="kpi-lbl">Trienios en nómina</div><div class="kpi-val">1.053 €</div><div class="kpi-sub">Devengados sept.</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-t">Detalle · Septiembre 2025</div>
+      <div class="card-acts">
+        <select class="fi" style="width:auto;padding:6px 10px;font-size:12px"><option>Septiembre 2025</option><option>Agosto 2025</option><option>Julio 2025</option></select>
+        <button class="btn btn-acc btn-sm" onclick="openM('m-procesar-nomina')">⚙ Procesar nómina</button>
+      </div>
+    </div>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Empleado · Puesto</th><th>Sueldo + compl.</th><th>Trienios</th><th>Otros</th><th>Total bruto</th><th>IRPF</th><th>SS trab.</th><th>Neto</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td><div style="font-weight:700">M. García López</div><div class="mono" style="font-size:11px;color:var(--t3)">F-001 · A1/30 · Secretaria</div></td><td class="mono">5.307 €</td><td><span class="coste-badge" style="background:var(--purple2);color:var(--purple);border:1px solid rgba(160,112,240,.3)">8×55=440€</span></td><td class="mono c3">—</td><td class="mono c-a">5.747 €</td><td class="mono c-r">−1.609 €</td><td class="mono c3">−270 €</td><td class="mono c-g">3.868 €</td><td><span class="badge b-g">OK</span></td></tr>
+        <tr><td><div style="font-weight:700">J. Rodríguez Martín</div><div class="mono" style="font-size:11px;color:var(--t3)">F-002 · A1/29 · Interventor</div></td><td class="mono">4.901 €</td><td><span class="coste-badge" style="background:var(--purple2);color:var(--purple);border:1px solid rgba(160,112,240,.3)">6×55=330€</span></td><td class="mono c3">—</td><td class="mono c-a">5.231 €</td><td class="mono c-r">−1.412 €</td><td class="mono c3">−246 €</td><td class="mono c-g">3.573 €</td><td><span class="badge b-g">OK</span></td></tr>
+        <tr style="background:rgba(160,112,240,.03)"><td><div style="font-weight:700">C. Moreno Díaz</div><div class="mono" style="font-size:11px;color:var(--t3)">F-005 · C1/20 · Admin.</div></td><td class="mono">2.213 €</td><td><div><span class="coste-badge" style="background:var(--purple2);color:var(--purple);border:1px solid rgba(160,112,240,.3)">4×35=140€</span><div class="mono" style="font-size:10px;color:var(--yellow);margin-top:2px">⚠ T-5 desde 15/10 → +35€</div></div></td><td class="mono c3">—</td><td class="mono c-a">2.353 €</td><td class="mono c-r">−423 €</td><td class="mono c3">−111 €</td><td class="mono c-g">1.819 €</td><td><span class="badge b-y">Trienio próx.</span></td></tr>
+        <tr><td><div style="font-weight:700">P. González Ruiz</div><div class="mono" style="font-size:11px;color:var(--t3)">F-009 · C1/22 · Policía</div></td><td class="mono">2.498 €</td><td><span class="coste-badge" style="background:var(--purple2);color:var(--purple);border:1px solid rgba(160,112,240,.3)">5×35=175€</span></td><td class="mono">Noct: 180 €</td><td class="mono c-a">2.853 €</td><td class="mono c-r">−542 €</td><td class="mono c3">−134 €</td><td class="mono c-g">2.177 €</td><td><span class="badge b-g">OK</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div style="padding:11px 16px;background:var(--s3);border-top:1px solid var(--b1);display:flex;gap:20px;align-items:center">
+      <span class="mono c3" style="font-size:12px">+ 35 empleados más · Clic en fila para recibo</span>
+      <div style="flex:1"></div>
+      <span class="mono c2">Trienios: <strong class="c-p">1.053 €</strong></span>
+      <span class="mono c2">Bruto: <strong style="color:var(--t1)">136.862 €</strong></span>
+      <span class="mono c2">Neto: <strong style="color:var(--t1)">97.042 €</strong></span>
+      <span class="badge b-y" id="nomina-estado">En proceso</span>
+    </div>
+  </div>
+</div><!-- /view-nominas -->
+
+<!-- ═══ CONTROL ═══ -->
+<div class="view" id="view-control">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Control de Crédito</div>
+  </div>
+  <div class="sec-sub">Semáforo · Proyección lineal · Art. 173 TRLRHL</div>
+  <div class="g4">
+    <div class="kpi" style="--kc:var(--green)"><div class="kpi-lbl">Partidas zona segura</div><div class="kpi-val">6</div><div class="kpi-sub">&lt;80% en mes 9</div></div>
+    <div class="kpi" style="--kc:var(--yellow)"><div class="kpi-lbl">En atención</div><div class="kpi-val">1</div><div class="kpi-sub">120.00 · 81%</div></div>
+    <div class="kpi" style="--kc:var(--red)"><div class="kpi-lbl">Alerta crítica</div><div class="kpi-val">1</div><div class="kpi-sub">150.00 · 93%</div></div>
+    <div class="kpi" style="--kc:var(--purple)"><div class="kpi-lbl">Vacantes retenidas</div><div class="kpi-val">119.200 €</div><div class="kpi-sub">8 vacantes · no reasignable</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="card-t">Proyección lineal a cierre · Art. 173 TRLRHL</div></div>
+    <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Partida</th><th>Créd. definitivo</th><th>Obligado M9</th><th>% Real</th><th>% Esp.</th><th>Proy. dic.</th><th>Trienios Q4</th><th>Margen ajustado</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">120.00</td><td class="mono">432.000 €</td><td class="mono">349.920 €</td><td class="mono c-y">81%</td><td class="mono c3">75%</td><td class="mono c-y">466.560 €</td><td class="mono c-p">+1.320 €</td><td class="mono c-r">−43.610 €</td><td><span class="badge b-y">ATENCIÓN</span></td></tr>
+        <tr><td class="mono">121.00</td><td class="mono">210.000 €</td><td class="mono">142.800 €</td><td class="mono c-g">68%</td><td class="mono c3">75%</td><td class="mono c-g">190.400 €</td><td class="mono c3">—</td><td class="mono c-g">+19.600 €</td><td><span class="badge b-g">OK</span></td></tr>
+        <tr><td class="mono">130.00</td><td class="mono">180.000 €</td><td class="mono">129.600 €</td><td class="mono c-g">72%</td><td class="mono c3">75%</td><td class="mono c-g">172.800 €</td><td class="mono c-p">+133 €</td><td class="mono c-g">+7.067 €</td><td><span class="badge b-g">OK</span></td></tr>
+        <tr style="background:rgba(240,64,64,.04)"><td class="mono c-r">150.00</td><td class="mono">35.000 €</td><td class="mono">32.550 €</td><td class="mono c-r">93%</td><td class="mono c3">75%</td><td class="mono c-r">43.400 €</td><td class="mono c3">—</td><td class="mono c-r">−8.400 €</td><td><span class="badge b-r">ALERTA</span></td></tr>
+        <tr><td class="mono">160.00</td><td class="mono">288.000 €</td><td class="mono">213.120 €</td><td class="mono c-g">74%</td><td class="mono c3">75%</td><td class="mono c-g">284.160 €</td><td class="mono c3">—</td><td class="mono c-g">+3.840 €</td><td><span class="badge b-g">OK</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div><!-- /view-control -->
+
+<!-- ═══ BLOQUEO ═══ -->
+<div class="view" id="view-bloqueo">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Bloqueo de gasto</div>
+  </div>
+  <div class="sec-sub">Control preventivo · Evitar compromisos sin crédito disponible</div>
+  <div class="narrative">Este módulo permite <strong>bloquear preventivamente</strong> determinados tipos de gasto antes de que se produzca el compromiso. Un bloqueo registrado aquí genera un expediente para traslado a Intervención. <strong>No es una restricción automática del sistema contable</strong> — eso requiere integración con SicalWin/Seres — pero sí genera el documento formal para que Intervención actúe.</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><div class="card-t">Bloqueos activos</div><button class="btn btn-acc btn-sm" onclick="openM('m-nuevo-bloqueo')">+ Nuevo bloqueo</button></div>
+      <div class="bloqueo-row">
+        <span style="font-size:18px">🚫</span>
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">Vacante F-003 · Técnico Admin. A1</div><div style="font-size:12px;color:var(--t3)">Sin convocar hasta diciembre · Ahorro estimado: 12.150 €</div></div>
+        <div style="text-align:right"><span class="badge b-r">Activo</span><div class="mono c3" style="font-size:10px;margin-top:3px">Desde 01/09/2025</div></div>
+      </div>
+      <div class="bloqueo-row">
+        <span style="font-size:18px">📉</span>
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">Restricción devengos productividad</div><div style="font-size:12px;color:var(--t3)">No aprobar nuevos devengos 150.00 hasta resolución mod. crédito · +5.200 €</div></div>
+        <div style="text-align:right"><span class="badge b-y">Pend. Interventor</span><div class="mono c3" style="font-size:10px;margin-top:3px">Desde 25/09/2025</div></div>
+      </div>
+      <div class="bloqueo-row" style="opacity:.5">
+        <span style="font-size:18px">✅</span>
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">Horas extra julio 2025</div><div style="font-size:12px;color:var(--t3)">Bloqueo temporal 151.00 · Resuelto tras suplemento</div></div>
+        <div style="text-align:right"><span class="badge b-g">Levantado</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-t">¿Qué puede bloquearse desde aquí?</div></div>
+      <div style="padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">✅</span><div><div style="font-weight:600;font-size:13px">Cobertura de vacantes</div><div style="font-size:12px;color:var(--t3)">Documento formal para Intervención y RRHH bloqueando la convocatoria</div></div></div>
+        <div style="display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">✅</span><div><div style="font-weight:600;font-size:13px">Devengos de productividad</div><div style="font-size:12px;color:var(--t3)">Restricción formal de nuevos devengos hasta modificación crédito</div></div></div>
+        <div style="display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">✅</span><div><div style="font-weight:600;font-size:13px">Gratificaciones y horas extra</div><div style="font-size:12px;color:var(--t3)">Suspensión temporal de autorización mientras hay déficit</div></div></div>
+        <div style="display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">⚠️</span><div><div style="font-weight:600;font-size:13px">Bloqueo directo en sistema contable</div><div style="font-size:12px;color:var(--t3)">Requiere integración con SicalWin/Seres. Disponible en roadmap 2026.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /view-bloqueo -->
+
+<!-- ═══ INFORMES ═══ -->
+<div class="view" id="view-informes">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Informes y Exportación</div>
+  </div>
+  <div class="sec-sub">Documentos oficiales listos para Intervención · Pleno · Secretaría</div>
+  <div class="card">
+    <div class="ig-hd">
+      <span style="font-size:20px">📄</span>
+      <div style="flex:1"><div style="font-size:15px;font-weight:800">Informe justificativo automático</div><div style="font-size:12px;color:var(--t3)">Generado desde los datos reales del sistema · listo para Intervención / Pleno</div></div>
+      <button class="btn btn-acc" onclick="generarInforme()">Generar informe completo →</button>
+    </div>
+    <div style="padding:20px;background:linear-gradient(180deg,rgba(74,143,245,.03),transparent)">
+      <div style="background:var(--s3);border:1px solid var(--b2);border-radius:8px;padding:20px;font-size:12px;line-height:1.8;color:var(--t2);max-height:240px;overflow-y:auto">
+        <div class="ig-titulo">INFORME DE SITUACIÓN PRESUPUESTARIA · CAP. I DE PERSONAL<br>Ayuntamiento de Villanueva del Río · Ejercicio 2025 · Septiembre</div>
+        <p><strong>1. RESUMEN EJECUTIVO</strong><br>El Capítulo I presenta una ejecución media del 74,9% sobre el crédito definitivo de 1.265.000 €, coherente con el mes 9. Sin embargo, la partida 150.00 (Productividad) presenta una ejecución del 93%, con déficit proyectado de <strong>8.400 €</strong> si no se adoptan medidas antes del 15 de octubre de 2025.</p>
+        <p><strong>2. RIESGO PRINCIPAL</strong><br>La partida 150.00 se agotará previsiblemente en la segunda semana de octubre. El crédito disponible ajustado real asciende a <strong>289.670 €</strong>, frente a los 317.910 € oficiales, una vez descontados trienios comprometidos (+1.453 €), atrasos con acuerdo habilitante (+12.650 €) y el déficit proyectado en 150.00 (+8.400 €).</p>
+        <p><strong>3. TRIENIOS</strong><br>4 trienios consolidan entre octubre y diciembre de 2025 con un impacto adicional de 1.453 € en el resto del ejercicio. La partida 120.00 dispone de margen suficiente para absorberlos.</p>
+        <p><strong>4. PROPUESTA DE ACTUACIÓN</strong><br>Se propone tramitar con carácter urgente suplemento de crédito en la partida 150.00 por importe mínimo de 8.400 €, con cargo al remanente de tesorería o a bajas en partidas con exceso de consignación.</p>
+        <p><em>Informe generado automáticamente por tugesto · Gestión Presupuestaria Cap. I · 30/09/2025</em></p>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn btn-acc btn-sm" onclick="generarInforme()">📄 Descargar PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="toast('↓ Exportando Excel...')">📊 Descargar Excel</button>
+        <button class="btn btn-ghost btn-sm" onclick="toast('📄 Generando informe de escenario simulado...')">◎ Informe escenario simulador</button>
+      </div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card" style="cursor:pointer" onclick="generarInforme()"><div style="padding:18px;text-align:center"><div style="font-size:26px;margin-bottom:8px">📊</div><div style="font-weight:700;margin-bottom:4px">Informe Cap. I completo</div><div style="font-size:11px;color:var(--t3);margin-bottom:10px">Con trienios, atrasos y proyección</div><span class="badge b-g">PDF · Excel</span></div></div>
+    <div class="card" style="cursor:pointer"><div style="padding:18px;text-align:center"><div style="font-size:26px;margin-bottom:8px">🏛</div><div style="font-weight:700;margin-bottom:4px">Informe RPT / Plantilla</div><div style="font-size:11px;color:var(--t3);margin-bottom:10px">Estado puestos · BOP-ready</div><span class="badge b-b">PDF</span></div></div>
+    <div class="card" style="cursor:pointer"><div style="padding:18px;text-align:center"><div style="font-size:26px;margin-bottom:8px">📋</div><div style="font-weight:700;margin-bottom:4px">Certificado Masa Salarial</div><div style="font-size:11px;color:var(--t3);margin-bottom:10px">Art. 103 bis EBEP · Firmable</div><span class="badge b-p">PDF firmable</span></div></div>
+  </div>
+</div><!-- /view-informes -->
+
+<!-- ═══ ONBOARDING ═══ -->
+<div class="view" id="view-onboarding">
+  <div class="view-header">
+    <button class="back-btn" onclick="navTo('dashboard')">← Dashboard</button>
+    <div class="sec-t" style="margin-bottom:0">Alta de nuevo ayuntamiento</div>
+  </div>
+  <div class="sec-sub">Asistente de carga inicial · 5 pasos · Tiempo estimado: 1–3 días hábiles</div>
+  <div class="alert al-b"><div>ℹ</div><div>Completa los 5 pasos en orden. Los datos pueden editarse en cualquier momento tras la activación.</div></div>
+  <div class="g3">
+    <div class="card" style="cursor:pointer"><div style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:28px;height:28px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#000">1</div><div style="font-weight:700">Datos del ente local</div></div><div style="font-size:12px;color:var(--t3)">Nombre, CIF, ejercicio, régimen, provincia</div><div style="margin-top:10px"><span class="badge b-g">Completado</span></div></div></div>
+    <div class="card" style="cursor:pointer;border-color:var(--acc)"><div style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:28px;height:28px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#000">2</div><div style="font-weight:700">Plantilla + RPT</div></div><div style="font-size:12px;color:var(--t3)">Importar puestos, grupos, niveles, RPT</div><div style="margin-top:10px"><span class="badge b-a">En curso</span></div></div></div>
+    <div class="card" style="cursor:pointer;opacity:.6"><div style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:28px;height:28px;border-radius:50%;background:var(--b2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--t3)">3</div><div style="font-weight:700">Empleados + trienios</div></div><div style="font-size:12px;color:var(--t3)">Fecha ingreso, trienios, IRPF, situación</div><div style="margin-top:10px"><span class="badge b-x">Pendiente</span></div></div></div>
+    <div class="card" style="cursor:pointer;opacity:.6"><div style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:28px;height:28px;border-radius:50%;background:var(--b2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--t3)">4</div><div style="font-weight:700">Presupuesto Cap. I</div></div><div style="font-size:12px;color:var(--t3)">Partidas, créditos, saldo inicial</div><div style="margin-top:10px"><span class="badge b-x">Pendiente</span></div></div></div>
+    <div class="card" style="cursor:pointer;opacity:.6"><div style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:28px;height:28px;border-radius:50%;background:var(--b2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--t3)">5</div><div style="font-weight:700">Verificación y activación</div></div><div style="font-size:12px;color:var(--t3)">Checklist, validaciones y activar</div><div style="margin-top:10px"><span class="badge b-x">Pendiente</span></div></div></div>
+  </div>
+</div><!-- /view-onboarding -->
+
+</div><!-- /content -->
+</div><!-- /main -->
+<!-- ═══ MODALES ═══ -->
+
+<!-- MODIFICACIÓN CRÉDITO -->
+<div class="modal-ov" id="m-mod-credito">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Modificación urgente · Partida 150.00</div><button class="modal-x" onclick="closeM('m-mod-credito')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert al-r"><div>⛔</div><div>Déficit proyectado 8.400 €. Requiere acuerdo JGL o Pleno (art. 179 TRLRHL). Si supera el 10% de consignación → Pleno obligatorio.</div></div>
+      <div class="fg"><label>Tipo</label><select class="fi"><option>Suplemento de crédito</option><option>Transferencia entre partidas</option><option>Crédito extraordinario</option></select></div>
+      <div class="frow">
+        <div class="fg"><label>Importe (€)</label><input type="number" class="fi" value="8400" placeholder="Mínimo recomendado: 8.400 €"></div>
+        <div class="fg"><label>Fuente financiación</label><select class="fi"><option>Remanente de tesorería</option><option>Mayores ingresos</option><option>Baja en otra partida</option></select></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Nº acuerdo</label><input type="text" class="fi" placeholder="JGL 35/2025"></div>
+        <div class="fg"><label>Fecha del acuerdo</label><input type="date" class="fi"></div>
+      </div>
+      <div class="fg"><label>Observaciones</label><textarea class="fi" rows="2" placeholder="Motivo: agotamiento proyectado partida 150.00..."></textarea></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-mod-credito')">Cancelar</button><button class="btn btn-acc" onclick="closeM('m-mod-credito');toast('✓ Modificación registrada · Pendiente acuerdo JGL/Pleno')">Registrar modificación</button></div>
+  </div>
+</div>
+
+<!-- BLOQUEAR VACANTE -->
+<div class="modal-ov" id="m-bloquear-vacante">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Bloquear cobertura de vacante</div><button class="modal-x" onclick="closeM('m-bloquear-vacante')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert al-y"><div>⚠</div><div>Este bloqueo genera un expediente para traslado a RRHH e Intervención. No paraliza automáticamente el proceso selectivo.</div></div>
+      <div class="fg"><label>Puesto a bloquear</label><select class="fi"><option>F-003 · Técnico Admin. Gral. A1 · 48.600 €/año</option><option>F-008 · Auxiliar Administrativo C2 · 26.400 €/año</option><option>L-002 · Arquitecto Técnico A2 · 44.200 €/año</option></select></div>
+      <div class="frow">
+        <div class="fg"><label>Bloqueo hasta</label><input type="date" class="fi"></div>
+        <div class="fg"><label>Motivo</label><select class="fi"><option>Restricción presupuestaria</option><option>Decisión política</option><option>Pendiente revisión orgánica</option></select></div>
+      </div>
+      <div class="fg"><label>Ahorro estimado en el ejercicio</label><input type="text" class="fi" value="12.150 €" readonly style="color:var(--green)"></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-bloquear-vacante')">Cancelar</button><button class="btn btn-acc" onclick="closeM('m-bloquear-vacante');toast('✓ Bloqueo registrado · Notificado a RRHH e Intervención')">Registrar bloqueo</button></div>
+  </div>
+</div>
+
+<!-- RESTRINGIR PRODUCTIVIDAD -->
+<div class="modal-ov" id="m-restringir-prod">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Restricción devengos · Partida 150.00</div><button class="modal-x" onclick="closeM('m-restringir-prod')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert al-y"><div>⚠</div><div>La restricción impide aprobar nuevos devengos en productividad hasta que se resuelva la modificación de crédito. Genera notificación a responsables de servicio.</div></div>
+      <div class="fg"><label>Crédito disponible actual</label><input type="text" class="fi" value="2.450 €" readonly style="color:var(--red)"></div>
+      <div class="fg"><label>Devengos pendientes a retener</label><input type="number" class="fi" value="5200"></div>
+      <div class="fg"><label>Vigencia</label><input type="date" class="fi"></div>
+      <div class="fg"><label>Notificar a</label><input type="text" class="fi" placeholder="Responsables de servicio, Alcaldía..."></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-restringir-prod')">Cancelar</button><button class="btn btn-acc" onclick="closeM('m-restringir-prod');toast('✓ Restricción registrada · Notificaciones enviadas')">Registrar restricción</button></div>
+  </div>
+</div>
+
+<!-- IMPACTO TRIENIOS -->
+<div class="modal-ov" id="m-impacto-trienios">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Impacto trienios Q4 sobre crédito</div><button class="modal-x" onclick="closeM('m-impacto-trienios')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--s3);border-radius:6px"><span>C. Moreno Díaz · 5º C1 · 15/10</span><span class="mono c-p">+35 €/mes · resto ej.: +70 €</span></div>
+        <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--s3);border-radius:6px"><span>P. González Ruiz · 6º C1 · 02/11</span><span class="mono c-p">+35 €/mes · resto ej.: +70 €</span></div>
+        <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--s3);border-radius:6px"><span>R. Fernández Gil · 6º C1 · 18/11</span><span class="mono c-p">+35 €/mes · resto ej.: +35 €</span></div>
+        <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--s3);border-radius:6px"><span>M. Torres Blanco · 5º C2 · 01/12</span><span class="mono c-p">+26 €/mes · resto ej.: +26 €</span></div>
+      </div>
+      <div style="background:var(--s3);border-radius:8px;padding:14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-weight:700">Impacto total resto ejercicio 2025</span>
+        <span class="mono c-p" style="font-size:18px;font-weight:800">1.453 €</span>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:var(--t3)">Partida 120.00 disponible: 82.080 €. Margen suficiente para absorber estos trienios.</div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-acc" onclick="closeM('m-impacto-trienios')">Entendido</button></div>
+  </div>
+</div>
+
+<!-- ACCIÓN RÁPIDA -->
+<div class="modal-ov" id="m-accion-rapida">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">⚡ Acción rápida</div><button class="modal-x" onclick="closeM('m-accion-rapida')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-red" style="justify-content:flex-start;padding:12px 16px" onclick="closeM('m-accion-rapida');openM('m-mod-credito')">🔧 Tramitar modificación crédito 150.00 → déficit 8.400 €</button>
+        <button class="btn btn-ghost" style="justify-content:flex-start;padding:12px 16px" onclick="closeM('m-accion-rapida');openM('m-bloquear-vacante')">🚫 Bloquear cobertura vacante F-003 → ahorro 12.150 €</button>
+        <button class="btn btn-ghost" style="justify-content:flex-start;padding:12px 16px" onclick="closeM('m-accion-rapida');openM('m-restringir-prod')">📉 Restringir devengos productividad → +5.200 €</button>
+        <button class="btn btn-ghost" style="justify-content:flex-start;padding:12px 16px" onclick="closeM('m-accion-rapida');navTo('simulador')">◎ Abrir simulador de escenarios</button>
+        <button class="btn btn-ghost" style="justify-content:flex-start;padding:12px 16px" onclick="closeM('m-accion-rapida');generarInforme()">📄 Generar informe justificativo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETALLE EMPLEADO -->
+<div class="modal-ov" id="m-detalle-emp">
+  <div class="modal modal-lg">
+    <div class="modal-hd"><div class="modal-t" id="demp-title">—</div><button class="modal-x" onclick="closeM('m-detalle-emp')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div style="background:var(--s3);border-radius:8px;padding:14px">
+          <div class="kpi-lbl">Puesto · Grupo/Nivel</div><div style="font-size:14px;font-weight:700;margin-bottom:10px" id="demp-puesto">—</div>
+          <div class="kpi-lbl">Situación</div><div style="margin-bottom:10px" id="demp-sit">—</div>
+          <div class="kpi-lbl">Jornada · IRPF</div><div class="mono" id="demp-jornada">—</div>
+        </div>
+        <div style="background:var(--s3);border-radius:8px;padding:14px">
+          <div class="kpi-lbl">Fecha de ingreso</div><div class="mono" style="margin-bottom:10px" id="demp-fi">—</div>
+          <div class="kpi-lbl">Antigüedad</div><div class="mono" style="margin-bottom:10px" id="demp-ant">—</div>
+          <div class="kpi-lbl">Trienios · Coste/año · Partida</div><div class="mono c-p" id="demp-trienios">—</div>
+        </div>
+      </div>
+      <div style="background:var(--s3);border-radius:8px;padding:14px" id="demp-retrib"></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-detalle-emp')">Cerrar</button><button class="btn btn-acc">Editar</button></div>
+  </div>
+</div>
+
+<!-- DETALLE PUESTO -->
+<div class="modal-ov" id="m-detalle-puesto">
+  <div class="modal modal-lg">
+    <div class="modal-hd"><div class="modal-t" id="dpuesto-title">—</div><button class="modal-x" onclick="closeM('m-detalle-puesto')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div style="background:var(--s3);border-radius:8px;padding:14px">
+          <div class="kpi-lbl">Tipo · Estado</div><div style="margin-bottom:10px" id="dp-tipo">—</div>
+          <div class="kpi-lbl">Empleado asignado</div><div style="font-weight:700;font-size:14px" id="dp-emp">—</div>
+        </div>
+        <div style="background:var(--s3);border-radius:8px;padding:14px">
+          <div class="kpi-lbl">Grupo / Nivel CD</div><div class="mono" style="margin-bottom:10px" id="dp-grupo">—</div>
+          <div class="kpi-lbl">Provisión · Trienios</div><div class="mono" id="dp-prov">—</div>
+        </div>
+      </div>
+      <div style="background:var(--s3);border-radius:8px;padding:14px" id="dp-coste"></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-detalle-puesto')">Cerrar</button><button class="btn btn-acc">Editar</button></div>
+  </div>
+</div>
+
+<!-- PROCESAR NÓMINA -->
+<div class="modal-ov" id="m-procesar-nomina">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Procesar nómina · Septiembre 2025</div><button class="modal-x" onclick="closeM('m-procesar-nomina')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert al-b"><div>ℹ</div><div>39 empleados activos · Trienios devengados incluidos automáticamente · Imputación Cap. I automática.</div></div>
+      <div style="background:var(--s3);border-radius:8px;padding:14px;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
+        <div><div class="kpi-lbl">Período</div><div class="mono">Sep 2025</div></div>
+        <div><div class="kpi-lbl">Empleados</div><div class="mono">39 activos</div></div>
+        <div><div class="kpi-lbl">Fecha valor</div><div class="mono">30/09/2025</div></div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div class="kpi-lbl" style="margin-bottom:8px">Conceptos</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--acc)"> Retribuciones ordinarias</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--acc)"> Trienios devengados</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:var(--acc)"> Atrasos (bloqueados · sin crédito)</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:var(--acc)"> Gratificaciones</label>
+        </div>
+      </div>
+      <div class="alert al-y"><div>⚠</div><div>ATR-2025-001 (8.420 €) no puede incluirse: margen ajustado en 120.00 insuficiente.</div></div>
+      <div class="fg"><label>Fecha de pago</label><input type="date" class="fi" value="2025-09-30"></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-procesar-nomina')">Cancelar</button><button class="btn btn-acc" onclick="confirmarNomina()">✓ Confirmar y procesar</button></div>
+  </div>
+</div>
+
+<!-- NUEVO ATRASO -->
+<div class="modal-ov" id="m-nuevo-atraso">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Registrar nuevo atraso</div><button class="modal-x" onclick="closeM('m-nuevo-atraso')">✕</button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Tipo</label><select class="fi"><option>Revisión salarial LPGE</option><option>Trienio reconocido retroactivamente</option><option>Complemento convenio</option><option>Sentencia judicial</option></select></div>
+      <div class="frow">
+        <div class="fg"><label>Período desde</label><input type="date" class="fi"></div>
+        <div class="fg"><label>Período hasta</label><input type="date" class="fi"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Partida</label><select class="fi"><option>120.00</option><option>130.00</option><option>131.00</option><option>150.00</option></select></div>
+        <div class="fg"><label>Importe total (€)</label><input type="number" class="fi" placeholder="0"></div>
+      </div>
+      <div class="fg"><label>Acuerdo habilitante</label><input type="text" class="fi" placeholder="Ej: JGL 15/01/2025"></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-nuevo-atraso')">Cancelar</button><button class="btn btn-acc" onclick="closeM('m-nuevo-atraso');toast('✓ Atraso registrado correctamente')">Registrar</button></div>
+  </div>
+</div>
+
+<!-- LIQUIDAR ATRASO -->
+<div class="modal-ov" id="m-liquidar-atraso">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Liquidar atraso · ATR-2025-001</div><button class="modal-x" onclick="closeM('m-liquidar-atraso')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert al-y"><div>⚠</div><div>Verifica crédito disponible en 120.00 antes de liquidar. Con trienios Q4, margen ajustado: 69.430 €.</div></div>
+      <div style="background:var(--s3);border-radius:8px;padding:14px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b1)"><span>Revisión salarial LPGE 2025</span><span class="mono c-a">8.420 €</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b1)"><span>Retención IRPF estimada</span><span class="mono c-r">−1.600 €</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b1)"><span>SS trabajador</span><span class="mono c-r">−396 €</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:700"><span>Neto a percibir</span><span class="mono c-g">6.424 €</span></div>
+      </div>
+      <div class="fg"><label>Incluir en nómina de</label><select class="fi"><option>Octubre 2025</option><option>Noviembre 2025</option></select></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-liquidar-atraso')">Cancelar</button><button class="btn btn-acc" onclick="closeM('m-liquidar-atraso');toast('✓ Atraso incluido en nómina de octubre 2025')">Liquidar en nómina</button></div>
+  </div>
+</div>
+
+<!-- NUEVO EMPLEADO -->
+<div class="modal-ov" id="m-nuevo-emp">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Alta de nuevo empleado</div><button class="modal-x" onclick="closeM('m-nuevo-emp')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow">
+        <div class="fg"><label>Nombre y apellidos *</label><input type="text" id="ne-nombre" class="fi" placeholder="Nombre completo"></div>
+        <div class="fg"><label>DNI / NIF</label><input type="text" id="ne-dni" class="fi" placeholder="12345678A"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Puesto</label><select id="ne-puesto" class="fi">
+          <option value="F-001 · Secretario/a">F-001 · Secretario/a General (A1)</option>
+          <option value="F-002 · Interventor/a">F-002 · Interventor/a (A1)</option>
+          <option value="F-003 · Técnico Admin.">F-003 · Técnico Admin. Gral. (A1)</option>
+          <option value="F-005 · Administrativo/a" selected>F-005 · Administrativo/a (C1)</option>
+          <option value="F-007 · Aux. Administrativo">F-007 · Auxiliar Administrativo (C2)</option>
+          <option value="F-009 · Policía Local">F-009 · Policía Local (C1)</option>
+          <option value="L-001 · Técnico TIC">L-001 · Técnico Informática (A2)</option>
+          <option value="L-003 · Oficial Mant.">L-003 · Oficial 1ª Mantenimiento (C2)</option>
+        </select></div>
+        <div class="fg"><label>Fecha de ingreso *</label><input type="date" id="ne-fi" class="fi"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Trienios reconocidos</label><input type="number" id="ne-trienios" class="fi" placeholder="0" min="0" value="0"></div>
+        <div class="fg"><label>% IRPF</label><input type="number" id="ne-irpf" class="fi" placeholder="15" min="0" max="45" value="15"></div>
+      </div>
+      <div class="fg"><label>Situación</label><select id="ne-sit" class="fi">
+        <option value="Activo" selected>Activo</option>
+        <option value="Baja médica">Baja médica</option>
+        <option value="Excedencia">Excedencia</option>
+      </select></div>
+      <div class="alert al-b" style="margin-top:4px"><div>ℹ</div><div style="font-size:12px">El empleado aparecerá en la tabla inmediatamente. El próximo trienio se calcula automáticamente.</div></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-nuevo-emp')">Cancelar</button><button class="btn btn-acc" onclick="guardarNuevoEmpleado()">✓ Dar de alta</button></div>
+  </div>
+</div>
+
+<!-- NUEVO BLOQUEO -->
+<div class="modal-ov" id="m-nuevo-bloqueo">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-t">Registrar nuevo bloqueo</div><button class="modal-x" onclick="closeM('m-nuevo-bloqueo')">✕</button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Tipo de bloqueo</label><select class="fi"><option>Cobertura de vacante</option><option>Devengos de productividad</option><option>Gratificaciones y horas extra</option><option>Otro gasto de personal</option></select></div>
+      <div class="fg"><label>Descripción</label><input type="text" class="fi" placeholder="Descripción del bloqueo..."></div>
+      <div class="frow">
+        <div class="fg"><label>Partida afectada</label><select class="fi"><option>120.00</option><option>150.00</option><option>151.00</option><option>130.00</option></select></div>
+        <div class="fg"><label>Ahorro estimado (€)</label><input type="number" class="fi" placeholder="0"></div>
+      </div>
+      <div class="fg"><label>Vigencia hasta</label><input type="date" class="fi"></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeM('m-nuevo-bloqueo')">Cancelar</button><button class="btn btn-acc" onclick="closeM('m-nuevo-bloqueo');toast('✓ Bloqueo registrado · Notificado a Intervención')">Registrar</button></div>
+  </div>
+</div>
+
+
+<!-- MODIFICAR RPT -->
+<div class="modal-ov" id="m-modificar-rpt">
+  <div class="modal modal-lg">
+    <div class="modal-hd"><div class="modal-t">Modificar RPT · Relación de Puestos de Trabajo</div><button class="modal-x" onclick="closeM('m-modificar-rpt')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert al-b"><div>ℹ</div><div>Las modificaciones de RPT requieren aprobación por Pleno (art. 74 EBEP). Este formulario genera el expediente de modificación.</div></div>
+      <div class="fg"><label>Tipo de modificación</label>
+        <select class="fi">
+          <option>Creación de nuevo puesto</option>
+          <option>Supresión de puesto</option>
+          <option>Modificación de retribuciones</option>
+          <option>Cambio de denominación</option>
+          <option>Reclasificación de grupo</option>
+          <option>Cambio de adscripción / partida</option>
+        </select>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Puesto afectado</label><input type="text" class="fi" placeholder="Ej: F-003 · Técnico Admin."></div>
+        <div class="fg"><label>Motivo / justificación</label><input type="text" class="fi" placeholder="Ej: Necesidad organizativa..."></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Coste económico estimado</label><input type="number" class="fi" placeholder="€/año"></div>
+        <div class="fg"><label>Partida presupuestaria</label>
+          <select class="fi"><option>120.00</option><option>121.00</option><option>130.00</option><option>131.00</option></select>
+        </div>
+      </div>
+      <div class="fg"><label>Acuerdo de aprobación</label><input type="text" class="fi" placeholder="Pleno Nº / Fecha"></div>
+      <div class="fg"><label>Observaciones</label><textarea class="fi" rows="2" placeholder="Detalle adicional..."></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeM('m-modificar-rpt')">Cancelar</button>
+      <button class="btn btn-acc" onclick="closeM('m-modificar-rpt');toast('✓ Expediente de modificación RPT generado · Pendiente aprobación Pleno')">Generar expediente</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="display:none;position:fixed;bottom:28px;right:28px;background:var(--s2);border:1px solid var(--green);color:var(--green);padding:12px 20px;border-radius:8px;font-family:var(--mono);font-size:13px;z-index:9999;box-shadow:0 8px 40px rgba(0,0,0,.6)"></div>
+
+<script>
+// ─── DATOS DE EMPLEADOS (array dinámico) ──────────────────────────────
+const AVATAR_COLORS = [
+  ['rgba(245,147,50,.25)','var(--acc)'],['rgba(96,170,255,.25)','var(--blue)'],
+  ['rgba(192,144,255,.25)','var(--purple)'],['rgba(46,234,138,.25)','var(--green)'],
+  ['rgba(255,208,51,.25)','var(--yellow)'],['rgba(255,90,90,.25)','var(--red)'],
+  ['rgba(96,170,255,.25)','#22d3ee'],['rgba(160,210,130,.25)','#86efac'],
+];
+
+// NOTA: historial_trienios = [{grupo, num, mesT}] — trienios por grupo en que se consolidaron
+// Cada trienio se paga a la cuantía del grupo en que consolidó, NO al grupo actual (LPGE)
+// Empleados sin cambio de grupo tienen un único elemento en historial_trienios
+let EMPLEADOS = [
+  {id:'EMP-001',nombre:'María García López',     ini:'MG',puesto:'Secretaria General',  cod:'F-001',grupo:'A1',nivel:30,fi:'01/03/2001',trienios:8, proxT:'01/03/2027',partida:'120.00',sit:'Activo',   irpf:'28%',mesT:55,nota:'',
+   historial_trienios:[{grupo:'A1',num:8,mesT:55}]},
+  {id:'EMP-002',nombre:'Juan Rodríguez Martín',  ini:'JR',puesto:'Interventor',         cod:'F-002',grupo:'A1',nivel:29,fi:'15/06/2005',trienios:6, proxT:'15/06/2026',partida:'120.00',sit:'Activo',   irpf:'27%',mesT:55,nota:'',
+   historial_trienios:[{grupo:'A1',num:6,mesT:55}]},
+  {id:'EMP-003',nombre:'Ana Pérez Vidal',         ini:'AP',puesto:'Técnico Admin. Gral.',cod:'F-004',grupo:'A1',nivel:26,fi:'10/02/2018',trienios:2, proxT:'10/02/2027',partida:'120.00',sit:'Activo',   irpf:'19%',mesT:55,nota:'',
+   historial_trienios:[{grupo:'A1',num:2,mesT:55}]},
+  // EMP-004: ascendió de C2 a C1. 3 trienios consolidados: 1 siendo C2, 2 siendo C1
+  {id:'EMP-004',nombre:'Luis Sánchez Mora',       ini:'LS',puesto:'Aux. Administrativo', cod:'F-007',grupo:'C1',nivel:16,fi:'03/07/2015',trienios:3, proxT:'03/07/2027',partida:'120.00',sit:'Activo',   irpf:'14%',mesT:35,nota:'Ascendido de C2 a C1 en 2021',
+   historial_trienios:[{grupo:'C2',num:1,mesT:26},{grupo:'C1',num:2,mesT:35}]},
+  {id:'EMP-005',nombre:'Carmen Moreno Díaz',      ini:'CM',puesto:'Administrativo/a',    cod:'F-005',grupo:'C1',nivel:20,fi:'15/10/2013',trienios:4, proxT:'15/10/2025',partida:'120.00',sit:'Activo',   irpf:'18%',mesT:35,nota:'⚠ Trienio próx.',
+   historial_trienios:[{grupo:'C1',num:4,mesT:35}]},
+  {id:'EMP-006',nombre:'Antonio López Gil',       ini:'AL',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'20/04/2012',trienios:4, proxT:'20/04/2027',partida:'120.00',sit:'Activo',   irpf:'19%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:4,mesT:35}]},
+  {id:'EMP-007',nombre:'Elena Ruiz Castro',       ini:'ER',puesto:'Administrativo/a',    cod:'F-005',grupo:'C1',nivel:20,fi:'01/09/2019',trienios:1, proxT:'01/09/2026',partida:'120.00',sit:'Activo',   irpf:'15%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:1,mesT:35}]},
+  {id:'EMP-008',nombre:'Sergio Martín Blanco',    ini:'SM',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'14/06/2014',trienios:3, proxT:'14/06/2026',partida:'120.00',sit:'Activo',   irpf:'17%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:3,mesT:35}]},
+  {id:'EMP-009',nombre:'Pedro González Ruiz',     ini:'PG',puesto:'Policía Local',       cod:'F-009',grupo:'C1',nivel:22,fi:'02/11/2010',trienios:5, proxT:'02/11/2025',partida:'120.00',sit:'Activo',   irpf:'19%',mesT:35,nota:'⚠ Trienio próx.',
+   historial_trienios:[{grupo:'C1',num:5,mesT:35}]},
+  {id:'EMP-010',nombre:'Marta Jiménez Pons',      ini:'MJ',puesto:'Aux. Administrativo', cod:'F-008',grupo:'C2',nivel:16,fi:'22/03/2017',trienios:2, proxT:'22/03/2026',partida:'120.00',sit:'Activo',   irpf:'13%',mesT:26,nota:'',
+   historial_trienios:[{grupo:'C2',num:2,mesT:26}]},
+  {id:'EMP-011',nombre:'Carlos Fernández Roca',   ini:'CF',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'07/01/2016',trienios:3, proxT:'07/01/2028',partida:'120.00',sit:'Activo',   irpf:'16%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:3,mesT:35}]},
+  {id:'EMP-012',nombre:'Patricia Gómez Vera',     ini:'PV',puesto:'Administrativo/a',    cod:'F-005',grupo:'C1',nivel:20,fi:'05/05/2021',trienios:1, proxT:'05/05/2027',partida:'120.00',sit:'Activo',   irpf:'15%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:1,mesT:35}]},
+  {id:'EMP-013',nombre:'Roberto Díaz Méndez',     ini:'RD',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'18/08/2013',trienios:4, proxT:'18/08/2026',partida:'120.00',sit:'Activo',   irpf:'18%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:4,mesT:35}]},
+  {id:'EMP-014',nombre:'Rosa Fernández Gil',      ini:'RF',puesto:'Administrativo/a',    cod:'F-006',grupo:'C1',nivel:20,fi:'18/11/2009',trienios:5, proxT:'18/11/2025',partida:'120.00',sit:'Baja médica',irpf:'18%',mesT:35,nota:'⚠ Trienio próx.',
+   historial_trienios:[{grupo:'C1',num:5,mesT:35}]},
+  {id:'EMP-015',nombre:'David Torres Aguilar',    ini:'DT',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'28/02/2020',trienios:1, proxT:'28/02/2026',partida:'120.00',sit:'Activo',   irpf:'15%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:1,mesT:35}]},
+  {id:'EMP-016',nombre:'Isabel Vargas Soler',     ini:'IV',puesto:'Aux. Administrativo', cod:'F-007',grupo:'C2',nivel:16,fi:'11/10/2018',trienios:2, proxT:'11/10/2027',partida:'120.00',sit:'Activo',   irpf:'13%',mesT:26,nota:'',
+   historial_trienios:[{grupo:'C2',num:2,mesT:26}]},
+  {id:'EMP-017',nombre:'Francisco Molina Ruiz',   ini:'FM',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'09/03/2011',trienios:4, proxT:'09/03/2026',partida:'120.00',sit:'Activo',   irpf:'18%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:4,mesT:35}]},
+  {id:'EMP-018',nombre:'Laura Herrero Pinto',     ini:'LH',puesto:'Administrativo/a',    cod:'F-005',grupo:'C1',nivel:20,fi:'23/07/2022',trienios:1, proxT:'23/07/2028',partida:'120.00',sit:'Activo',   irpf:'14%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:1,mesT:35}]},
+  {id:'EMP-019',nombre:'Manuel Castillo Vega',    ini:'MC',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'16/04/2015',trienios:3, proxT:'16/04/2027',partida:'120.00',sit:'Activo',   irpf:'16%',mesT:35,nota:'',
+   historial_trienios:[{grupo:'C1',num:3,mesT:35}]},
+  {id:'EMP-020',nombre:'Miguel Torres Blanco',    ini:'MT',puesto:'Oficial 1ª Mant.',    cod:'L-003',grupo:'C2',nivel:14,fi:'01/12/2012',trienios:4, proxT:'01/12/2025',partida:'130.00',sit:'Excedencia',irpf:'—', mesT:26,nota:'⚠ Trienio próx.',
+   historial_trienios:[{grupo:'C2',num:4,mesT:26}]},
+  {id:'EMP-021',nombre:'Laura Martínez Sanz',     ini:'LM',puesto:'Técnico Informática', cod:'L-001',grupo:'A2',nivel:22,fi:'10/09/2020',trienios:1, proxT:'10/09/2026',partida:'130.00',sit:'Activo',   irpf:'22%',mesT:44,nota:'',
+   historial_trienios:[{grupo:'A2',num:1,mesT:44}]},
+  {id:'EMP-022',nombre:'Raúl Navarro Blasco',     ini:'RN',puesto:'Oficial 1ª Mant.',    cod:'L-003',grupo:'C2',nivel:14,fi:'04/05/2016',trienios:3, proxT:'04/05/2028',partida:'130.00',sit:'Activo',   irpf:'14%',mesT:26,nota:''},
+  {id:'EMP-023',nombre:'Cristina Vidal Mora',     ini:'CV',puesto:'Aux. Administrativo', cod:'F-008',grupo:'C2',nivel:16,fi:'12/01/2023',trienios:0, proxT:'12/01/2026',partida:'120.00',sit:'Activo',   irpf:'12%',mesT:26,nota:''},
+  {id:'EMP-024',nombre:'Alejandro Gil Ramos',     ini:'AG',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'30/06/2017',trienios:2, proxT:'30/06/2026',partida:'120.00',sit:'Activo',   irpf:'16%',mesT:35,nota:''},
+  {id:'EMP-025',nombre:'Natalia Ortiz Cano',      ini:'NO',puesto:'Administrativo/a',    cod:'F-005',grupo:'C1',nivel:20,fi:'15/03/2020',trienios:1, proxT:'15/03/2026',partida:'120.00',sit:'Activo',   irpf:'15%',mesT:35,nota:''},
+  {id:'EMP-026',nombre:'Pablo Serrano López',     ini:'PS',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'22/09/2018',trienios:2, proxT:'22/09/2027',partida:'120.00',sit:'Activo',   irpf:'15%',mesT:35,nota:''},
+  {id:'EMP-027',nombre:'Sandra Castro Reyes',     ini:'SC',puesto:'Aux. Administrativo', cod:'F-007',grupo:'C2',nivel:16,fi:'08/11/2021',trienios:1, proxT:'08/11/2027',partida:'120.00',sit:'Activo',   irpf:'12%',mesT:26,nota:''},
+  {id:'EMP-028',nombre:'Javier Morales Pons',     ini:'JM',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'17/02/2014',trienios:3, proxT:'17/02/2026',partida:'120.00',sit:'Activo',   irpf:'17%',mesT:35,nota:''},
+  {id:'EMP-029',nombre:'Beatriz Romero Vega',     ini:'BR',puesto:'Administrativo/a',    cod:'F-005',grupo:'C1',nivel:20,fi:'09/07/2019',trienios:2, proxT:'09/07/2028',partida:'120.00',sit:'Activo',   irpf:'15%',mesT:35,nota:''},
+  {id:'EMP-030',nombre:'Óscar Delgado Fuentes',   ini:'OD',puesto:'Oficial 1ª Mant.',    cod:'L-003',grupo:'C2',nivel:14,fi:'25/04/2017',trienios:2, proxT:'25/04/2026',partida:'130.00',sit:'Activo',   irpf:'13%',mesT:26,nota:''},
+  {id:'EMP-031',nombre:'Inés Guerrero Soto',      ini:'IG',puesto:'Aux. Administrativo', cod:'F-008',grupo:'C2',nivel:16,fi:'03/02/2022',trienios:1, proxT:'03/02/2028',partida:'120.00',sit:'Activo',   irpf:'12%',mesT:26,nota:''},
+  {id:'EMP-032',nombre:'Tomás Iglesias Núñez',    ini:'TI',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'11/08/2016',trienios:3, proxT:'11/08/2028',partida:'120.00',sit:'Activo',   irpf:'16%',mesT:35,nota:''},
+  {id:'EMP-033',nombre:'Lucía Campos Herrera',    ini:'LC',puesto:'Administrativo/a',    cod:'F-005',grupo:'C1',nivel:20,fi:'28/05/2021',trienios:1, proxT:'28/05/2027',partida:'120.00',sit:'Activo',   irpf:'14%',mesT:35,nota:''},
+  {id:'EMP-034',nombre:'Fernando Reyes Pinto',    ini:'FR',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'06/03/2013',trienios:4, proxT:'06/03/2026',partida:'120.00',sit:'Activo',   irpf:'18%',mesT:35,nota:''},
+  {id:'EMP-035',nombre:'Claudia Varela Mora',     ini:'CL',puesto:'Aux. Administrativo', cod:'F-007',grupo:'C2',nivel:16,fi:'19/10/2023',trienios:0, proxT:'19/10/2026',partida:'120.00',sit:'Activo',   irpf:'11%',mesT:26,nota:''},
+  {id:'EMP-036',nombre:'Álvaro Roca Blanco',      ini:'AR',puesto:'Policía Local',       cod:'F-010',grupo:'C1',nivel:20,fi:'01/07/2015',trienios:3, proxT:'01/07/2027',partida:'120.00',sit:'Activo',   irpf:'16%',mesT:35,nota:''},
+  {id:'EMP-037',nombre:'Mónica Fuentes Gil',      ini:'MF',puesto:'Administrativo/a',    cod:'F-005',grupo:'C1',nivel:20,fi:'14/04/2020',trienios:1, proxT:'14/04/2026',partida:'120.00',sit:'Activo',   irpf:'14%',mesT:35,nota:''},
+  {id:'EMP-038',nombre:'Rubén Cano Serrano',      ini:'RC',puesto:'Oficial 1ª Mant.',    cod:'L-003',grupo:'C2',nivel:14,fi:'23/06/2018',trienios:2, proxT:'23/06/2027',partida:'130.00',sit:'Activo',   irpf:'13%',mesT:26,nota:''},
+  {id:'EMP-039',nombre:'Silvia Nuñez Castro',     ini:'SN',puesto:'Aux. Administrativo', cod:'F-008',grupo:'C2',nivel:16,fi:'07/09/2022',trienios:1, proxT:'07/09/2028',partida:'120.00',sit:'Activo',   irpf:'12%',mesT:26,nota:''},
+];
+
+const TRIENIO_EUR = {A1:660,A2:528,C1:420,C2:312,E:252};
+const GRUPO_BADGE = {A1:'b-b',A2:'b-b',C1:'b-g',C2:'b-x',E:'b-x'};
+
+function calcAntiguedad(fi) {
+  const [d,m,y] = fi.split('/').map(Number);
+  const diff = (new Date(2025,8,1) - new Date(y,m-1,d))/(365.25*24*3600*1000);
+  return Math.floor(diff);
+}
+
+function calcTrienioEur(emp) {
+  return (emp.trienios||0) * (TRIENIO_EUR[emp.grupo]||0);
+}
+
+function empRowHTML(e, idx) {
+  const av = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+  const eur = calcTrienioEur(e);
+  const ant = calcAntiguedad(e.fi);
+  const mesT = TRIENIO_EUR[e.grupo]||0;
+  const proxColor = e.nota.includes('⚠') ? 'c-y' : 'c2';
+  const sitBadge = {Activo:'b-g','Baja médica':'b-y',Excedencia:'b-x'}[e.sit]||'b-x';
+  const opacity = e.sit==='Excedencia'?'opacity:.5;':e.sit==='Baja médica'?'opacity:.8;':'';
+  const args = `'${e.id}','${e.nombre}','${e.ini}','${e.puesto}','${e.cod}','${e.grupo}/${e.nivel}','${e.fi}','${ant} años','${e.trienios}','${e.proxT}','${eur}','${e.partida}','${e.sit}','${e.irpf}','100%','${mesT}'`;
+  return `<tr onclick="verEmp(${args})" style="${opacity}">
+    <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="background:${av[0]};color:${av[1]}">${e.ini}</div><div><div style="font-weight:700">${e.nombre}</div><div class="mono" style="font-size:10px;color:var(--t3)">${e.id}</div></div></div></td>
+    <td><div>${e.puesto}</div><span class="badge ${GRUPO_BADGE[e.grupo]||'b-x'}">${e.grupo}</span></td>
+    <td class="mono" style="font-size:12px">${e.fi}</td>
+    <td class="mono">${ant} años</td>
+    <td>${(()=>{
+      if(!e.trienios) return '<span class="c3">—</span>';
+      if(e.historial_trienios && e.historial_trienios.length>1){
+        return e.historial_trienios.map(h=>`<span class="coste-badge" style="background:var(--purple2);color:var(--purple);border:1px solid rgba(192,144,255,.3);margin-right:3px">${h.num}×${h.mesT}€<span style="font-size:9px;opacity:.7"> ${h.grupo}</span></span>`).join('');
+      }
+      return `<span class="coste-badge" style="background:var(--purple2);color:var(--purple);border:1px solid rgba(192,144,255,.3)">${e.trienios} × ${mesT} €</span>`;
+    })()}</td>
+    <td class="mono ${proxColor}">${e.proxT}${e.nota?` <span style="font-size:11px">${e.nota}</span>`:''}</td>
+    <td class="mono c-p">${eur>0?fmt(eur)+' €':'—'}</td>
+    <td class="mono" style="font-size:11px">${e.partida}</td>
+    <td><span class="badge ${sitBadge}">${e.sit}</span></td>
+    <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();verEmp(${args})">Ver</button></td>
+  </tr>`;
+}
+
+function renderEmpleados() {
+  const tbody = document.getElementById('emp-tbody');
+  if(!tbody) return;
+  const rows = EMPLEADOS.map((e,i) => empRowHTML(e,i)).join('');
+  tbody.innerHTML = rows;
+  const activos = EMPLEADOS.filter(e=>e.sit!=='Excedencia').length;
+  const costeTotal = EMPLEADOS.reduce((s,e)=>s+calcTrienioEur(e),0);
+  const footer = document.getElementById('emp-footer');
+  if(footer) footer.textContent = `Mostrando ${EMPLEADOS.length} empleados · Clic en fila para detalle`;
+  const fc = document.getElementById('emp-footer-coste');
+  if(fc) fc.textContent = `Coste trienios total: ${fmt(costeTotal)} €/año`;
+}
+
+function guardarNuevoEmpleado() {
+  const nom = document.getElementById('ne-nombre')?.value?.trim();
+  const puesto = document.getElementById('ne-puesto')?.value;
+  const fi = document.getElementById('ne-fi')?.value;
+  const triStr = document.getElementById('ne-trienios')?.value||'0';
+  const irpf = document.getElementById('ne-irpf')?.value||'15';
+  const sit = document.getElementById('ne-sit')?.value||'Activo';
+  if(!nom||!fi){toast('⚠ Completa nombre y fecha de ingreso','var(--yellow)');return;}
+  const nextId = 'EMP-' + String(EMPLEADOS.length+1).padStart(3,'0');
+  const ini = nom.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  // Detect grupo from puesto
+  const grupoMap = {
+    'F-001':'A1','F-002':'A1','F-003':'A1','F-004':'A1','F-005':'C1',
+    'F-006':'C1','F-007':'C2','F-008':'C2','F-009':'C1','F-010':'C1',
+    'L-001':'A2','L-002':'A2','L-003':'C2','E-001':'A1'
+  };
+  const codMatch = puesto.match(/^([A-Z]-\d+)/);
+  const cod = codMatch?codMatch[1]:'F-005';
+  const grupo = grupoMap[cod]||'C1';
+  const nivel = {A1:26,A2:22,C1:20,C2:16,E:20}[grupo]||20;
+  const trienios = parseInt(triStr)||0;
+  const mesT = TRIENIO_EUR[grupo]||0;
+  // Compute prox trienio date
+  const [fy,fm,fd] = fi.split('-').map(Number);
+  const nextTriDate = new Date(fy+((trienios+1)*3), fm-1, fd);
+  const proxT = `${String(nextTriDate.getDate()).padStart(2,'0')}/${String(nextTriDate.getMonth()+1).padStart(2,'0')}/${nextTriDate.getFullYear()}`;
+  const fiFormatted = fi.split('-').reverse().join('/');
+  EMPLEADOS.push({
+    id:nextId, nombre:nom, ini, puesto:puesto.replace(/^[A-Z]-\d+\s·\s/,''),
+    cod, grupo, nivel, fi:fiFormatted, trienios, proxT,
+    partida: cod.startsWith('L')?'130.00':'120.00',
+    sit, irpf:irpf+'%', mesT, nota:''
+  });
+  renderEmpleados();
+  closeM('m-nuevo-emp');
+  toast(`✓ Empleado ${nom} dado de alta · ${nextId}`);
+  // Scroll to bottom of table
+  const tbl = document.getElementById('emp-tbody');
+  if(tbl) tbl.lastElementChild?.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+const TITLES={dashboard:'Dashboard · Sistema de Decisión Presupuestaria',simulador:'Simulador de Escenarios en Tiempo Real',empleados:'Empleados · Antigüedad y Trienios',plantilla:'Plantilla Orgánica · 47 puestos',rpt:'RPT · Relación de Puestos de Trabajo',trienios:'Trienios · Antigüedad · LPGE 2025',atrasos:'Atrasos · Devengos Pendientes',consignaciones:'Consignaciones Presupuestarias · Cap. I',nominas:'Nóminas · Liquidación Mensual',control:'Control de Crédito · Proyección',bloqueo:'Bloqueo de Gasto',informes:'Informes y Exportación',onboarding:'Alta de nuevo ayuntamiento'};
+
+// ─── DATOS MENSUALES ───────────────────────────────────────────────────
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// Partidas: crédito definitivo y % obligado acumulado por mes (0-11)
+// Meses 9-11 son proyección (marcados como futuro)
+const PARTIDAS = [
+  {cod:'120.00', desc:'Retrib. básicas func.', cred:432000,  proy:false,
+   pct:[7,15,23,31,39,48,57,67,81,91,98,107]},
+  {cod:'121.00', desc:'Retrib. complementarias', cred:210000, proy:false,
+   pct:[6,13,20,27,35,43,52,61,68,76,84,93]},
+  {cod:'130.00', desc:'Retrib. básicas lab.',   cred:180000, proy:false,
+   pct:[7,15,22,30,38,47,56,64,72,81,89,98]},
+  {cod:'131.00', desc:'Retrib. comp. lab.',     cred:80000,  proy:false,
+   pct:[6,13,21,29,37,46,54,62,70,78,86,94]},
+  {cod:'150.00', desc:'Productividad',          cred:35000,  proy:false,
+   pct:[6,13,21,31,42,55,68,80,93,107,null,null]}, // agota en oct
+  {cod:'151.00', desc:'Gratificaciones',        cred:18000,  proy:false,
+   pct:[4,8,14,20,28,35,42,49,55,62,70,78]},
+  {cod:'160.00', desc:'Seg. Social empresa',    cred:288000, proy:false,
+   pct:[7,15,22,30,38,47,56,65,74,83,91,100]},
+  {cod:'161.00', desc:'Prestaciones sociales',  cred:22000,  proy:false,
+   pct:[5,10,16,23,31,38,45,52,60,67,74,82]},
+];
+
+// Mes actual (0-indexado)
+let MES_ACTUAL = 8;
+let VISTA_ANUAL = false;
+
+function getTotalObligado(m) {
+  return PARTIDAS.reduce((s,p)=>{
+    const pct = p.pct[m];
+    return s + (pct !== null ? Math.min(pct,100)/100*p.cred : p.cred);
+  },0);
+}
+
+function getProyeccionDic(m) {
+  // Proyección lineal a diciembre desde el mes actual
+  return PARTIDAS.reduce((s,p)=>{
+    const pct11 = p.pct[11];
+    return s + (pct11 !== null ? pct11/100*p.cred : p.cred);
+  },0);
+}
+
+function getDeficit(m) {
+  // Déficit total = suma de exceso sobre crédito por partida proyectado a dic
+  return PARTIDAS.reduce((s,p)=>{
+    const pct11 = p.pct[11];
+    if (pct11 === null || pct11 <= 100) return s;
+    return s + (pct11-100)/100*p.cred;
+  },0);
+}
+
+function getPartidaRuptura(m) {
+  // Primera partida que supere 100% en proyección dic
+  for(const p of PARTIDAS){
+    const pct11 = p.pct[11];
+    if(pct11 !== null && pct11 > 100) return p.cod;
+  }
+  return null;
+}
+
+function getMesRuptura(p) {
+  // Mes en que la partida supera 100%
+  for(let m=0;m<12;m++){
+    if(p.pct[m] !== null && p.pct[m] >= 100) return MESES[m];
+  }
+  return null;
+}
+
+function getCreditoDisponibleBruto(m) {
+  const total = getTotalObligado(m);
+  const credTot = PARTIDAS.reduce((s,p)=>s+p.cred,0);
+  return credTot - total;
+}
+
+function getTrieniosRestantes(m) {
+  // Trienios Q4 solo aplican a partir de mes 8 (sep) - ya comprometidos
+  return m >= 8 ? 1453 : 0;
+}
+
+function getCreditoAjustado(m) {
+  const bruto = getCreditoDisponibleBruto(m);
+  const trienios = getTrieniosRestantes(m);
+  const atrasos = m >= 5 ? 12650 : 0; // atrasos se confirman en junio
+  const deficit150 = (() => {
+    const p150 = PARTIDAS.find(p=>p.cod==='150.00');
+    const pct11 = p150.pct[11];
+    if(pct11 === null || pct11 <= 100) return 0;
+    return (pct11-100)/100*p150.cred;
+  })();
+  const revision = 5737;
+  return bruto - trienios - atrasos - (deficit150 > 0 ? deficit150 : 0) - revision;
+}
+
+function getProbDesviacion(m) {
+  const deficit = getDeficit(m);
+  if(deficit <= 0) return Math.max(5, 10 + m*2);
+  const pct150 = PARTIDAS.find(p=>p.cod==='150.00').pct[m];
+  if(pct150 === null || pct150 < 70) return 25;
+  if(pct150 < 80) return 45;
+  if(pct150 < 90) return 68;
+  return Math.min(95, 80 + (pct150-90)*1.5);
+}
+
+function getNivelRiesgo(m) {
+  const pct150 = PARTIDAS.find(p=>p.cod==='150.00').pct[m];
+  const deficit = getDeficit(m);
+  const totalPct = getTotalObligado(m)/PARTIDAS.reduce((s,p)=>s+p.cred,0)*100;
+  const ideal = ((m+1)/12)*100;
+  if(pct150 === null || pct150 >= 100 || deficit > 15000) return 'critico';
+  if(pct150 >= 85 || deficit > 5000 || totalPct > ideal+8) return 'alerta';
+  if(pct150 >= 70 || totalPct > ideal+4) return 'atencion';
+  return 'ok';
+}
+
+function fmt(n){return Math.round(n).toLocaleString('es-ES');}
+
+
+// ─── VISTA ANUAL ──────────────────────────────────────────────────────
+function setMesAnual() {
+  const credTot = PARTIDAS.reduce((s,p)=>s+p.cred,0); // 1.265.000
+  const obligadoAnual = PARTIDAS.reduce((s,p)=>{
+    const pct = p.pct[11]||100; return s + Math.min(pct,100)/100*p.cred;
+  },0);
+  const deficit = getDeficit(11);
+  const pctAnual = obligadoAnual/credTot*100;
+
+  // Chip
+  const chip = document.getElementById('tb-chip-estado');
+  if(chip){chip.textContent='📅 Vista anual 2025';chip.style.cssText='font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:5px;background:var(--blue2);color:var(--blue);border:1px solid rgba(96,170,255,.35)';}
+
+  // Risk block — resumen anual
+  const rb = document.getElementById('risk-block');
+  if(rb){rb.style.background='linear-gradient(135deg,rgba(96,170,255,.1),rgba(96,170,255,.03))';rb.style.borderColor='rgba(96,170,255,.35)';}
+  const rl = document.getElementById('risk-label');
+  if(rl) rl.style.color='var(--blue)';
+  const rltxt = document.getElementById('risk-label-txt');
+  if(rltxt) rltxt.textContent='RESUMEN ANUAL 2025 · VISIÓN COMPLETA DEL EJERCICIO';
+  const rd=document.getElementById('risk-deficit');
+  if(rd){rd.textContent=deficit>0?`−${fmt(deficit)} €`:'Sin déficit';rd.style.color=deficit>0?'var(--red)':'var(--green)';}
+  document.getElementById('risk-deficit-sub').textContent='Resultado proyectado diciembre';
+  const rrup=document.getElementById('risk-ruptura');
+  const p150=PARTIDAS.find(p=>p.cod==='150.00');
+  const rupMes=getMesRuptura(p150);
+  if(rrup){rrup.textContent=rupMes||'Sin ruptura';rrup.style.color=rupMes?'var(--yellow)':'var(--green)';}
+  document.getElementById('risk-ruptura-sub').textContent=rupMes?`Partida 150.00 · agota en ${rupMes}`:'Todas las partidas dentro del crédito';
+  const ajustado = credTot - obligadoAnual - 1453 - 12650 - 5737;
+  const rcred=document.getElementById('risk-credito');
+  if(rcred){rcred.textContent=`${fmt(Math.max(0,ajustado))} €`;rcred.style.color=ajustado>50000?'var(--green)':ajustado>0?'var(--yellow)':'var(--red)';}
+  document.getElementById('risk-credito-sub').textContent='Margen ajustado proyectado a cierre';
+
+  // KPIs anuales
+  document.getElementById('kpi-ejec-val').textContent=`${pctAnual.toFixed(1)}%`;
+  document.getElementById('kpi-ejec-val').style.color=pctAnual<98?'var(--green)':pctAnual<105?'var(--yellow)':'var(--red)';
+  document.getElementById('kpi-ejec-sub').textContent='Ejecución proyectada diciembre';
+  document.getElementById('kpi-ejec-delta').textContent='Proyección anual';
+  document.getElementById('kpi-ejec-delta').className='kpi-delta kd-b';
+  document.getElementById('kpi-desv-val').textContent=deficit>0?`−${fmt(deficit)} €`:`+${fmt(Math.abs(deficit))} €`;
+  document.getElementById('kpi-desv-val').style.color=deficit>0?'var(--red)':'var(--green)';
+  document.getElementById('kpi-desv-sub').textContent='Desviación total estimada a cierre';
+  document.getElementById('kpi-desv-delta').textContent=deficit>0?'⚠ Déficit proyectado':'✓ Cierre en positivo';
+  document.getElementById('kpi-desv-delta').className=`kpi-delta ${deficit>0?'kd-r':'kd-g'}`;
+  document.getElementById('kpi-oblig-val').textContent=`${fmt(obligadoAnual)} €`;
+  document.getElementById('kpi-oblig-sub').textContent=`Total obligado proyectado · ${pctAnual.toFixed(1)}%`;
+  document.getElementById('kpi-oblig-delta').textContent='Proyección dic.';
+  document.getElementById('kpi-prob-val').textContent=`${Math.round(getProbDesviacion(11))}%`;
+  document.getElementById('kpi-prob-val').style.color=getProbDesviacion(11)<30?'var(--green)':getProbDesviacion(11)<60?'var(--yellow)':'var(--red)';
+  document.getElementById('kpi-prob-sub').textContent='Probabilidad desviación a cierre';
+  document.getElementById('kpi-prob-delta').textContent='Estimación anual';
+  document.getElementById('kpi-prob-delta').className='kpi-delta kd-b';
+
+  // Crédito ajustado anual
+  document.getElementById('ca-bruto').textContent=`${fmt(credTot-obligadoAnual)} €`;
+  document.getElementById('ca-tri-lbl').textContent='— Trienios comprometidos';
+  document.getElementById('ca-tri-sub').textContent='Impacto total trienios 2025';
+  document.getElementById('ca-tri-val').textContent='−1.453 €';
+  document.getElementById('ca-tri-val').className='ca-amount c-r';
+  document.getElementById('ca-atr-val').textContent='−12.650 €';
+  document.getElementById('ca-atr-val').className='ca-amount c-r';
+  const defRow=document.getElementById('ca-deficit-row');
+  if(defRow) defRow.style.display=deficit>0?'':'none';
+  if(deficit>0) document.getElementById('ca-deficit-val').textContent=`−${fmt(deficit)} €`;
+  const ctv=document.getElementById('ca-total-val');
+  if(ctv){const adj=Math.max(0,ajustado);ctv.textContent=`${fmt(adj)} €`;ctv.style.color=adj>50000?'var(--green)':adj>0?'var(--yellow)':'var(--red)';}
+  const sem=document.getElementById('ca-semaforo');
+  if(sem){const sc=ajustado>50000?'var(--green)':ajustado>0?'var(--yellow)':'var(--red)';sem.style.background=sc;sem.style.boxShadow=`0 0 8px ${sc}`;}
+  document.getElementById('ca-nota').textContent='Margen real estimado a 31 de diciembre 2025';
+
+  // Narrativa anual
+  const narrEl=document.getElementById('narrativa');
+  if(narrEl) narrEl.innerHTML=`<strong>Resumen del ejercicio 2025.</strong> La ejecución anual proyectada del Cap. I es del <strong>${pctAnual.toFixed(1)}%</strong> sobre el crédito definitivo de ${fmt(credTot)} €. La partida crítica es <strong>150.00 Productividad</strong>, que se agota en octubre sin modificación de crédito. El margen real ajustado a cierre es de <strong>${fmt(Math.max(0,ajustado))} €</strong>. ${deficit>0?`El déficit proyectado es de <strong>${fmt(deficit)} €</strong>, absorbible mediante las acciones recomendadas.`:'Sin déficit proyectado si se ejecutan las acciones recomendadas.'}`;
+
+  // Alertas — mostrar todas en vista anual
+  const a150=document.getElementById('alerta-150');
+  if(a150){a150.className='alert al-r';a150.style.display='';}
+  const atri=document.getElementById('alerta-trienios');
+  if(atri) atri.style.display='';
+  const aatr=document.getElementById('alerta-atrasos');
+  if(aatr) aatr.style.display='';
+
+  // Charts
+  buildMainChartAnual();
+  buildProyChart(11);
+  buildTablaPartidasAnual();
+}
+
+function buildMainChartAnual() {
+  const c = document.getElementById('chart-main');
+  if(!c) return;
+  const maxVal = 160000;
+  const bh = 112;
+  const months = ['E','F','M','A','M','J','J','A','S','O','N','D'];
+  const nomina = [82400,81900,84200,79800,83600,88400,91200,94800,97200,99800,101400,105000];
+  const trieniosMes = [980,980,1010,1010,1010,1020,1020,1053,1053,1572,1572,1572];
+  c.innerHTML = months.map((lbl,i)=>{
+    const h = bh;
+    const nom = nomina[i];
+    const tri = trieniosMes[i];
+    return `<div class="cbar">
+      <div style="position:relative;width:100%;height:${h}px;background:var(--b1);border-radius:2px 2px 0 0" title="${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][i]}: ${fmt(nom)} €">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${nom/maxVal*100}%;background:var(--acc);opacity:.85;border-radius:2px 2px 0 0"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${tri/maxVal*100}%;background:var(--purple);opacity:.7"></div>
+      </div>
+      <div class="cbar-lbl" style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);width:100%;text-align:center">${lbl}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildTablaPartidasAnual() {
+  const t = document.getElementById('tabla-partidas-dash');
+  if(!t) return;
+  const rows = PARTIDAS.map(p=>{
+    const pct11 = p.pct[11]||100;
+    const st = pct11>=100?'r':pct11>=90?'r':pct11>=80?'y':'g';
+    const lbl = pct11>=100?'AGOTADA':pct11>=90?'ALERTA':pct11>=80?'ATENCIÓN':'OK';
+    const barCol = {r:'var(--red)',y:'var(--yellow)',g:'var(--green)'}[st];
+    return `<tr style="${st==='r'?'background:rgba(255,90,90,.04);':''}">
+      <td class="mono" style="${st==='r'?'color:var(--red);':''}">${p.cod}</td>
+      <td style="font-size:13px">${p.desc}</td>
+      <td><div class="prog"><div class="prog-fill" style="width:${Math.min(pct11,100)}%;background:${barCol};height:6px;border-radius:4px"></div></div><span class="mono" style="font-size:11px;color:${barCol}">${pct11}%</span></td>
+      <td>${fmt(Math.min(pct11,100)/100*p.cred)} €</td>
+      <td><span class="badge b-${st}">${lbl}</span></td>
+    </tr>`;
+  });
+  t.innerHTML=`<table><thead><tr><th>Partida</th><th>Descripción</th><th>Ejec. proyectada dic.</th><th>Obligado</th><th>Estado</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
+// ─── RENDER MENSUAL ────────────────────────────────────────────────────
+function setMes(m) {
+  VISTA_ANUAL = (m === 12);
+  if(VISTA_ANUAL) { setMesAnual(); return; }
+  MES_ACTUAL = m;
+  const nomMes = MESES[m];
+  const numMes = m+1;
+  const esProyeccion = m >= 9;
+
+  const credTot = PARTIDAS.reduce((s,p)=>s+p.cred,0); // 1.265.000
+  const obligado = getTotalObligado(m);
+  const disponibleBruto = credTot - obligado;
+  const trienios = getTrieniosRestantes(m);
+  const atrasos = m >= 5 ? 12650 : 0;
+  const p150 = PARTIDAS.find(p=>p.cod==='150.00');
+  const pct150 = p150.pct[m];
+  const deficit150 = (pct150 !== null && pct150 > 100) ? (pct150-100)/100*p150.cred : (pct150===null?8400:Math.max(0,(pct150-100)/100*p150.cred));
+  const creditoAjustado = getCreditoAjustado(m);
+  const deficit = getDeficit(m);
+  const nivel = getNivelRiesgo(m);
+  const prob = getProbDesviacion(m);
+  const pctReal = obligado/credTot*100;
+  const pctIdeal = numMes/12*100;
+  const desvPp = pctReal - pctIdeal;
+
+  // Chip topbar
+  const chip = document.getElementById('tb-chip-estado');
+  if(chip){
+    const cfg = {critico:['⛔ CRÍTICO',`background:var(--red2);color:var(--red);border:1px solid rgba(255,85,85,.3)`],alerta:['⚠ RIESGO ACTIVO',`background:var(--red2);color:var(--red);border:1px solid rgba(255,85,85,.3)`],atencion:['⚡ ATENCIÓN',`background:var(--yellow2);color:var(--yellow);border:1px solid rgba(255,208,51,.3)`],ok:['✓ EN CONTROL',`background:var(--green2);color:var(--green);border:1px solid rgba(46,234,138,.3)`]};
+    chip.textContent=cfg[nivel][0]; chip.style.cssText=`font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:5px;${cfg[nivel][1]}`;
+  }
+
+  // Risk block
+  const rb = document.getElementById('risk-block');
+  if(rb){
+    rb.style.background = nivel==='ok'
+      ? 'linear-gradient(135deg,rgba(46,234,138,.1),rgba(46,234,138,.03))'
+      : nivel==='atencion'
+      ? 'linear-gradient(135deg,rgba(255,208,51,.1),rgba(255,208,51,.03))'
+      : 'linear-gradient(135deg,rgba(255,85,85,.12),rgba(255,85,85,.04))';
+    rb.style.borderColor = nivel==='ok'?'rgba(46,234,138,.35)':nivel==='atencion'?'rgba(255,208,51,.35)':'rgba(255,85,85,.35)';
+    const accent = nivel==='ok'?'var(--green)':nivel==='atencion'?'var(--yellow)':'var(--red)';
+    rb.style.setProperty('--before-bg', accent);
+  }
+  const rl = document.getElementById('risk-label');
+  if(rl) rl.style.color = nivel==='ok'?'var(--green)':nivel==='atencion'?'var(--yellow)':'var(--red)';
+  const rltxt = document.getElementById('risk-label-txt');
+  if(rltxt){
+    const msgs={critico:`🚨 PARTIDA 150.00 AGOTADA · ${nomMes.toUpperCase()} · ACCIÓN URGENTE`,alerta:`⚠ RIESGO PRESUPUESTARIO ACTIVO · ${nomMes.toUpperCase()}`,atencion:`⚡ ATENCIÓN PRESUPUESTARIA · ${nomMes.toUpperCase()}`,ok:`✓ EJECUCIÓN CONTROLADA · ${nomMes.toUpperCase()}`};
+    rltxt.textContent = msgs[nivel];
+  }
+  const rd=document.getElementById('risk-deficit');
+  if(rd){rd.textContent=deficit>0?`−${fmt(deficit)} €`:'Sin déficit proyectado';rd.style.color=deficit>0?'var(--red)':'var(--green)';}
+  document.getElementById('risk-deficit-sub').textContent = deficit>0?`Proyección cierre sin intervención`:`Ejecución bajo control a cierre`;
+  const rrup=document.getElementById('risk-ruptura');
+  const partRup = getPartidaRuptura(m);
+  if(rrup){rrup.textContent=partRup?getMesRuptura(p150)||'Sin ruptura':'Sin ruptura';rrup.style.color=partRup?'var(--yellow)':'var(--green)';}
+  document.getElementById('risk-ruptura-sub').textContent = partRup?`Partida ${partRup} · agotamiento proyectado`:`Todas las partidas dentro del crédito`;
+  const rcred=document.getElementById('risk-credito');
+  if(rcred){rcred.textContent=`${fmt(creditoAjustado)} €`;rcred.style.color=creditoAjustado>100000?'var(--green)':creditoAjustado>50000?'var(--yellow)':'var(--red)';}
+  document.getElementById('risk-credito-sub').textContent = `Ajustado · disponible real ${nomMes}`;
+
+  // KPIs
+  const kev=document.getElementById('kpi-ejec-val');
+  if(kev){kev.textContent=(desvPp>=0?'+':'')+desvPp.toFixed(1)+' pp';kev.style.color=Math.abs(desvPp)<3?'var(--green)':desvPp<6?'var(--yellow)':'var(--red)';}
+  document.getElementById('kpi-ejec-sub').textContent=`${pctReal.toFixed(1)}% real · ${pctIdeal.toFixed(1)}% esperado mes ${numMes}`;
+  const kdelta=document.getElementById('kpi-ejec-delta');
+  if(kdelta){kdelta.textContent=desvPp>3?'↑ Por encima del ritmo':desvPp<-3?'↓ Por debajo del ritmo':'→ En línea';kdelta.className=`kpi-delta ${desvPp>3?'kd-r':desvPp<-3?'kd-g':'kd-b'}`;}
+  const kdv=document.getElementById('kpi-desv-val');
+  if(kdv){kdv.textContent=deficit>0?`−${fmt(deficit)} €`:'+'+fmt(Math.abs(deficit))+' €';kdv.style.color=deficit>0?'var(--red)':'var(--green)';}
+  document.getElementById('kpi-desv-sub').textContent=`Proyección cierre ${esProyeccion?'(proyección)':'sin acción'}`;
+  document.getElementById('kpi-desv-delta').textContent=deficit>0?'⚠ Requiere acción':'✓ Cierre en positivo';
+  document.getElementById('kpi-desv-delta').className=`kpi-delta ${deficit>0?'kd-r':'kd-g'}`;
+  document.getElementById('kpi-oblig-val').textContent=`${fmt(obligado)} €`;
+  document.getElementById('kpi-oblig-sub').textContent=`Mes ${numMes} · ${pctReal.toFixed(1)}% del cap.`;
+  document.getElementById('kpi-oblig-delta').textContent=esProyeccion?'Proyección':'Dato real';
+  const kpv=document.getElementById('kpi-prob-val');
+  if(kpv){kpv.textContent=`${Math.round(prob)}%`;kpv.style.color=prob<30?'var(--green)':prob<60?'var(--yellow)':'var(--red)';}
+  document.getElementById('kpi-prob-sub').textContent=`Si no se actúa en ${nomMes.toLowerCase()}`;
+  document.getElementById('kpi-prob-delta').textContent=prob>70?'Alta certeza':prob>40?'Riesgo moderado':'Bajo riesgo';
+  document.getElementById('kpi-prob-delta').className=`kpi-delta ${prob>70?'kd-r':prob>40?'kd-y':'kd-g'}`;
+
+  // Crédito ajustado waterfall
+  document.getElementById('ca-bruto').textContent=`${fmt(disponibleBruto)} €`;
+  document.getElementById('ca-tri-lbl').textContent = m>=8?'— Trienios Q4':'— Trienios (sin consolidar)';
+  document.getElementById('ca-tri-sub').textContent = m>=8?'4 trienios oct–dic · obligatorio':'No hay trienios comprometidos aún';
+  document.getElementById('ca-tri-val').textContent = trienios>0?`−${fmt(trienios)} €`:'0 €';
+  document.getElementById('ca-tri-val').className = trienios>0?'ca-amount c-r':'ca-amount c2';
+  document.getElementById('ca-atr-val').textContent = atrasos>0?`−${fmt(atrasos)} €`:'0 €';
+  document.getElementById('ca-atr-val').className = atrasos>0?'ca-amount c-r':'ca-amount c2';
+  const defRow=document.getElementById('ca-deficit-row');
+  if(defRow) defRow.style.display=deficit150>0?'':'none';
+  if(deficit150>0) document.getElementById('ca-deficit-val').textContent=`−${fmt(deficit150)} €`;
+  const ctv=document.getElementById('ca-total-val');
+  if(ctv){ctv.textContent=`${fmt(creditoAjustado)} €`;ctv.style.color=creditoAjustado>100000?'var(--green)':creditoAjustado>50000?'var(--yellow)':'var(--red)';}
+  const sem=document.getElementById('ca-semaforo');
+  if(sem){const sc=creditoAjustado>100000?'var(--green)':creditoAjustado>50000?'var(--yellow)':'var(--red)';sem.style.background=sc;sem.style.boxShadow=`0 0 8px ${sc}`;}
+  const sobrest=disponibleBruto-(trienios+atrasos+(deficit150||0)+5737);
+  document.getElementById('ca-nota').textContent=`Sobreestimación oficial: ${fmt(Math.max(0,disponibleBruto-creditoAjustado))} €`;
+
+  // Narrativa
+  const narrEl=document.getElementById('narrativa');
+  if(narrEl){
+    const p150pct=pct150||0;
+    if(nivel==='ok') narrEl.innerHTML=`<strong>Ejecución en línea.</strong> La partida 150.00 (Productividad) está al ${p150pct.toFixed(0)}%, dentro del ritmo esperado para ${nomMes}. El crédito disponible ajustado es de <strong>${fmt(creditoAjustado)} €</strong>. Siguen activos los trienios a vigilar en Q4 y los 12.650 € en atrasos. No hay alertas críticas en este momento.`;
+    else if(nivel==='atencion') narrEl.innerHTML=`<strong>Señales de alerta incipientes.</strong> La partida 150.00 está al ${p150pct.toFixed(0)}%. Si el ritmo de gasto se mantiene, la proyección a diciembre genera tensión. El crédito ajustado real es <strong>${fmt(creditoAjustado)} €</strong>. Momento ideal para tomar medidas preventivas antes de que el problema sea urgente.`;
+    else if(nivel==='alerta') narrEl.innerHTML=`<strong>El problema no está donde parece.</strong> La ejecución media (${pctReal.toFixed(1)}%) parece razonable para el mes ${numMes}. Pero <strong>la partida 150.00 está al ${p150pct.toFixed(0)}%</strong> y se agotará sin intervención. El déficit ajustado es de <strong>${fmt(deficit)} €</strong>, absorbible con las acciones recomendadas. El problema estructural: el presupuesto de productividad es sistemáticamente insuficiente.`;
+    else narrEl.innerHTML=`<strong>🚨 Situación crítica.</strong> La partida <strong>150.00 está agotada</strong> en ${nomMes}. No se pueden liquidar más devengos de productividad sin modificación de crédito urgente. El déficit acumulado proyectado es de <strong>${fmt(deficit)} €</strong>. Es necesario tramitar expediente de modificación presupuestaria con carácter inmediato.`;
+  }
+
+  // Alertas
+  const a150=document.getElementById('alerta-150');
+  if(a150){
+    if(pct150===null||pct150>=100){a150.className='alert al-r';a150.style.display='';a150.querySelector('strong').textContent='150.00 Productividad AGOTADA';}
+    else if(pct150>=80){a150.className='alert al-r';a150.style.display='';}
+    else if(pct150>=60){a150.className='alert al-y';a150.style.display='';}
+    else{a150.style.display='none';}
+    if(a150.style.display!=='none'){const s=a150.querySelector('strong');if(s&&pct150!==null&&pct150<100)s.textContent=`150.00 Productividad al ${pct150}%`;}
+  }
+  const atri=document.getElementById('alerta-trienios');
+  if(atri) atri.style.display = m<=5?'none':'';
+  const aatr=document.getElementById('alerta-atrasos');
+  if(aatr) aatr.style.display = m<5?'none':'';
+
+  // Charts
+  buildMainChart(m);
+  buildProyChart(m);
+  buildTablaPartidas(m);
+}
+
+// ─── CHARTS ───────────────────────────────────────────────────────────
+function buildMainChart(m) {
+  const c = document.getElementById('chart-main');
+  if(!c) return;
+  const credMes = 1265000/12;
+  const bh = 112;
+  const maxVal = 160000;
+  const months = ['E','F','M','A','M','J','J','A','S','O','N','D'];
+  // Nómina mensual estimada por mes (real hasta m, proyección después)
+  const nomina = [82400,81900,84200,79800,83600,88400,91200,94800,97200,99800,101400,105000];
+  const trieniosMes = [980,980,1010,1010,1010,1020,1020,1053,1053,1572,1572,1572];
+  c.innerHTML = months.map((lbl,i)=>{
+    const isProy = i>m;
+    const isCurrent = i===m;
+    const nom = nomina[i];
+    const tri = trieniosMes[i];
+    const h = bh;
+    return `<div class="cbar">
+      <div style="position:relative;width:100%;height:${h}px;background:var(--b1);border-radius:2px 2px 0 0;${isCurrent?'outline:1px solid var(--acc);':''}" title="${MESES[i]}: ${fmt(nom)} €">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${nom/maxVal*100}%;background:${isProy?'rgba(91,163,255,.35)':'var(--acc)'};opacity:${isProy?.6:.85};border-radius:2px 2px 0 0;${isProy?'border:1px dashed rgba(91,163,255,.4);':''};transition:height .3s"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${tri/maxVal*100}%;background:var(--purple);opacity:.7"></div>
+        ${isCurrent?`<div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8px;color:var(--acc);white-space:nowrap">◆</div>`:''}
+      </div>
+      <div class="cbar-lbl" style="${isCurrent?'color:var(--acc);font-weight:700':''}">${lbl}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildProyChart(m) {
+  const c = document.getElementById('chart-proy-wrap');
+  if(!c) return;
+  const deficit = getDeficit(m);
+  const base = deficit > 0 ? deficit/2 : 5000;
+  const sc = [
+    {l:'Peor caso', v:-Math.round(deficit||17290), col:'var(--red)'},
+    {l:'Escenario base', v:Math.round(deficit>0?base:8650), col:'var(--yellow)'},
+    {l:'Óptimo', v:Math.round(deficit>0?deficit+20000:38200), col:'var(--green)'},
+  ];
+  const maxAbs = Math.max(...sc.map(s=>Math.abs(s.v)));
+  c.innerHTML=`<div style="display:flex;gap:20px;align-items:flex-end;height:90px">${sc.map(s=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font-family:var(--mono);font-size:10px;color:${s.col};font-weight:700">${s.v>0?'+':''}${fmt(Math.abs(s.v))} €</div><div style="width:100%;height:${Math.max(8,Math.abs(s.v)/maxAbs*70)}px;background:${s.col};opacity:.7;border-radius:4px 4px 0 0"></div><div style="font-family:var(--mono);font-size:9px;color:var(--t3);text-align:center">${s.l}</div></div>`).join('')}</div>`;
+}
+
+function buildTablaPartidas(m) {
+  const t = document.getElementById('tabla-partidas-dash');
+  if(!t) return;
+  const rows = PARTIDAS.map(p=>{
+    const pct = p.pct[m];
+    const pctVal = pct===null?100:pct;
+    const pct11 = p.pct[11];
+    const st = pctVal>=100?'r':pctVal>=85?'r':pctVal>=75?'y':'g';
+    const lbl = pctVal>=100?'AGOTADA':pctVal>=85?'ALERTA':pctVal>=75?'ATENCIÓN':'OK';
+    const barCol = {r:'var(--red)',y:'var(--yellow)',g:'var(--green)'}[st];
+    const isMain = p.cod==='150.00'&&pctVal>=80;
+    return `<tr style="${isMain?'background:rgba(255,85,85,.04);':''}">
+      <td class="mono" style="${st==='r'?'color:var(--red);':''}">${p.cod}</td>
+      <td style="font-size:12px">${p.desc}</td>
+      <td><div class="prog"><div class="prog-fill" style="width:${Math.min(pctVal,100)}%;background:${barCol};height:4px;border-radius:3px"></div></div><span class="mono" style="font-size:11px;color:${barCol}">${pct===null?'—':pctVal+'%'}</span></td>
+      <td><span class="badge b-${st}">${lbl}</span></td>
+    </tr>`;
+  });
+  t.innerHTML=`<table><thead><tr><th>Partida</th><th>Descripción</th><th>Ejec. ${MESES[m]}</th><th>Estado</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+function updateSim(){
+  const emp=parseInt(document.getElementById('si-emp').value);
+  const sal=parseFloat(document.getElementById('si-sal').value);
+  const v1=document.getElementById('si-v1').checked;
+  const v2=document.getElementById('si-v2').checked;
+  const tri=document.getElementById('si-tri').checked;
+  const atr=document.getElementById('si-atr').checked;
+  const mod=parseInt(document.getElementById('si-mod').value);
+  const res=document.getElementById('si-res').checked;
+  document.getElementById('sv-emp').textContent=emp;
+  document.getElementById('sv-sal').textContent=sal.toFixed(1)+'%';
+  document.getElementById('sv-mod').textContent=mod.toLocaleString('es-ES')+' €';
+  const base=317910;
+  const gastoBase=298470;
+  const dEmp=(emp-39)*2800;
+  const dSal=97860*(sal/100)*3;
+  const dV1=v1?-4050:0;
+  const dV2=v2?-3683:0;
+  const dAtr=atr?12650:0;
+  const dRes=res?5200:0;
+  const credito=base+mod+(tri?0:1453)+(atr?0:12650);
+  const gasto=gastoBase+dEmp+dSal+dV1+dV2+(atr?12650:0)-(res?5200:0);
+  const resultado=credito-gasto;
+  const mensual=97860+(dEmp/3)+(97860*sal/100);
+  const f=v=>document.getElementById(v);
+  f('sr-credito').textContent=Math.round(credito).toLocaleString('es-ES')+' €';
+  f('sr-credito').style.color=credito>310000?'var(--green)':credito>285000?'var(--yellow)':'var(--red)';
+  f('sr-gasto').textContent=Math.round(gasto).toLocaleString('es-ES')+' €';
+  f('sr-res').textContent=(resultado>=0?'+':'')+Math.round(resultado).toLocaleString('es-ES')+' €';
+  f('sr-res').style.color=resultado>=0?'var(--green)':resultado>-5000?'var(--yellow)':'var(--red)';
+  f('sr-men').textContent=Math.round(mensual).toLocaleString('es-ES')+' €';
+  f('sr-tri').textContent=tri?'−1.453 €':'0 €';
+  f('sr-atr').textContent=atr?'−12.650 €':'0 €';
+  const ok=resultado>=0||mod>=8400;
+  f('sr-ruptura').textContent=ok?'Sin ruptura':'Octubre 2025';
+  f('sr-ruptura').style.color=ok?'var(--green)':'var(--red)';
+  f('sr-ruptdet').textContent=ok?'Cierre en positivo con este escenario':'Partida 150.00 · semana 2';
+  const prob=Math.min(95,Math.max(5,13+(resultado/800)+(mod/100)+(res?15:0)));
+  f('sr-prob').textContent=Math.round(prob)+'%';
+  f('sr-prob-bar').style.width=prob+'%';
+  f('sr-prob-bar').style.background=prob>70?'var(--green)':prob>40?'var(--yellow)':'var(--red)';
+}
+
+function resetSim(){['si-emp','si-sal','si-mod'].forEach(id=>document.getElementById(id).value=id==='si-emp'?39:id==='si-sal'?0:0);['si-v1','si-v2','si-atr','si-res'].forEach(id=>document.getElementById(id).checked=false);document.getElementById('si-tri').checked=true;updateSim();}
+
+// Ver empleado
+function verEmp(id,nom,ini,puesto,cod,grupo,fi,ant,t,proxT,costeT,partida,sit,irpf,jornada,mesT){
+  document.getElementById('demp-title').textContent=nom+' · '+id+' · '+cod;
+  document.getElementById('demp-puesto').textContent=puesto+' · '+grupo;
+  const sc={Activo:'var(--green)','Baja médica':'var(--yellow)',Excedencia:'var(--t3)'}[sit]||'var(--t3)';
+  document.getElementById('demp-sit').innerHTML=`<span style="display:inline-block;padding:2px 8px;border-radius:3px;border:1px solid ${sc};color:${sc};font-family:var(--mono);font-size:10px">${sit}</span>`;
+  document.getElementById('demp-jornada').textContent=jornada+' jornada · IRPF '+irpf;
+  document.getElementById('demp-fi').textContent=fi;
+  document.getElementById('demp-ant').textContent=ant;
+  // Buscar datos completos del empleado (con historial_trienios)
+  const empData = EMPLEADOS.find(e=>e.id===id);
+  const historial = empData && empData.historial_trienios ? empData.historial_trienios : [{grupo:grupo,num:parseInt(t),mesT:parseInt(mesT)}];
+  const totalTriMes = historial.reduce((s,h)=>s+(h.num*h.mesT),0);
+  const totalTriAnio = totalTriMes * 14;
+  document.getElementById('demp-trienios').textContent=t+' trienios · '+totalTriAnio.toLocaleString('es-ES')+' €/año · '+partida;
+  const base={'55':1337,'44':1084,'35':858,'26':707,'21':602}[mesT]||858;
+  // Filas de trienios desglosadas por grupo
+  const triRows = historial.map(h=>`
+    <tr style="color:var(--purple)">
+      <td>Trienios Grupo ${h.grupo} (${h.num} × ${h.mesT} €/mes)</td>
+      <td class="mono c-p">${(h.num*h.mesT).toLocaleString('es-ES')} €</td>
+    </tr>`).join('');
+  const triNote = historial.length > 1
+    ? `<tr style="font-size:11px"><td colspan="2" style="color:var(--t3);font-style:italic;padding-top:2px">⚠ Cada trienio se paga a la cuantía del grupo en que consolidó (LPGE)</td></tr>`
+    : '';
+  document.getElementById('demp-retrib').innerHTML=`<table><thead><tr><th>Concepto</th><th>€/mes</th></tr></thead><tbody>
+    <tr><td>Sueldo base</td><td class="mono">${base.toLocaleString('es-ES')} €</td></tr>
+    <tr><td>Complementos (según RPT)</td><td class="mono c2">—</td></tr>
+    ${triRows}${triNote}
+    <tr><td><b>Total trienios</b></td><td class="mono c-p"><b>${totalTriMes.toLocaleString('es-ES')} €</b></td></tr>
+    <tr><td>Retención IRPF estimada</td><td class="mono c-r">${irpf}</td></tr>
+  </tbody></table>`;
+  openM('m-detalle-emp');
+}
+
+// Ver puesto
+function verPuesto(cod,denom,grupo,nivel,tipo,estado,empleado,coste,partida,provision,trieniosInfo){
+  document.getElementById('dpuesto-title').textContent=cod+' · '+denom;
+  const esVac=estado==='Vacante';
+  document.getElementById('dp-tipo').innerHTML=`<span class="badge b-b">${tipo}</span> <span class="badge ${esVac?'b-y':'b-g'}">${estado}</span>`;
+  document.getElementById('dp-emp').textContent=empleado;
+  document.getElementById('dp-grupo').textContent='Grupo '+grupo+' · Nivel CD '+nivel;
+  document.getElementById('dp-prov').textContent=provision+' · '+trieniosInfo;
+  document.getElementById('dp-coste').innerHTML=`<div style="display:flex;gap:24px;flex-wrap:wrap"><div><div class="kpi-lbl">Coste anual estimado</div><div class="mono c-a" style="font-size:18px;font-weight:800">${coste} €</div></div><div><div class="kpi-lbl">Partida</div><div class="mono" style="font-size:16px">${partida}</div></div>${esVac?`<div><div class="kpi-lbl">Crédito retenido</div><div class="mono c-y">${coste} € · No reasignable sin mod.</div></div>`:''}</div>`;
+  openM('m-detalle-puesto');
+}
+
+// Nómina
+function confirmarNomina(){closeM('m-procesar-nomina');const el=document.getElementById('nomina-estado');if(el){el.textContent='Procesada';el.className='badge b-g';}toast('✓ Nómina '+MESES[MES_ACTUAL]+' 2025 procesada');}
+
+// Nav y utils
+function nav(el,id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));const v=document.getElementById('view-'+id);if(v)v.classList.add('active');if(el&&el.classList)el.classList.add('active');document.getElementById('tb-title').textContent=TITLES[id]||'';}
+function navTo(id){const ni=document.querySelector(`.ni[onclick*="'${id}'"]`);nav(ni,id);}
+function openM(id){const m=document.getElementById(id);if(m)m.classList.add('open');}
+function closeM(id){const m=document.getElementById(id);if(m)m.classList.remove('open');}
+document.querySelectorAll('.modal-ov').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+function toast(msg,col){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';t.style.borderColor=col||'var(--green)';t.style.color=col||'var(--green)';clearTimeout(t._to);t._to=setTimeout(()=>t.style.display='none',4000);}
+function filterTable(inp,id){const q=inp.value.toLowerCase();document.querySelectorAll('#'+id+' tbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');}
+function generarInforme(){toast('📄 Generando informe '+MESES[MES_ACTUAL]+' 2025...');}
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+
+// ── PASSWORD PROTECTION ────────────────────────────────
+(function(){
+  var HASH = '7a3f8c2e9b1d4f6a0e5c7b8d2f4a1e9c'; // tugesto2026 obfuscated
+  var KEY = 'tg_auth_v5';
+  function simpleHash(s){
+    var h=0;for(var i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i)|0;}
+    return Math.abs(h).toString(16).padStart(8,'0');
+  }
+  var CORRECT = simpleHash('tugesto2026');
+  if(sessionStorage.getItem(KEY) === CORRECT){
+    document.getElementById('pw-overlay').classList.add('hidden');
+  }
+  window.checkPw = function(){
+    var val = document.getElementById('pw-input').value;
+    if(simpleHash(val) === CORRECT){
+      sessionStorage.setItem(KEY, CORRECT);
+      var ov = document.getElementById('pw-overlay');
+      ov.style.transition='opacity .4s';
+      ov.style.opacity='0';
+      setTimeout(function(){ov.classList.add('hidden');ov.style.opacity='';},400);
+    } else {
+      var inp = document.getElementById('pw-input');
+      var err = document.getElementById('pw-error');
+      err.textContent = 'Contraseña incorrecta';
+      inp.classList.add('error');
+      inp.value='';
+      setTimeout(function(){inp.classList.remove('error');err.textContent='';},1500);
+    }
+  };
+})();
+
+
+setMes(8); // Septiembre por defecto
+renderEmpleados();
+updateSim();
+</script>
+</body>
+</html>
