@@ -571,7 +571,7 @@ textarea.fi{resize:vertical;}
       <span style="font-size:20px">◎</span>
       <div class="sim-title">Simulación en tiempo real · Capítulo I 2025</div>
       <button class="btn btn-ghost btn-sm" onclick="resetSim()">↺ Resetear</button>
-      <button class="btn btn-acc btn-sm" onclick="toast('↓ Exportando escenario...')">↓ Exportar</button>
+      <button class="btn btn-acc btn-sm" onclick="exportarEscenario()">↓ Exportar</button>
     </div>
     <div class="sim-body">
       <div>
@@ -771,7 +771,7 @@ textarea.fi{resize:vertical;}
       <div class="card-t" data-i18n="card_rpt">RPT · Condiciones retributivas por puesto</div>
       <div class="card-acts">
         <input class="search-inp" placeholder="Buscar puesto..." oninput="filterTable(this,'t-rpt')">
-        <button class="btn btn-ghost btn-sm" onclick="toast('📄 Generando informe RPT en PDF...')">📄 Exportar RPT</button>
+        <button class="btn btn-ghost btn-sm" onclick="generarInformeRPT()">📄 Exportar RPT</button>
         <button class="btn btn-acc btn-sm">+ Modificar RPT</button>
       </div>
     </div>
@@ -1089,15 +1089,15 @@ textarea.fi{resize:vertical;}
       </div>
       <div style="display:flex;gap:10px;margin-top:14px">
         <button class="btn btn-acc btn-sm" onclick="generarInforme()">📄 Descargar PDF</button>
-        <button class="btn btn-ghost btn-sm">📊 Descargar Excel</button>
-        <button class="btn btn-ghost btn-sm" onclick="toast('📄 Generando informe de escenario simulado...')">◎ Informe escenario simulador</button>
+        <button class="btn btn-ghost btn-sm" onclick="generarExcel()">📊 Descargar Excel</button>
+        <button class="btn btn-ghost btn-sm" onclick="generarInformeEscenario()">◎ Informe escenario simulador</button>
       </div>
     </div>
   </div>
   <div class="g3">
     <div class="card" style="cursor:pointer" onclick="generarInforme()"><div style="padding:18px;text-align:center"><div style="font-size:26px;margin-bottom:8px">📊</div><div style="font-weight:700;margin-bottom:4px">Informe Cap. I completo</div><div style="font-size:11px;color:var(--t3);margin-bottom:10px">Con trienios, atrasos y proyección</div><span class="badge b-g">PDF · Excel</span></div></div>
-    <div class="card" style="cursor:pointer"><div style="padding:18px;text-align:center"><div style="font-size:26px;margin-bottom:8px">🏛</div><div style="font-weight:700;margin-bottom:4px">Informe RPT / Plantilla</div><div style="font-size:11px;color:var(--t3);margin-bottom:10px">Estado puestos · BOP-ready</div><span class="badge b-b">PDF</span></div></div>
-    <div class="card" style="cursor:pointer"><div style="padding:18px;text-align:center"><div style="font-size:26px;margin-bottom:8px">📋</div><div style="font-weight:700;margin-bottom:4px">Certificado Masa Salarial</div><div style="font-size:11px;color:var(--t3);margin-bottom:10px">Art. 103 bis EBEP · Firmable</div><span class="badge b-p">PDF firmable</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="generarInformeRPT()"><div style="padding:18px;text-align:center"><div style="font-size:26px;margin-bottom:8px">🏛</div><div style="font-weight:700;margin-bottom:4px">Informe RPT / Plantilla</div><div style="font-size:11px;color:var(--t3);margin-bottom:10px">Estado puestos · BOP-ready</div><span class="badge b-b">PDF</span></div></div>
+    <div class="card" style="cursor:pointer" onclick="generarCertificadoMasa()"><div style="padding:18px;text-align:center"><div style="font-size:26px;margin-bottom:8px">📋</div><div style="font-weight:700;margin-bottom:4px">Certificado Masa Salarial</div><div style="font-size:11px;color:var(--t3);margin-bottom:10px">Art. 103 bis EBEP · Firmable</div><span class="badge b-p">PDF firmable</span></div></div>
   </div>
 </div><!-- /view-informes -->
 
@@ -1354,10 +1354,10 @@ textarea.fi{resize:vertical;}
 <script>
 // ── IDIOMAS ──────────────────────────────────────────────────────────
 const LANGS={
-  es:{logo_tag:'gestión presupuestaria · cap. i',nav_decision:'Decisión',nav_personal:'Personal',nav_presupuesto:'Presupuesto',nav_control:'Control',nav_dashboard:'Dashboard',nav_simulador:'Simulador',nav_empleados:'Empleados',nav_plantilla:'Plantilla',nav_rpt:'RPT',nav_trienios:'Trienios',nav_atrasos:'Atrasos',nav_consignaciones:'Consignaciones',nav_nominas:'Nóminas',nav_ccontrol:'Control crédito',nav_bloqueo:'Bloqueo de gasto',nav_informes:'Informes',nav_alta:'Alta ayuntamiento',tb_title:'Dashboard · Sistema de Decisión Presupuestaria',mes_lbl:'Mes',btn_informe:'📄 Informe',meses:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],anio_completo:'📅 Año completo 2025',back:'← Dashboard',i18n:{lbl_deficit_previsto:'Déficit previsto',lbl_fecha_ruptura:'Fecha de ruptura',lbl_credito_real:'Crédito real disponible',kpi_ejec:'% Ejec. real vs ideal',kpi_desv:'Desviación anual est.',kpi_coste:'Coste estructural',kpi_coyunt:'Coste coyuntural',kpi_prob:'Prob. desviación',kpi_coste_sub:'Plantilla + trienios fijos',kpi_coyunt_sub:'Productividad + gratif. + atrasos',kpi_coste_delta:'96% del Cap. I',kpi_coyunt_delta:'4% variable',ca_title:'💰 Crédito disponible real',ca_badge:'DATO CLAVE',ca_bruto_lbl:'Disponible bruto (oficial)',ca_bruto_sub:'Dato sin ajustar',ca_atr_lbl:'— Atrasos aprobados',ca_atr_sub:'3 expedientes habilitados',ca_def_lbl:'— Déficit 150.00',ca_def_sub:'Agotamiento productividad · oct',ca_rev_lbl:'— Revisión salarial',ca_rev_sub:'Impacto estimado 2025',ca_total_lbl:'Crédito real ajustado',card_evolucion:'Evolución mensual',card_escenarios:'Escenarios a cierre dic.',card_estado:'Estado por partida',leg_real:'Real',leg_trienios:'Trienios',leg_proyeccion:'Proyección',btn_back:'← Dashboard',sec_simulador:'Simulador de escenarios',sec_empleados:'Empleados',sec_plantilla:'Plantilla Orgánica',sec_rpt:'Relación de Puestos de Trabajo (RPT)',sec_trienios:'Trienios · Antigüedad',sec_atrasos:'Atrasos',sec_consig:'Consignaciones Presupuestarias',sec_nominas:'Nóminas · Liquidación mensual',sec_control:'Control de Crédito',sec_bloqueo:'Bloqueo de gasto',sec_informes:'Informes y Exportación',sec_onboarding:'Alta de nuevo ayuntamiento',risk_actions_title:'⚡ ACCIONES RECOMENDADAS · impacto inmediato',act_mod_credito:'🔧 Modificación de crédito 150.00 (productividad)',act_vacante:'🚫 No cubrir vacante F-003 este ejercicio',act_restringir:'📉 Restringir devengos productividad pendientes',act_simular:'◎ Simular combinación de acciones',btn_tramitar:'Tramitar →',btn_bloquear:'Bloquear →',btn_restringir:'Restringir →',btn_simular:'Simular →',act_ver_esc:'Ver escenarios',msg_critico:'🚨 PARTIDA 150.00 AGOTADA · {mes} · ACCIÓN URGENTE',msg_alerta:'⚠ RIESGO PRESUPUESTARIO ACTIVO · {mes}',msg_atencion:'⚡ ATENCIÓN PRESUPUESTARIA · {mes}',msg_ok:'✓ EJECUCIÓN CONTROLADA · {mes}',narr_critico:'🚨 Situación crítica.',narr_alerta:'El problema no está donde parece.',narr_atencion:'Señales de alerta incipientes.',narr_ok:'Ejecución en línea.',lbl_pct_ejec:'% real',lbl_esperado:'% esperado mes',chip_anual:'📅 Vista anual 2025',resumen_anual:'RESUMEN ANUAL 2025 · VISIÓN COMPLETA DEL EJERCICIO',kpi_oblig_sub:'Obligado acumulado mes 9',kpi_oblig_delta:'Dato real contable',sim_sub:'Modifica parámetros en tiempo real · resultado inmediato sobre crédito disponible',sim_lbl_emp:'Empleados activos',sim_lbl_v1:'Cubrir vacante F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cubrir vacante L-002 (A2 · 44.200 €)',sim_lbl_sal:'Subida salarial adicional',sim_lbl_tri:'Incluir trienios Q4 comprometidos',sim_lbl_atr:'Liquidar atrasos pendientes (12.650 €)',sim_lbl_mod:'Modificación crédito 150.00',sim_lbl_res:'Restricción devengos productividad',sim_res_cred:'Crédito disponible ajustado',sim_res_gasto:'Gasto estimado Q4 (oct–dic)',sim_res_final:'Resultado final estimado',sim_res_mensual:'Coste plantilla/mes',sim_res_tri:'Impacto trienios Q4',sim_res_atr:'Impacto atrasos',card_comparativa:'Comparativa de escenarios',emp_sub:'Registro de personal activo con antigüedad, trienios y situación administrativa',kpi_emp_activos:'Empleados activos',kpi_emp_sub:'De 47 puestos en plantilla',kpi_tri_anio:'Coste trienios/año',kpi_tri_sub:'Imputado a 120.00 / 130.00',kpi_tri_q4:'Trienios Q4',kpi_tri_q4_sub:'+4.840 €/año desde Q4',kpi_ant_media:'Antigüedad media',kpi_ant_sub:'3,8 trienios/empleado',card_reg_emp:'Registro de empleados · Antigüedad y trienios',plan_sub:'47 puestos · Art. 126 TRLRHL y art. 90 EBEP',card_plantilla:'Plantilla · 47 puestos',rpt_sub:'Condiciones retributivas por puesto · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Puestos en RPT',kpi_rpt_sub1:'Todos los puestos del ente',kpi_masa_sal:'Masa salarial bruta',kpi_rpt_cred:'Crédito definitivo Cap. I 2025',kpi_rpt_ce:'Compl. específico medio',kpi_rpt_ce_sub:'Media ponderada por puesto',kpi_rpt_rev:'Última aprobación RPT',kpi_rpt_rev_sub:'Pendiente revisión 2025',card_rpt:'RPT · Condiciones retributivas por puesto',card_tablas_lpge:'Tablas retributivas LPGE 2025 · Funcionarios',card_cd:'Niveles de Complemento de Destino · Art. 76 EBEP',tri_sub:'Devengados, próximos a consolidar e impacto económico · LPGE 2025',kpi_masa_tri:'Masa salarial trienios',kpi_masa_tri_sub:'3,84% masa salarial total',kpi_tri_q4_2:'Trienios Q4 (90 días)',kpi_tri_q4_sub2:'+4.840 €/año adicional',kpi_imp120:'Impacto 120.00',kpi_imp120_sub:'Trienios funcionarios 2025',kpi_imp130:'Impacto 130.00',kpi_imp130_sub:'Trienios laborales 2025',card_prox_tri:'Próximos trienios Q4 · 90 días',card_cuantias:'Cuantías LPGE 2025 por grupo',atr_sub:'Devengos pendientes de liquidación · Trienios, revisiones salariales, sentencias',kpi_atr_pend:'Pendiente liquidar',kpi_atr_exp:'3 expedientes',kpi_atr_tri:'Por trienios',kpi_atr_tri_sub:'Reconocimiento servicios previos',kpi_atr_liq:'Liquidados 2025',kpi_atr_liq_sub:'4 expedientes cerrados',kpi_atr_cred:'Sin crédito actual',kpi_atr_cred_sub:'Margen 150.00',card_exp_atrasos:'Expedientes de atrasos',cons_sub:'Capítulo I · Gastos de personal · Arts. 120–169 TRLRHL',card_estado_part:'Estado por partida · Ejercicio 2025',nom_sub:'Septiembre 2025 · 39 empleados activos',kpi_nom_bruto:'Total bruto sept.',kpi_nom_emp:'39 empleados',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Vence 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Vence 31/10/2025',kpi_nom_tri:'Trienios en nómina',kpi_nom_tri_sub:'Devengados sept.',card_det_nom:'Detalle · Septiembre 2025',ctrl_sub:'Semáforo · Proyección lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partidas zona segura',kpi_ctrl_seg_sub:'<80% en mes 9',kpi_ctrl_at:'En atención',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacantes retenidas',kpi_ctrl_vac_sub:'8 vacantes · no reasignable',card_proy:'Proyección lineal a cierre · Art. 173 TRLRHL',bloq_sub:'Control preventivo · Evitar compromisos sin crédito disponible',kpi_bloq_act:'Bloqueos activos',card_bloq_tipos:'¿Qué puede bloquearse desde aquí?',inf_sub:'Documentos oficiales listos para Intervención · Pleno · Secretaría',onb_sub:'Asistente de carga inicial · 5 pasos · Tiempo estimado: 1–3 días hábiles'}},
-  ca:{logo_tag:'gestió pressupostària · cap. i',nav_decision:'Decisió',nav_personal:'Personal',nav_presupuesto:'Pressupost',nav_control:'Control',nav_dashboard:'Tauler',nav_simulador:'Simulador',nav_empleados:'Empleats',nav_plantilla:'Plantilla',nav_rpt:'RPT',nav_trienios:'Triennis',nav_atrasos:'Endarreriments',nav_consignaciones:'Consignacions',nav_nominas:'Nòmines',nav_ccontrol:'Control crèdit',nav_bloqueo:'Bloqueig de despesa',nav_informes:'Informes',nav_alta:'Alta ajuntament',tb_title:"Tauler · Sistema de Decisió Pressupostària",mes_lbl:'Mes',btn_informe:'📄 Informe',meses:['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'],anio_completo:"📅 Any complet 2025",back:"← Tauler",i18n:{lbl_deficit_previsto:'Dèficit previst',lbl_fecha_ruptura:'Data de ruptura',lbl_credito_real:'Crèdit real disponible',kpi_ejec:'% Exec. real vs ideal',kpi_desv:'Desviació anual est.',kpi_coste:'Cost estructural',kpi_coyunt:'Cost conjuntural',kpi_prob:'Prob. desviació',kpi_coste_sub:'Plantilla + triennis fixos',kpi_coyunt_sub:'Productivitat + grat. + endarreriments',kpi_coste_delta:'96% del Cap. I',kpi_coyunt_delta:'4% variable',ca_title:'💰 Crèdit disponible real',ca_badge:'DADA CLAU',ca_bruto_lbl:'Disponible brut (oficial)',ca_bruto_sub:'Dada sense ajustar',ca_atr_lbl:'— Endarreriments aprovats',ca_atr_sub:'3 expedients habilitats',ca_def_lbl:'— Dèficit 150.00',ca_def_sub:'Esgotament productivitat · oct',ca_rev_lbl:'— Revisió salarial',ca_rev_sub:'Impacte estimat 2025',ca_total_lbl:'Crèdit real ajustat',card_evolucion:'Evolució mensual',card_escenarios:'Escenaris a tancament des.',card_estado:'Estat per partida',leg_real:'Real',leg_trienios:'Triennis',leg_proyeccion:'Projecció',btn_back:'← Tauler',sec_simulador:"Simulador d'escenaris",sec_empleados:'Empleats',sec_plantilla:'Plantilla Orgànica',sec_rpt:'Relació de Llocs de Treball (RPT)',sec_trienios:'Triennis · Antiguitat',sec_atrasos:'Endarreriments',sec_consig:'Consignacions Pressupostàries',sec_nominas:'Nòmines · Liquidació mensual',sec_control:'Control de Crèdit',sec_bloqueo:'Bloqueig de despesa',sec_informes:'Informes i Exportació',sec_onboarding:'Alta de nou ajuntament',risk_actions_title:'⚡ ACCIONS RECOMANADES · impacte immediat',act_mod_credito:'🔧 Modificació de crèdit 150.00 (productivitat)',act_vacante:'🚫 No cobrir vacant F-003 aquest exercici',act_restringir:'📉 Restringir meritaments productivitat pendents',act_simular:'◎ Simular combinació de accions',btn_tramitar:'Tramitar →',btn_bloquear:'Bloquejar →',btn_restringir:'Restringir →',btn_simular:'Simular →',act_ver_esc:'Veure escenaris',msg_critico:'🚨 PARTIDA 150.00 ESGOTADA · {mes} · ACCIÓ URGENT',msg_alerta:'⚠ RISC PRESSUPOSTARI ACTIU · {mes}',msg_atencion:'⚡ ATENCIÓ PRESSUPOSTÀRIA · {mes}',msg_ok:'✓ EXECUCIÓ CONTROLADA · {mes}',narr_critico:'🚨 Situació crítica.',narr_alerta:'El problema no és on sembla.',narr_atencion:"Senyals d'alerta incipients.",narr_ok:'Execució en línia.',lbl_pct_ejec:'% real',lbl_esperado:'% esperat mes',chip_anual:'📅 Vista anual 2025',resumen_anual:"RESUM ANUAL 2025 · VISIÓ COMPLETA DE L'EXERCICI",kpi_oblig_sub:'Obligat acumulat mes 9',kpi_oblig_delta:'Dada real comptable',sim_sub:'Modifica paràmetres en temps real · resultat immediat sobre crèdit disponible',sim_lbl_emp:'Empleats actius',sim_lbl_v1:'Cobrir vacant F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cobrir vacant L-002 (A2 · 44.200 €)',sim_lbl_sal:'Pujada salarial addicional',sim_lbl_tri:'Incloure triennis T4 compromesos',sim_lbl_atr:'Liquidar endarreriments pendents (12.650 €)',sim_lbl_mod:'Modificació crèdit 150.00',sim_lbl_res:'Restricció meritaments productivitat',sim_res_cred:'Crèdit disponible ajustat',sim_res_gasto:'Despesa estimada T4 (oct–des)',sim_res_final:'Resultat final estimat',sim_res_mensual:'Cost plantilla/mes',sim_res_tri:'Impacte triennis T4',sim_res_atr:'Impacte endarreriments',card_comparativa:'Comparativa de escenaris',emp_sub:'Registre de personal actiu amb antiguitat, triennis i situació administrativa',kpi_emp_activos:'Empleats actius',kpi_emp_sub:'De 47 llocs en plantilla',kpi_tri_anio:'Cost triennis/any',kpi_tri_sub:'Imputat a 120.00 / 130.00',kpi_tri_q4:'Triennis T4',kpi_tri_q4_sub:'+4.840 €/any des de T4',kpi_ant_media:'Antiguitat mitjana',kpi_ant_sub:'3,8 triennis/empleat',card_reg_emp:'Registre de empleats · Antiguitat i triennis',plan_sub:'47 llocs · Art. 126 TRLRHL i art. 90 EBEP',card_plantilla:'Plantilla · 47 llocs',rpt_sub:'Condicions retributives per lloc · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Llocs en RPT',kpi_rpt_sub1:"Tots els llocs de l'ens",kpi_masa_sal:'Massa salarial bruta',kpi_rpt_cred:'Crèdit definitiu Cap. I 2025',kpi_rpt_ce:'Compl. específic mig',kpi_rpt_ce_sub:'Mitjana ponderada per lloc',kpi_rpt_rev:'Darrera aprovació RPT',kpi_rpt_rev_sub:'Pendent revisió 2025',card_rpt:'RPT · Condicions retributives per lloc',card_tablas_lpge:'Taules retributives LPGE 2025 · Funcionaris',card_cd:'Nivells de Complement de Destinació · Art. 76 EBEP',tri_sub:'Meritats, propers a consolidar i impacte econòmic · LPGE 2025',kpi_masa_tri:'Massa salarial triennis',kpi_masa_tri_sub:'3,84% massa salarial total',kpi_tri_q4_2:'Triennis T4 (90 dies)',kpi_tri_q4_sub2:'+4.840 €/any addicional',kpi_imp120:'Impacte 120.00',kpi_imp120_sub:'Triennis funcionaris 2025',kpi_imp130:'Impacte 130.00',kpi_imp130_sub:'Triennis laborals 2025',card_prox_tri:'Propers triennis T4 · 90 dies',card_cuantias:'Quanties LPGE 2025 per grup',atr_sub:'Meritaments pendents de liquidació · Triennis, revisions salarials, sentències',kpi_atr_pend:'Pendent liquidar',kpi_atr_exp:'3 expedients',kpi_atr_tri:'Per triennis',kpi_atr_tri_sub:'Reconeixement serveis previs',kpi_atr_liq:'Liquidats 2025',kpi_atr_liq_sub:'4 expedients tancats',kpi_atr_cred:'Sense crèdit actual',kpi_atr_cred_sub:'Marge 150.00',card_exp_atrasos:"Expedients d'endarreriments",cons_sub:'Capítol I · Despeses de personal · Arts. 120–169 TRLRHL',card_estado_part:'Estat per partida · Exercici 2025',nom_sub:'Setembre 2025 · 39 empleats actius',kpi_nom_bruto:'Total brut set.',kpi_nom_emp:'39 empleats',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Venç 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Venç 31/10/2025',kpi_nom_tri:'Triennis en nòmina',kpi_nom_tri_sub:'Meritats set.',card_det_nom:'Detall · Setembre 2025',ctrl_sub:'Semàfor · Projecció lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partides zona segura',kpi_ctrl_seg_sub:'<80% en mes 9',kpi_ctrl_at:'En atenció',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacants retingudes',kpi_ctrl_vac_sub:'8 vacants · no reassignable',card_proy:'Projecció lineal al tancament · Art. 173 TRLRHL',bloq_sub:'Control preventiu · Evitar compromisos sense crèdit disponible',kpi_bloq_act:'Bloqueigs actius',card_bloq_tipos:"Què es pot bloquejar des d'aquí?",inf_sub:'Documents oficials llestos per a Intervenció · Ple · Secretaria',onb_sub:'Assistent de càrrega inicial · 5 passos · Temps estimat: 1–3 dies hàbils'}},
-  eu:{logo_tag:'aurrekontu kudeaketa · i. kap.',nav_decision:'Erabakia',nav_personal:'Pertsonala',nav_presupuesto:'Aurrekontua',nav_control:'Kontrola',nav_dashboard:'Aginte-taula',nav_simulador:'Simulagailua',nav_empleados:'Langileak',nav_plantilla:'Plantilla',nav_rpt:'RPT',nav_trienios:'Hirurtekoak',nav_atrasos:'Atzerapenak',nav_consignaciones:'Kontsignazioak',nav_nominas:'Nominak',nav_ccontrol:'Kreditu kontrola',nav_bloqueo:'Gastu blokeoa',nav_informes:'Txostenak',nav_alta:'Udal alta',tb_title:'Aginte-taula · Aurrekontu Erabaki Sistema',mes_lbl:'Hila',btn_informe:'📄 Txostena',meses:['Urtarrila','Otsaila','Martxoa','Apirila','Maiatza','Ekaina','Uztaila','Abuztua','Iraila','Urria','Azaroa','Abendua'],anio_completo:'📅 2025 urte osoa',back:'← Aginte-taula',i18n:{lbl_deficit_previsto:'Aurreikusitako defizita',lbl_fecha_ruptura:'Haustura data',lbl_credito_real:'Benetako kreditu erabilgarria',kpi_ejec:'% Benet. vs aurreikusita',kpi_desv:'Urteko desbideratzea',kpi_coste:'Kostu estrukturala',kpi_coyunt:'Kostu koiunturala',kpi_prob:'Desbid. probabilitatea',kpi_coste_sub:'Plantilla + trienio finkoak',kpi_coyunt_sub:'Produktibitatea + grat. + atzerapenak',kpi_coste_delta:'96% I. Kap.',kpi_coyunt_delta:'4% aldakorra',ca_title:'💰 Benetako kreditu erabilgarria',ca_badge:'DATU GAKOA',ca_bruto_lbl:'Erabilgarri gordina (ofiziala)',ca_bruto_sub:'Doitu gabeko datua',ca_atr_lbl:'— Onartutako atzerapenak',ca_atr_sub:'3 espediente baimenduak',ca_def_lbl:'— 150.00 defizita',ca_def_sub:'Produktibitate agortzea · urr.',ca_rev_lbl:'— Soldata berrikuspena',ca_rev_sub:'Estimatutako eragina 2025',ca_total_lbl:'Benetako kreditu egokitua',card_evolucion:'Hileko bilakaera',card_escenarios:'Abenduko itxiera eszenatokiak',card_estado:'Partidaren egoera',leg_real:'Erreala',leg_trienios:'Hirurtekoak',leg_proyeccion:'Proiekzioa',btn_back:'← Aginte-taula',sec_simulador:'Eszenatoki simulagailua',sec_empleados:'Langileak',sec_plantilla:'Plantilla organikoa',sec_rpt:'Lanpostuen Zerrenda (RPT)',sec_trienios:'Hirurtekoak · Antzinatasuna',sec_atrasos:'Atzerapenak',sec_consig:'Aurrekontu kontsignazioak',sec_nominas:'Nominak · Hileko likidazioa',sec_control:'Kreditu kontrola',sec_bloqueo:'Gastu blokeoa',sec_informes:'Txostenak eta esportazioa',sec_onboarding:'Udal berriaren alta',risk_actions_title:'⚡ GOMENDATUTAKO EKINTZAK · berehalako eragina',act_mod_credito:'🔧 150.00 kreditu aldaketa (produktibitatea)',act_vacante:'🚫 Ez bete F-003 lanpostua ekitaldi honetan',act_restringir:'📉 Mugatu produktibitate merituak',act_simular:'◎ Ekintza konbinazioa simulatu',btn_tramitar:'Tramitatu →',btn_bloquear:'Blokeatu →',btn_restringir:'Mugatu →',btn_simular:'Simulatu →',act_ver_esc:'Eszenatokiak ikusi',msg_critico:'🚨 150.00 PARTIDA AGORTUTA · {mes} · PREMIAZKO EKINTZA',msg_alerta:'⚠ AURREKONTU ARRISKUA AKTIBO · {mes}',msg_atencion:'⚡ AURREKONTU ARRETA · {mes}',msg_ok:'✓ BETEARAZPENA KONTROLATUTA · {mes}',narr_critico:'🚨 Egoera kritikoa.',narr_alerta:'Arazoa ez dago itxuraz dagoen lekuan.',narr_atencion:'Hasierako alerta seinaleak.',narr_ok:'Betearazpena lerrokatuta.',lbl_pct_ejec:'% erreala',lbl_esperado:'% aurreikusita hila',chip_anual:'📅 Urteko ikuspegia 2025',resumen_anual:'2025 URTEKO LABURPENA · EKITALDI OSOA',kpi_oblig_sub:'Metatutako betebeharra 9. hila',kpi_oblig_delta:'Datu erreal kontablea',sim_sub:'Aldatu parametroak denbora errealean · emaitza berehalakoa kreditu erabilgarrian',sim_lbl_emp:'Langile aktiboak',sim_lbl_v1:'F-003 lanpostua bete (A1 · 48.600 €)',sim_lbl_v2:'L-002 lanpostua bete (A2 · 44.200 €)',sim_lbl_sal:'Soldata igoera gehigarria',sim_lbl_tri:'T4 hirurtekoak barne hartzen ditu',sim_lbl_atr:'Atzerapen pendenteak likidatu (12.650 €)',sim_lbl_mod:'150.00 kreditu aldaketa',sim_lbl_res:'Produktibitate meritu murrizketa',sim_res_cred:'Kreditu erabilgarri egokitua',sim_res_gasto:'T4 gastu estimatua (urr–abe)',sim_res_final:'Azken emaitza estimatua',sim_res_mensual:'Plantilla kostua/hila',sim_res_tri:'T4 hirurtekoen eragina',sim_res_atr:'Atzeraenen eragina',card_comparativa:'Eszenatokien konparaketa',emp_sub:'Langile aktiboen erregistroa antzinatasunarekin, hirurtekoekin eta egoerarekin',kpi_emp_activos:'Langile aktiboak',kpi_emp_sub:'47 lanpostu plantillatik',kpi_tri_anio:'Trienio kostua/urte',kpi_tri_sub:'120.00 / 130.00-ri esleituta',kpi_tri_q4:'T4 hirurtekoak',kpi_tri_q4_sub:'+4.840 €/urte T4tik',kpi_ant_media:'Bataz besteko antzinatasuna',kpi_ant_sub:'3,8 hirurteko/langile',card_reg_emp:'Langileen erregistroa · Antzinatasuna eta hirurtekoak',plan_sub:'47 lanpostu · Art. 126 TRLRHL eta art. 90 EBEP',card_plantilla:'Plantilla · 47 lanpostu',rpt_sub:'Lanpostuaren ordainsari baldintzak · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Lanpostuak RPTn',kpi_rpt_sub1:'Erakundearen lanpostu guztiak',kpi_masa_sal:'Soldata masa gordina',kpi_rpt_cred:'Kapituluaren behin betiko kreditua I 2025',kpi_rpt_ce:'Batez besteko osagarri espezifikoa',kpi_rpt_ce_sub:'Lanpostuka pisatutako batez bestekoa',kpi_rpt_rev:'Azken RPT onarpena',kpi_rpt_rev_sub:'2025eko berrikuspena zain',card_rpt:'RPT · Lanpostuaren ordainsari baldintzak',card_tablas_lpge:'LPGE 2025 ordainsari taulak · Funtzionarioak',card_cd:'Helmuga Osagarriaren mailak · Art. 76 EBEP',tri_sub:'Meritaturikoak, sendotzear daudenak eta eragin ekonomikoa · LPGE 2025',kpi_masa_tri:'Hirurtekoen soldata masa',kpi_masa_tri_sub:'%3,84 soldata masa totala',kpi_tri_q4_2:'T4 hirurtekoak (90 egun)',kpi_tri_q4_sub2:'+4.840 €/urte gehigarri',kpi_imp120:'120.00 eragina',kpi_imp120_sub:'2025 funtzionario hirurtekoak',kpi_imp130:'130.00 eragina',kpi_imp130_sub:'2025 langile hirurtekoak',card_prox_tri:'Hurrengo T4 hirurtekoak · 90 egun',card_cuantias:'Taldearen arabera LPGE 2025 zenbatekoak',atr_sub:'Likidatzeko meritu pendenteak · Hirurtekoak, soldata berrikuspenak, epaiak',kpi_atr_pend:'Likidatzeko zain',kpi_atr_exp:'3 espediente',kpi_atr_tri:'Hirurtekoengatik',kpi_atr_tri_sub:'Aurretiazko zerbitzuen aitorpena',kpi_atr_liq:'2025 likidatuta',kpi_atr_liq_sub:'4 espediente itxita',kpi_atr_cred:'Oraingo kreditua gabe',kpi_atr_cred_sub:'150.00 tartea',card_exp_atrasos:'Atzerapen espedienteak',cons_sub:'I. Kapitulua · Langile gastuak · Arts. 120–169 TRLRHL',card_estado_part:'Partidaren egoera · 2025 ekitaldia',nom_sub:'2025 iraila · 39 langile aktibo',kpi_nom_bruto:'Iraileko guztira gordina',kpi_nom_emp:'39 langile',kpi_nom_irpf:'PFEZ · Mod. 111',kpi_nom_irpf_sub:'Muga 20/10/2025',kpi_nom_ss:'SS enpresa · TC2',kpi_nom_ss_sub:'Muga 31/10/2025',kpi_nom_tri:'Nominako hirurtekoak',kpi_nom_tri_sub:'Irailean meritaturikoak',card_det_nom:'Xehetasuna · 2025 iraila',ctrl_sub:'Semaforoa · Proiekzio lineala · Art. 173 TRLRHL',kpi_ctrl_seg:'Partida seguru gunean',kpi_ctrl_seg_sub:'<%80 9. hilean',kpi_ctrl_at:'Arretapean',kpi_ctrl_at_sub:'120.00 · %81',kpi_ctrl_crit:'Alerta kritikoa',kpi_ctrl_crit_sub:'150.00 · %93',kpi_ctrl_vac:'Erretenituriko lanpostu hutsak',kpi_ctrl_vac_sub:'8 lanpostu huts · berresleiezina',card_proy:'Itxierako proiekzio lineala · Art. 173 TRLRHL',bloq_sub:'Kontrol prebentiboa · Kreditu erabilgarririk gabeko konpromisoak saihestu',kpi_bloq_act:'Blokeo aktiboak',card_bloq_tipos:'Hemendik zer blokeatu daiteke?',inf_sub:'Dokumentu ofizialak prest Interbentziorako · Osoko Bilkurarako · Idazkaritzarako',onb_sub:'Hasierako karga laguntza · 5 urrats · Gutxi gorabeherako denbora: 1–3 egun lan'}},
-  gl:{logo_tag:'xestión orzamentaria · cap. i',nav_decision:'Decisión',nav_personal:'Persoal',nav_presupuesto:'Orzamento',nav_control:'Control',nav_dashboard:'Panel',nav_simulador:'Simulador',nav_empleados:'Empregados',nav_plantilla:'Cadro de persoal',nav_rpt:'RPT',nav_trienios:'Trienios',nav_atrasos:'Atrasos',nav_consignaciones:'Consignacións',nav_nominas:'Nóminas',nav_ccontrol:'Control crédito',nav_bloqueo:'Bloqueo de gasto',nav_informes:'Informes',nav_alta:'Alta concello',tb_title:'Panel · Sistema de Decisión Orzamentaria',mes_lbl:'Mes',btn_informe:'📄 Informe',meses:['Xaneiro','Febreiro','Marzo','Abril','Maio','Xuño','Xullo','Agosto','Setembro','Outubro','Novembro','Decembro'],anio_completo:'📅 Ano completo 2025',back:'← Panel',i18n:{lbl_deficit_previsto:'Déficit previsto',lbl_fecha_ruptura:'Data de ruptura',lbl_credito_real:'Crédito real dispoñible',kpi_ejec:'% Exec. real vs ideal',kpi_desv:'Desviación anual est.',kpi_coste:'Custo estrutural',kpi_coyunt:'Custo conxuntural',kpi_prob:'Prob. desviación',kpi_coste_sub:'Cadro de persoal + trienios',kpi_coyunt_sub:'Produtividade + grat. + atrasos',kpi_coste_delta:'96% do Cap. I',kpi_coyunt_delta:'4% variable',ca_title:'💰 Crédito dispoñible real',ca_badge:'DATO CLAVE',ca_bruto_lbl:'Dispoñible bruto (oficial)',ca_bruto_sub:'Dato sen axustar',ca_atr_lbl:'— Atrasos aprobados',ca_atr_sub:'3 expedientes habilitados',ca_def_lbl:'— Déficit 150.00',ca_def_sub:'Esgotamento produtividade · out.',ca_rev_lbl:'— Revisión salarial',ca_rev_sub:'Impacto estimado 2025',ca_total_lbl:'Crédito real axustado',card_evolucion:'Evolución mensual',card_escenarios:'Escenarios ao peche dec.',card_estado:'Estado por partida',leg_real:'Real',leg_trienios:'Trienios',leg_proyeccion:'Proxección',btn_back:'← Panel',sec_simulador:'Simulador de escenarios',sec_empleados:'Empregados',sec_plantilla:'Cadro de persoal',sec_rpt:'Relación de Postos de Traballo (RPT)',sec_trienios:'Trienios · Antigüidade',sec_atrasos:'Atrasos',sec_consig:'Consignacións Orzamentarias',sec_nominas:'Nóminas · Liquidación mensual',sec_control:'Control de Crédito',sec_bloqueo:'Bloqueo de gasto',sec_informes:'Informes e exportación',sec_onboarding:'Alta de novo concello',risk_actions_title:'⚡ ACCIÓNS RECOMENDADAS · impacto inmediato',act_mod_credito:'🔧 Modificación de crédito 150.00 (produtividade)',act_vacante:'🚫 Non cubrir vacante F-003 este exercicio',act_restringir:'📉 Restrinxir devindicacións produtividade pendentes',act_simular:'◎ Simular combinación de accións',btn_tramitar:'Tramitar →',btn_bloquear:'Bloquear →',btn_restringir:'Restrinxir →',btn_simular:'Simular →',act_ver_esc:'Ver escenarios',msg_critico:'🚨 PARTIDA 150.00 ESGOTADA · {mes} · ACCIÓN URXENTE',msg_alerta:'⚠ RISCO ORZAMENTARIO ACTIVO · {mes}',msg_atencion:'⚡ ATENCIÓN ORZAMENTARIA · {mes}',msg_ok:'✓ EXECUCIÓN CONTROLADA · {mes}',narr_critico:'🚨 Situación crítica.',narr_alerta:'O problema non está onde parece.',narr_atencion:'Sinais de alerta incipientes.',narr_ok:'Execución en liña.',lbl_pct_ejec:'% real',lbl_esperado:'% esperado mes',chip_anual:'📅 Vista anual 2025',resumen_anual:'RESUMO ANUAL 2025 · VISIÓN COMPLETA DO EXERCICIO',kpi_oblig_sub:'Obrigado acumulado mes 9',kpi_oblig_delta:'Dato real contable',sim_sub:'Modifica parámetros en tempo real · resultado inmediato sobre crédito dispoñible',sim_lbl_emp:'Empregados activos',sim_lbl_v1:'Cubrir vacante F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cubrir vacante L-002 (A2 · 44.200 €)',sim_lbl_sal:'Subida salarial adicional',sim_lbl_tri:'Incluír trienios Q4 comprometidos',sim_lbl_atr:'Liquidar atrasos pendentes (12.650 €)',sim_lbl_mod:'Modificación crédito 150.00',sim_lbl_res:'Restrición devindicacións produtividade',sim_res_cred:'Crédito dispoñible axustado',sim_res_gasto:'Gasto estimado Q4 (out–dec)',sim_res_final:'Resultado final estimado',sim_res_mensual:'Custo cadro de persoal/mes',sim_res_tri:'Impacto trienios Q4',sim_res_atr:'Impacto atrasos',card_comparativa:'Comparativa de escenarios',emp_sub:'Rexistro de persoal activo con antigüidade, trienios e situación administrativa',kpi_emp_activos:'Empregados activos',kpi_emp_sub:'De 47 postos en cadro de persoal',kpi_tri_anio:'Custo trienios/ano',kpi_tri_sub:'Imputado a 120.00 / 130.00',kpi_tri_q4:'Trienios Q4',kpi_tri_q4_sub:'+4.840 €/ano dende Q4',kpi_ant_media:'Antigüidade media',kpi_ant_sub:'3,8 trienios/empregado',card_reg_emp:'Rexistro de empregados · Antigüidade e trienios',plan_sub:'47 postos · Art. 126 TRLRHL e art. 90 EBEP',card_plantilla:'Cadro de persoal · 47 postos',rpt_sub:'Condicións retributivas por posto · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Postos en RPT',kpi_rpt_sub1:'Todos os postos do ente',kpi_masa_sal:'Masa salarial bruta',kpi_rpt_cred:'Crédito definitivo Cap. I 2025',kpi_rpt_ce:'Compl. específico medio',kpi_rpt_ce_sub:'Media ponderada por posto',kpi_rpt_rev:'Última aprobación RPT',kpi_rpt_rev_sub:'Pendente revisión 2025',card_rpt:'RPT · Condicións retributivas por posto',card_tablas_lpge:'Táboas retributivas LPGE 2025 · Funcionarios',card_cd:'Niveis de Complemento de Destino · Art. 76 EBEP',tri_sub:'Devindicados, próximos a consolidar e impacto económico · LPGE 2025',kpi_masa_tri:'Masa salarial trienios',kpi_masa_tri_sub:'3,84% masa salarial total',kpi_tri_q4_2:'Trienios Q4 (90 días)',kpi_tri_q4_sub2:'+4.840 €/ano adicional',kpi_imp120:'Impacto 120.00',kpi_imp120_sub:'Trienios funcionarios 2025',kpi_imp130:'Impacto 130.00',kpi_imp130_sub:'Trienios laborais 2025',card_prox_tri:'Próximos trienios Q4 · 90 días',card_cuantias:'Contías LPGE 2025 por grupo',atr_sub:'Devindicacións pendentes de liquidación · Trienios, revisións salariais, sentenzas',kpi_atr_pend:'Pendente liquidar',kpi_atr_exp:'3 expedientes',kpi_atr_tri:'Por trienios',kpi_atr_tri_sub:'Recoñecemento servizos previos',kpi_atr_liq:'Liquidados 2025',kpi_atr_liq_sub:'4 expedientes pechados',kpi_atr_cred:'Sen crédito actual',kpi_atr_cred_sub:'Marxe 150.00',card_exp_atrasos:'Expedientes de atrasos',cons_sub:'Capítulo I · Gastos de persoal · Arts. 120–169 TRLRHL',card_estado_part:'Estado por partida · Exercicio 2025',nom_sub:'Setembro 2025 · 39 empregados activos',kpi_nom_bruto:'Total bruto set.',kpi_nom_emp:'39 empregados',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Vence 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Vence 31/10/2025',kpi_nom_tri:'Trienios en nómina',kpi_nom_tri_sub:'Devindicados set.',card_det_nom:'Detalle · Setembro 2025',ctrl_sub:'Semáforo · Proxección lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partidas zona segura',kpi_ctrl_seg_sub:'<80% no mes 9',kpi_ctrl_at:'En atención',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacantes retidas',kpi_ctrl_vac_sub:'8 vacantes · non reasignable',card_proy:'Proxección lineal ao peche · Art. 173 TRLRHL',bloq_sub:'Control preventivo · Evitar compromisos sen crédito dispoñible',kpi_bloq_act:'Bloqueos activos',card_bloq_tipos:'Que pode bloquearse desde aquí?',inf_sub:'Documentos oficiais listos para Intervención · Pleno · Secretaría',onb_sub:'Asistente de carga inicial · 5 pasos · Tempo estimado: 1–3 días hábiles'}}
+  es:{logo_tag:'gestión presupuestaria · cap. i',nav_decision:'Decisión',nav_personal:'Personal',nav_presupuesto:'Presupuesto',nav_control:'Control',nav_dashboard:'Dashboard',nav_simulador:'Simulador',nav_empleados:'Empleados',nav_plantilla:'Plantilla',nav_rpt:'RPT',nav_trienios:'Trienios',nav_atrasos:'Atrasos',nav_consignaciones:'Consignaciones',nav_nominas:'Nóminas',nav_ccontrol:'Control crédito',nav_bloqueo:'Bloqueo de gasto',nav_informes:'Informes',nav_alta:'Alta ayuntamiento',tb_title:'Dashboard · Sistema de Decisión Presupuestaria',mes_lbl:'Mes',btn_informe:'📄 Informe',meses:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],anio_completo:'📅 Año completo 2025',back:'← Dashboard',i18n:{lbl_deficit_previsto:'Déficit previsto',lbl_fecha_ruptura:'Fecha de ruptura',lbl_credito_real:'Crédito real disponible',kpi_ejec:'% Ejec. real vs ideal',kpi_desv:'Desviación anual est.',kpi_coste:'Coste estructural',kpi_coyunt:'Coste coyuntural',kpi_prob:'Prob. desviación',kpi_coste_sub:'Plantilla + trienios fijos',kpi_coyunt_sub:'Productividad + gratif. + atrasos',kpi_coste_delta:'96% del Cap. I',kpi_coyunt_delta:'4% variable',ca_title:'💰 Crédito disponible real',ca_badge:'DATO CLAVE',ca_bruto_lbl:'Disponible bruto (oficial)',ca_bruto_sub:'Dato sin ajustar',ca_atr_lbl:'— Atrasos aprobados',ca_atr_sub:'3 expedientes habilitados',ca_def_lbl:'— Déficit 150.00',ca_def_sub:'Agotamiento productividad · oct',ca_rev_lbl:'— Revisión salarial',ca_rev_sub:'Impacto estimado 2025',ca_total_lbl:'Crédito real ajustado',card_evolucion:'Evolución mensual',card_escenarios:'Escenarios a cierre dic.',card_estado:'Estado por partida',leg_real:'Real',leg_trienios:'Trienios',leg_proyeccion:'Proyección',btn_back:'← Dashboard',sec_simulador:'Simulador de escenarios',sec_empleados:'Empleados',sec_plantilla:'Plantilla Orgánica',sec_rpt:'Relación de Puestos de Trabajo (RPT)',sec_trienios:'Trienios · Antigüedad',sec_atrasos:'Atrasos',sec_consig:'Consignaciones Presupuestarias',sec_nominas:'Nóminas · Liquidación mensual',sec_control:'Control de Crédito',sec_bloqueo:'Bloqueo de gasto',sec_informes:'Informes y Exportación',sec_onboarding:'Alta de nuevo ayuntamiento',risk_actions_title:'⚡ ACCIONES RECOMENDADAS · impacto inmediato',act_mod_credito:'🔧 Modificación de crédito 150.00 (productividad)',act_vacante:'🚫 No cubrir vacante F-003 este ejercicio',act_restringir:'📉 Restringir devengos productividad pendientes',act_simular:'◎ Simular combinación de acciones',btn_tramitar:'Tramitar →',btn_bloquear:'Bloquear →',btn_restringir:'Restringir →',btn_simular:'Simular →',act_ver_esc:'Ver escenarios',msg_critico:'🚨 PARTIDA 150.00 AGOTADA · {mes} · ACCIÓN URGENTE',msg_alerta:'⚠ RIESGO PRESUPUESTARIO ACTIVO · {mes}',msg_atencion:'⚡ ATENCIÓN PRESUPUESTARIA · {mes}',msg_ok:'✓ EJECUCIÓN CONTROLADA · {mes}',narr_critico:'🚨 Situación crítica.',narr_alerta:'El problema no está donde parece.',narr_atencion:'Señales de alerta incipientes.',narr_ok:'Ejecución en línea.',lbl_pct_ejec:'% real',lbl_esperado:'% esperado mes',chip_anual:'📅 Vista anual 2025',resumen_anual:'RESUMEN ANUAL 2025 · VISIÓN COMPLETA DEL EJERCICIO',kpi_oblig_sub:'Obligado acumulado mes 9',kpi_oblig_delta:'Dato real contable',sim_sub:'Modifica parámetros en tiempo real · resultado inmediato sobre crédito disponible',sim_lbl_emp:'Empleados activos',sim_lbl_v1:'Cubrir vacante F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cubrir vacante L-002 (A2 · 44.200 €)',sim_lbl_sal:'Subida salarial adicional',sim_lbl_tri:'Incluir trienios Q4 comprometidos',sim_lbl_atr:'Liquidar atrasos pendientes (12.650 €)',sim_lbl_mod:'Modificación crédito 150.00',sim_lbl_res:'Restricción devengos productividad',sim_res_cred:'Crédito disponible ajustado',sim_res_gasto:'Gasto estimado Q4 (oct–dic)',sim_res_final:'Resultado final estimado',sim_res_mensual:'Coste plantilla/mes',sim_res_tri:'Impacto trienios Q4',sim_res_atr:'Impacto atrasos',card_comparativa:'Comparativa de escenarios',emp_sub:'Registro de personal activo con antigüedad, trienios y situación administrativa',kpi_emp_activos:'Empleados activos',kpi_emp_sub:'De 47 puestos en plantilla',kpi_tri_anio:'Coste trienios/año',kpi_tri_sub:'Imputado a 120.00 / 130.00',kpi_tri_q4:'Trienios Q4',kpi_tri_q4_sub:'+4.840 €/año desde Q4',kpi_ant_media:'Antigüedad media',kpi_ant_sub:'3,8 trienios/empleado',card_reg_emp:'Registro de empleados · Antigüedad y trienios',plan_sub:'47 puestos · Art. 126 TRLRHL y art. 90 EBEP',card_plantilla:'Plantilla · 47 puestos',rpt_sub:'Condiciones retributivas por puesto · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Puestos en RPT',kpi_rpt_sub1:'Todos los puestos del ente',kpi_masa_sal:'Masa salarial bruta',kpi_rpt_cred:'Crédito definitivo Cap. I 2025',kpi_rpt_ce:'Compl. específico medio',kpi_rpt_ce_sub:'Media ponderada por puesto',kpi_rpt_rev:'Última aprobación RPT',kpi_rpt_rev_sub:'Pendiente revisión 2025',card_rpt:'RPT · Condiciones retributivas por puesto',card_tablas_lpge:'Tablas retributivas LPGE 2025 · Funcionarios',card_cd:'Niveles de Complemento de Destino · Art. 76 EBEP',tri_sub:'Devengados, próximos a consolidar e impacto económico · LPGE 2025',kpi_masa_tri:'Masa salarial trienios',kpi_masa_tri_sub:'3,84% masa salarial total',kpi_tri_q4_2:'Trienios Q4 (90 días)',kpi_tri_q4_sub2:'+4.840 €/año adicional',kpi_imp120:'Impacto 120.00',kpi_imp120_sub:'Trienios funcionarios 2025',kpi_imp130:'Impacto 130.00',kpi_imp130_sub:'Trienios laborales 2025',card_prox_tri:'Próximos trienios Q4 · 90 días',card_cuantias:'Cuantías LPGE 2025 por grupo',atr_sub:'Devengos pendientes de liquidación · Trienios, revisiones salariales, sentencias',kpi_atr_pend:'Pendiente liquidar',kpi_atr_exp:'3 expedientes',kpi_atr_tri:'Por trienios',kpi_atr_tri_sub:'Reconocimiento servicios previos',kpi_atr_liq:'Liquidados 2025',kpi_atr_liq_sub:'4 expedientes cerrados',kpi_atr_cred:'Sin crédito actual',kpi_atr_cred_sub:'Margen 150.00',card_exp_atrasos:'Expedientes de atrasos',cons_sub:'Capítulo I · Gastos de personal · Arts. 120–169 TRLRHL',card_estado_part:'Estado por partida · Ejercicio 2025',nom_sub:'Septiembre 2025 · 39 empleados activos',kpi_nom_bruto:'Total bruto sept.',kpi_nom_emp:'39 empleados',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Vence 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Vence 31/10/2025',kpi_nom_tri:'Trienios en nómina',kpi_nom_tri_sub:'Devengados sept.',card_det_nom:'Detalle · Septiembre 2025',ctrl_sub:'Semáforo · Proyección lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partidas zona segura',kpi_ctrl_seg_sub:'<80% en mes 9',kpi_ctrl_at:'En atención',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacantes retenidas',kpi_ctrl_vac_sub:'8 vacantes · no reasignable',card_proy:'Proyección lineal a cierre · Art. 173 TRLRHL',bloq_sub:'Control preventivo · Evitar compromisos sin crédito disponible',kpi_bloq_act:'Bloqueos activos',card_bloq_tipos:'¿Qué puede bloquearse desde aquí?',inf_sub:'Documentos oficiales listos para Intervención · Pleno · Secretaría',onb_sub:'Asistente de carga inicial · 5 pasos · Tiempo estimado: 1–3 días hábiles',kpi_oblig_sub:'Obligado acumulado mes 9',kpi_oblig_delta:'Dato real contable',sim_sub:'Modifica parámetros en tiempo real · resultado inmediato sobre crédito disponible',sim_lbl_emp:'Empleados activos',sim_lbl_v1:'Cubrir vacante F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cubrir vacante L-002 (A2 · 44.200 €)',sim_lbl_sal:'Subida salarial adicional',sim_lbl_tri:'Incluir trienios Q4 comprometidos',sim_lbl_atr:'Liquidar atrasos pendientes (12.650 €)',sim_lbl_mod:'Modificación crédito 150.00',sim_lbl_res:'Restricción devengos productividad',sim_res_cred:'Crédito disponible ajustado',sim_res_gasto:'Gasto estimado Q4 (oct–dic)',sim_res_final:'Resultado final estimado',sim_res_mensual:'Coste plantilla/mes',sim_res_tri:'Impacto trienios Q4',sim_res_atr:'Impacto atrasos',card_comparativa:'Comparativa de escenarios',emp_sub:'Registro de personal activo con antigüedad, trienios y situación administrativa',kpi_emp_activos:'Empleados activos',kpi_emp_sub:'De 47 puestos en plantilla',kpi_tri_anio:'Coste trienios/año',kpi_tri_sub:'Imputado a 120.00 / 130.00',kpi_tri_q4:'Trienios Q4',kpi_tri_q4_sub:'+4.840 €/año desde Q4',kpi_ant_media:'Antigüedad media',kpi_ant_sub:'3,8 trienios/empleado',card_reg_emp:'Registro de empleados · Antigüedad y trienios',plan_sub:'47 puestos · Art. 126 TRLRHL y art. 90 EBEP',card_plantilla:'Plantilla · 47 puestos',rpt_sub:'Condiciones retributivas por puesto · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Puestos en RPT',kpi_rpt_sub1:'Todos los puestos del ente',kpi_masa_sal:'Masa salarial bruta',kpi_rpt_cred:'Crédito definitivo Cap. I 2025',kpi_rpt_ce:'Compl. específico medio',kpi_rpt_ce_sub:'Media ponderada por puesto',kpi_rpt_rev:'Última aprobación RPT',kpi_rpt_rev_sub:'Pendiente revisión 2025',card_rpt:'RPT · Condiciones retributivas por puesto',card_tablas_lpge:'Tablas retributivas LPGE 2025 · Funcionarios',card_cd:'Niveles de Complemento de Destino · Art. 76 EBEP',tri_sub:'Devengados, próximos a consolidar e impacto económico · LPGE 2025',kpi_masa_tri:'Masa salarial trienios',kpi_masa_tri_sub:'3,84% masa salarial total',kpi_tri_q4_2:'Trienios Q4 (90 días)',kpi_tri_q4_sub2:'+4.840 €/año adicional',kpi_imp120:'Impacto 120.00',kpi_imp120_sub:'Trienios funcionarios 2025',kpi_imp130:'Impacto 130.00',kpi_imp130_sub:'Trienios laborales 2025',card_prox_tri:'Próximos trienios Q4 · 90 días',card_cuantias:'Cuantías LPGE 2025 por grupo',atr_sub:'Devengos pendientes de liquidación · Trienios, revisiones salariales, sentencias',kpi_atr_pend:'Pendiente liquidar',kpi_atr_exp:'3 expedientes',kpi_atr_tri:'Por trienios',kpi_atr_tri_sub:'Reconocimiento servicios previos',kpi_atr_liq:'Liquidados 2025',kpi_atr_liq_sub:'4 expedientes cerrados',kpi_atr_cred:'Sin crédito actual',kpi_atr_cred_sub:'Margen 150.00',card_exp_atrasos:'Expedientes de atrasos',cons_sub:'Capítulo I · Gastos de personal · Arts. 120–169 TRLRHL',card_estado_part:'Estado por partida · Ejercicio 2025',nom_sub:'Septiembre 2025 · 39 empleados activos',kpi_nom_bruto:'Total bruto sept.',kpi_nom_emp:'39 empleados',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Vence 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Vence 31/10/2025',kpi_nom_tri:'Trienios en nómina',kpi_nom_tri_sub:'Devengados sept.',card_det_nom:'Detalle · Septiembre 2025',ctrl_sub:'Semáforo · Proyección lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partidas zona segura',kpi_ctrl_seg_sub:'<80% en mes 9',kpi_ctrl_at:'En atención',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacantes retenidas',kpi_ctrl_vac_sub:'8 vacantes · no reasignable',card_proy:'Proyección lineal a cierre · Art. 173 TRLRHL',bloq_sub:'Control preventivo · Evitar compromisos sin crédito disponible',kpi_bloq_act:'Bloqueos activos',card_bloq_tipos:'¿Qué puede bloquearse desde aquí?',inf_sub:'Documentos oficiales listos para Intervención · Pleno · Secretaría',onb_sub:'Asistente de carga inicial · 5 pasos · Tiempo estimado: 1–3 días hábiles'}},
+  ca:{logo_tag:'gestió pressupostària · cap. i',nav_decision:'Decisió',nav_personal:'Personal',nav_presupuesto:'Pressupost',nav_control:'Control',nav_dashboard:'Tauler',nav_simulador:'Simulador',nav_empleados:'Empleats',nav_plantilla:'Plantilla',nav_rpt:'RPT',nav_trienios:'Triennis',nav_atrasos:'Endarreriments',nav_consignaciones:'Consignacions',nav_nominas:'Nòmines',nav_ccontrol:'Control crèdit',nav_bloqueo:'Bloqueig de despesa',nav_informes:'Informes',nav_alta:'Alta ajuntament',tb_title:"Tauler · Sistema de Decisió Pressupostària",mes_lbl:'Mes',btn_informe:'📄 Informe',meses:['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'],anio_completo:"📅 Any complet 2025",back:"← Tauler",i18n:{lbl_deficit_previsto:'Dèficit previst',lbl_fecha_ruptura:'Data de ruptura',lbl_credito_real:'Crèdit real disponible',kpi_ejec:'% Exec. real vs ideal',kpi_desv:'Desviació anual est.',kpi_coste:'Cost estructural',kpi_coyunt:'Cost conjuntural',kpi_prob:'Prob. desviació',kpi_coste_sub:'Plantilla + triennis fixos',kpi_coyunt_sub:'Productivitat + grat. + endarreriments',kpi_coste_delta:'96% del Cap. I',kpi_coyunt_delta:'4% variable',ca_title:'💰 Crèdit disponible real',ca_badge:'DADA CLAU',ca_bruto_lbl:'Disponible brut (oficial)',ca_bruto_sub:'Dada sense ajustar',ca_atr_lbl:'— Endarreriments aprovats',ca_atr_sub:'3 expedients habilitats',ca_def_lbl:'— Dèficit 150.00',ca_def_sub:'Esgotament productivitat · oct',ca_rev_lbl:'— Revisió salarial',ca_rev_sub:'Impacte estimat 2025',ca_total_lbl:'Crèdit real ajustat',card_evolucion:'Evolució mensual',card_escenarios:'Escenaris a tancament des.',card_estado:'Estat per partida',leg_real:'Real',leg_trienios:'Triennis',leg_proyeccion:'Projecció',btn_back:'← Tauler',sec_simulador:"Simulador d'escenaris",sec_empleados:'Empleats',sec_plantilla:'Plantilla Orgànica',sec_rpt:'Relació de Llocs de Treball (RPT)',sec_trienios:'Triennis · Antiguitat',sec_atrasos:'Endarreriments',sec_consig:'Consignacions Pressupostàries',sec_nominas:'Nòmines · Liquidació mensual',sec_control:'Control de Crèdit',sec_bloqueo:'Bloqueig de despesa',sec_informes:'Informes i Exportació',sec_onboarding:'Alta de nou ajuntament',risk_actions_title:'⚡ ACCIONS RECOMANADES · impacte immediat',act_mod_credito:'🔧 Modificació de crèdit 150.00 (productivitat)',act_vacante:'🚫 No cobrir vacant F-003 aquest exercici',act_restringir:'📉 Restringir meritaments productivitat pendents',act_simular:'◎ Simular combinació de accions',btn_tramitar:'Tramitar →',btn_bloquear:'Bloquejar →',btn_restringir:'Restringir →',btn_simular:'Simular →',act_ver_esc:'Veure escenaris',msg_critico:'🚨 PARTIDA 150.00 ESGOTADA · {mes} · ACCIÓ URGENT',msg_alerta:'⚠ RISC PRESSUPOSTARI ACTIU · {mes}',msg_atencion:'⚡ ATENCIÓ PRESSUPOSTÀRIA · {mes}',msg_ok:'✓ EXECUCIÓ CONTROLADA · {mes}',narr_critico:'🚨 Situació crítica.',narr_alerta:'El problema no és on sembla.',narr_atencion:"Senyals d'alerta incipients.",narr_ok:'Execució en línia.',lbl_pct_ejec:'% real',lbl_esperado:'% esperat mes',chip_anual:'📅 Vista anual 2025',resumen_anual:"RESUM ANUAL 2025 · VISIÓ COMPLETA DE L'EXERCICI",kpi_oblig_sub:'Obligat acumulat mes 9',kpi_oblig_delta:'Dada real comptable',sim_sub:'Modifica paràmetres en temps real · resultat immediat sobre crèdit disponible',sim_lbl_emp:'Empleats actius',sim_lbl_v1:'Cobrir vacant F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cobrir vacant L-002 (A2 · 44.200 €)',sim_lbl_sal:'Pujada salarial addicional',sim_lbl_tri:'Incloure triennis T4 compromesos',sim_lbl_atr:'Liquidar endarreriments pendents (12.650 €)',sim_lbl_mod:'Modificació crèdit 150.00',sim_lbl_res:'Restricció meritaments productivitat',sim_res_cred:'Crèdit disponible ajustat',sim_res_gasto:'Despesa estimada T4 (oct–des)',sim_res_final:'Resultat final estimat',sim_res_mensual:'Cost plantilla/mes',sim_res_tri:'Impacte triennis T4',sim_res_atr:'Impacte endarreriments',card_comparativa:'Comparativa de escenaris',emp_sub:'Registre de personal actiu amb antiguitat, triennis i situació administrativa',kpi_emp_activos:'Empleats actius',kpi_emp_sub:'De 47 llocs en plantilla',kpi_tri_anio:'Cost triennis/any',kpi_tri_sub:'Imputat a 120.00 / 130.00',kpi_tri_q4:'Triennis T4',kpi_tri_q4_sub:'+4.840 €/any des de T4',kpi_ant_media:'Antiguitat mitjana',kpi_ant_sub:'3,8 triennis/empleat',card_reg_emp:'Registre de empleats · Antiguitat i triennis',plan_sub:'47 llocs · Art. 126 TRLRHL i art. 90 EBEP',card_plantilla:'Plantilla · 47 llocs',rpt_sub:'Condicions retributives per lloc · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Llocs en RPT',kpi_rpt_sub1:"Tots els llocs de l'ens",kpi_masa_sal:'Massa salarial bruta',kpi_rpt_cred:'Crèdit definitiu Cap. I 2025',kpi_rpt_ce:'Compl. específic mig',kpi_rpt_ce_sub:'Mitjana ponderada per lloc',kpi_rpt_rev:'Darrera aprovació RPT',kpi_rpt_rev_sub:'Pendent revisió 2025',card_rpt:'RPT · Condicions retributives per lloc',card_tablas_lpge:'Taules retributives LPGE 2025 · Funcionaris',card_cd:'Nivells de Complement de Destinació · Art. 76 EBEP',tri_sub:'Meritats, propers a consolidar i impacte econòmic · LPGE 2025',kpi_masa_tri:'Massa salarial triennis',kpi_masa_tri_sub:'3,84% massa salarial total',kpi_tri_q4_2:'Triennis T4 (90 dies)',kpi_tri_q4_sub2:'+4.840 €/any addicional',kpi_imp120:'Impacte 120.00',kpi_imp120_sub:'Triennis funcionaris 2025',kpi_imp130:'Impacte 130.00',kpi_imp130_sub:'Triennis laborals 2025',card_prox_tri:'Propers triennis T4 · 90 dies',card_cuantias:'Quanties LPGE 2025 per grup',atr_sub:'Meritaments pendents de liquidació · Triennis, revisions salarials, sentències',kpi_atr_pend:'Pendent liquidar',kpi_atr_exp:'3 expedients',kpi_atr_tri:'Per triennis',kpi_atr_tri_sub:'Reconeixement serveis previs',kpi_atr_liq:'Liquidats 2025',kpi_atr_liq_sub:'4 expedients tancats',kpi_atr_cred:'Sense crèdit actual',kpi_atr_cred_sub:'Marge 150.00',card_exp_atrasos:"Expedients d'endarreriments",cons_sub:'Capítol I · Despeses de personal · Arts. 120–169 TRLRHL',card_estado_part:'Estat per partida · Exercici 2025',nom_sub:'Setembre 2025 · 39 empleats actius',kpi_nom_bruto:'Total brut set.',kpi_nom_emp:'39 empleats',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Venç 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Venç 31/10/2025',kpi_nom_tri:'Triennis en nòmina',kpi_nom_tri_sub:'Meritats set.',card_det_nom:'Detall · Setembre 2025',ctrl_sub:'Semàfor · Projecció lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partides zona segura',kpi_ctrl_seg_sub:'<80% en mes 9',kpi_ctrl_at:'En atenció',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacants retingudes',kpi_ctrl_vac_sub:'8 vacants · no reassignable',card_proy:'Projecció lineal al tancament · Art. 173 TRLRHL',bloq_sub:'Control preventiu · Evitar compromisos sense crèdit disponible',kpi_bloq_act:'Bloqueigs actius',card_bloq_tipos:"Què es pot bloquejar des d'aquí?",inf_sub:'Documents oficials llestos per a Intervenció · Ple · Secretaria',onb_sub:'Assistent de càrrega inicial · 5 passos · Temps estimat: 1–3 dies hàbils',kpi_oblig_sub:'Obligat acumulat mes 9',kpi_oblig_delta:'Dada real comptable',sim_sub:'Modifica paràmetres en temps real · resultat immediat sobre crèdit disponible',sim_lbl_emp:'Empleats actius',sim_lbl_v1:'Cobrir vacant F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cobrir vacant L-002 (A2 · 44.200 €)',sim_lbl_sal:'Pujada salarial addicional',sim_lbl_tri:'Incloure triennis T4 compromesos',sim_lbl_atr:'Liquidar endarreriments pendents (12.650 €)',sim_lbl_mod:'Modificació crèdit 150.00',sim_lbl_res:'Restricció meritaments productivitat',sim_res_cred:'Crèdit disponible ajustat',sim_res_gasto:'Despesa estimada T4 (oct–des)',sim_res_final:'Resultat final estimat',sim_res_mensual:'Cost plantilla/mes',sim_res_tri:'Impacte triennis T4',sim_res_atr:'Impacte endarreriments',card_comparativa:'Comparativa de escenaris',emp_sub:'Registre de personal actiu amb antiguitat, triennis i situació administrativa',kpi_emp_activos:'Empleats actius',kpi_emp_sub:'De 47 llocs en plantilla',kpi_tri_anio:'Cost triennis/any',kpi_tri_sub:'Imputat a 120.00 / 130.00',kpi_tri_q4:'Triennis T4',kpi_tri_q4_sub:'+4.840 €/any des de T4',kpi_ant_media:'Antiguitat mitjana',kpi_ant_sub:'3,8 triennis/empleat',card_reg_emp:'Registre de empleats · Antiguitat i triennis',plan_sub:'47 llocs · Art. 126 TRLRHL i art. 90 EBEP',card_plantilla:'Plantilla · 47 llocs',rpt_sub:'Condicions retributives per lloc · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Llocs en RPT',kpi_rpt_sub1:"Tots els llocs de l'ens",kpi_masa_sal:'Massa salarial bruta',kpi_rpt_cred:'Crèdit definitiu Cap. I 2025',kpi_rpt_ce:'Compl. específic mig',kpi_rpt_ce_sub:'Mitjana ponderada per lloc',kpi_rpt_rev:'Darrera aprovació RPT',kpi_rpt_rev_sub:'Pendent revisió 2025',card_rpt:'RPT · Condicions retributives per lloc',card_tablas_lpge:'Taules retributives LPGE 2025 · Funcionaris',card_cd:'Nivells de Complement de Destinació · Art. 76 EBEP',tri_sub:'Meritats, propers a consolidar i impacte econòmic · LPGE 2025',kpi_masa_tri:'Massa salarial triennis',kpi_masa_tri_sub:'3,84% massa salarial total',kpi_tri_q4_2:'Triennis T4 (90 dies)',kpi_tri_q4_sub2:'+4.840 €/any addicional',kpi_imp120:'Impacte 120.00',kpi_imp120_sub:'Triennis funcionaris 2025',kpi_imp130:'Impacte 130.00',kpi_imp130_sub:'Triennis laborals 2025',card_prox_tri:'Propers triennis T4 · 90 dies',card_cuantias:'Quanties LPGE 2025 per grup',atr_sub:'Meritaments pendents de liquidació · Triennis, revisions salarials, sentències',kpi_atr_pend:'Pendent liquidar',kpi_atr_exp:'3 expedients',kpi_atr_tri:'Per triennis',kpi_atr_tri_sub:'Reconeixement serveis previs',kpi_atr_liq:'Liquidats 2025',kpi_atr_liq_sub:'4 expedients tancats',kpi_atr_cred:'Sense crèdit actual',kpi_atr_cred_sub:'Marge 150.00',card_exp_atrasos:"Expedients d'endarreriments",cons_sub:'Capítol I · Despeses de personal · Arts. 120–169 TRLRHL',card_estado_part:'Estat per partida · Exercici 2025',nom_sub:'Setembre 2025 · 39 empleats actius',kpi_nom_bruto:'Total brut set.',kpi_nom_emp:'39 empleats',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Venç 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Venç 31/10/2025',kpi_nom_tri:'Triennis en nòmina',kpi_nom_tri_sub:'Meritats set.',card_det_nom:'Detall · Setembre 2025',ctrl_sub:'Semàfor · Projecció lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partides zona segura',kpi_ctrl_seg_sub:'<80% en mes 9',kpi_ctrl_at:'En atenció',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacants retingudes',kpi_ctrl_vac_sub:'8 vacants · no reassignable',card_proy:'Projecció lineal al tancament · Art. 173 TRLRHL',bloq_sub:'Control preventiu · Evitar compromisos sense crèdit disponible',kpi_bloq_act:'Bloqueigs actius',card_bloq_tipos:"Què es pot bloquejar des d'aquí?",inf_sub:'Documents oficials llestos per a Intervenció · Ple · Secretaria',onb_sub:'Assistent de càrrega inicial · 5 passos · Temps estimat: 1–3 dies hàbils'}},
+  eu:{logo_tag:'aurrekontu kudeaketa · i. kap.',nav_decision:'Erabakia',nav_personal:'Pertsonala',nav_presupuesto:'Aurrekontua',nav_control:'Kontrola',nav_dashboard:'Aginte-taula',nav_simulador:'Simulagailua',nav_empleados:'Langileak',nav_plantilla:'Plantilla',nav_rpt:'RPT',nav_trienios:'Hirurtekoak',nav_atrasos:'Atzerapenak',nav_consignaciones:'Kontsignazioak',nav_nominas:'Nominak',nav_ccontrol:'Kreditu kontrola',nav_bloqueo:'Gastu blokeoa',nav_informes:'Txostenak',nav_alta:'Udal alta',tb_title:'Aginte-taula · Aurrekontu Erabaki Sistema',mes_lbl:'Hila',btn_informe:'📄 Txostena',meses:['Urtarrila','Otsaila','Martxoa','Apirila','Maiatza','Ekaina','Uztaila','Abuztua','Iraila','Urria','Azaroa','Abendua'],anio_completo:'📅 2025 urte osoa',back:'← Aginte-taula',i18n:{lbl_deficit_previsto:'Aurreikusitako defizita',lbl_fecha_ruptura:'Haustura data',lbl_credito_real:'Benetako kreditu erabilgarria',kpi_ejec:'% Benet. vs aurreikusita',kpi_desv:'Urteko desbideratzea',kpi_coste:'Kostu estrukturala',kpi_coyunt:'Kostu koiunturala',kpi_prob:'Desbid. probabilitatea',kpi_coste_sub:'Plantilla + trienio finkoak',kpi_coyunt_sub:'Produktibitatea + grat. + atzerapenak',kpi_coste_delta:'96% I. Kap.',kpi_coyunt_delta:'4% aldakorra',ca_title:'💰 Benetako kreditu erabilgarria',ca_badge:'DATU GAKOA',ca_bruto_lbl:'Erabilgarri gordina (ofiziala)',ca_bruto_sub:'Doitu gabeko datua',ca_atr_lbl:'— Onartutako atzerapenak',ca_atr_sub:'3 espediente baimenduak',ca_def_lbl:'— 150.00 defizita',ca_def_sub:'Produktibitate agortzea · urr.',ca_rev_lbl:'— Soldata berrikuspena',ca_rev_sub:'Estimatutako eragina 2025',ca_total_lbl:'Benetako kreditu egokitua',card_evolucion:'Hileko bilakaera',card_escenarios:'Abenduko itxiera eszenatokiak',card_estado:'Partidaren egoera',leg_real:'Erreala',leg_trienios:'Hirurtekoak',leg_proyeccion:'Proiekzioa',btn_back:'← Aginte-taula',sec_simulador:'Eszenatoki simulagailua',sec_empleados:'Langileak',sec_plantilla:'Plantilla organikoa',sec_rpt:'Lanpostuen Zerrenda (RPT)',sec_trienios:'Hirurtekoak · Antzinatasuna',sec_atrasos:'Atzerapenak',sec_consig:'Aurrekontu kontsignazioak',sec_nominas:'Nominak · Hileko likidazioa',sec_control:'Kreditu kontrola',sec_bloqueo:'Gastu blokeoa',sec_informes:'Txostenak eta esportazioa',sec_onboarding:'Udal berriaren alta',risk_actions_title:'⚡ GOMENDATUTAKO EKINTZAK · berehalako eragina',act_mod_credito:'🔧 150.00 kreditu aldaketa (produktibitatea)',act_vacante:'🚫 Ez bete F-003 lanpostua ekitaldi honetan',act_restringir:'📉 Mugatu produktibitate merituak',act_simular:'◎ Ekintza konbinazioa simulatu',btn_tramitar:'Tramitatu →',btn_bloquear:'Blokeatu →',btn_restringir:'Mugatu →',btn_simular:'Simulatu →',act_ver_esc:'Eszenatokiak ikusi',msg_critico:'🚨 150.00 PARTIDA AGORTUTA · {mes} · PREMIAZKO EKINTZA',msg_alerta:'⚠ AURREKONTU ARRISKUA AKTIBO · {mes}',msg_atencion:'⚡ AURREKONTU ARRETA · {mes}',msg_ok:'✓ BETEARAZPENA KONTROLATUTA · {mes}',narr_critico:'🚨 Egoera kritikoa.',narr_alerta:'Arazoa ez dago itxuraz dagoen lekuan.',narr_atencion:'Hasierako alerta seinaleak.',narr_ok:'Betearazpena lerrokatuta.',lbl_pct_ejec:'% erreala',lbl_esperado:'% aurreikusita hila',chip_anual:'📅 Urteko ikuspegia 2025',resumen_anual:'2025 URTEKO LABURPENA · EKITALDI OSOA',kpi_oblig_sub:'Metatutako betebeharra 9. hila',kpi_oblig_delta:'Datu erreal kontablea',sim_sub:'Aldatu parametroak denbora errealean · emaitza berehalakoa kreditu erabilgarrian',sim_lbl_emp:'Langile aktiboak',sim_lbl_v1:'F-003 lanpostua bete (A1 · 48.600 €)',sim_lbl_v2:'L-002 lanpostua bete (A2 · 44.200 €)',sim_lbl_sal:'Soldata igoera gehigarria',sim_lbl_tri:'T4 hirurtekoak barne hartzen ditu',sim_lbl_atr:'Atzerapen pendenteak likidatu (12.650 €)',sim_lbl_mod:'150.00 kreditu aldaketa',sim_lbl_res:'Produktibitate meritu murrizketa',sim_res_cred:'Kreditu erabilgarri egokitua',sim_res_gasto:'T4 gastu estimatua (urr–abe)',sim_res_final:'Azken emaitza estimatua',sim_res_mensual:'Plantilla kostua/hila',sim_res_tri:'T4 hirurtekoen eragina',sim_res_atr:'Atzeraenen eragina',card_comparativa:'Eszenatokien konparaketa',emp_sub:'Langile aktiboen erregistroa antzinatasunarekin, hirurtekoekin eta egoerarekin',kpi_emp_activos:'Langile aktiboak',kpi_emp_sub:'47 lanpostu plantillatik',kpi_tri_anio:'Trienio kostua/urte',kpi_tri_sub:'120.00 / 130.00-ri esleituta',kpi_tri_q4:'T4 hirurtekoak',kpi_tri_q4_sub:'+4.840 €/urte T4tik',kpi_ant_media:'Bataz besteko antzinatasuna',kpi_ant_sub:'3,8 hirurteko/langile',card_reg_emp:'Langileen erregistroa · Antzinatasuna eta hirurtekoak',plan_sub:'47 lanpostu · Art. 126 TRLRHL eta art. 90 EBEP',card_plantilla:'Plantilla · 47 lanpostu',rpt_sub:'Lanpostuaren ordainsari baldintzak · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Lanpostuak RPTn',kpi_rpt_sub1:'Erakundearen lanpostu guztiak',kpi_masa_sal:'Soldata masa gordina',kpi_rpt_cred:'Kapituluaren behin betiko kreditua I 2025',kpi_rpt_ce:'Batez besteko osagarri espezifikoa',kpi_rpt_ce_sub:'Lanpostuka pisatutako batez bestekoa',kpi_rpt_rev:'Azken RPT onarpena',kpi_rpt_rev_sub:'2025eko berrikuspena zain',card_rpt:'RPT · Lanpostuaren ordainsari baldintzak',card_tablas_lpge:'LPGE 2025 ordainsari taulak · Funtzionarioak',card_cd:'Helmuga Osagarriaren mailak · Art. 76 EBEP',tri_sub:'Meritaturikoak, sendotzear daudenak eta eragin ekonomikoa · LPGE 2025',kpi_masa_tri:'Hirurtekoen soldata masa',kpi_masa_tri_sub:'%3,84 soldata masa totala',kpi_tri_q4_2:'T4 hirurtekoak (90 egun)',kpi_tri_q4_sub2:'+4.840 €/urte gehigarri',kpi_imp120:'120.00 eragina',kpi_imp120_sub:'2025 funtzionario hirurtekoak',kpi_imp130:'130.00 eragina',kpi_imp130_sub:'2025 langile hirurtekoak',card_prox_tri:'Hurrengo T4 hirurtekoak · 90 egun',card_cuantias:'Taldearen arabera LPGE 2025 zenbatekoak',atr_sub:'Likidatzeko meritu pendenteak · Hirurtekoak, soldata berrikuspenak, epaiak',kpi_atr_pend:'Likidatzeko zain',kpi_atr_exp:'3 espediente',kpi_atr_tri:'Hirurtekoengatik',kpi_atr_tri_sub:'Aurretiazko zerbitzuen aitorpena',kpi_atr_liq:'2025 likidatuta',kpi_atr_liq_sub:'4 espediente itxita',kpi_atr_cred:'Oraingo kreditua gabe',kpi_atr_cred_sub:'150.00 tartea',card_exp_atrasos:'Atzerapen espedienteak',cons_sub:'I. Kapitulua · Langile gastuak · Arts. 120–169 TRLRHL',card_estado_part:'Partidaren egoera · 2025 ekitaldia',nom_sub:'2025 iraila · 39 langile aktibo',kpi_nom_bruto:'Iraileko guztira gordina',kpi_nom_emp:'39 langile',kpi_nom_irpf:'PFEZ · Mod. 111',kpi_nom_irpf_sub:'Muga 20/10/2025',kpi_nom_ss:'SS enpresa · TC2',kpi_nom_ss_sub:'Muga 31/10/2025',kpi_nom_tri:'Nominako hirurtekoak',kpi_nom_tri_sub:'Irailean meritaturikoak',card_det_nom:'Xehetasuna · 2025 iraila',ctrl_sub:'Semaforoa · Proiekzio lineala · Art. 173 TRLRHL',kpi_ctrl_seg:'Partida seguru gunean',kpi_ctrl_seg_sub:'<%80 9. hilean',kpi_ctrl_at:'Arretapean',kpi_ctrl_at_sub:'120.00 · %81',kpi_ctrl_crit:'Alerta kritikoa',kpi_ctrl_crit_sub:'150.00 · %93',kpi_ctrl_vac:'Erretenituriko lanpostu hutsak',kpi_ctrl_vac_sub:'8 lanpostu huts · berresleiezina',card_proy:'Itxierako proiekzio lineala · Art. 173 TRLRHL',bloq_sub:'Kontrol prebentiboa · Kreditu erabilgarririk gabeko konpromisoak saihestu',kpi_bloq_act:'Blokeo aktiboak',card_bloq_tipos:'Hemendik zer blokeatu daiteke?',inf_sub:'Dokumentu ofizialak prest Interbentziorako · Osoko Bilkurarako · Idazkaritzarako',onb_sub:'Hasierako karga laguntza · 5 urrats · Gutxi gorabeherako denbora: 1–3 egun lan',kpi_oblig_sub:'Metatutako betebeharra 9. hila',kpi_oblig_delta:'Datu erreal kontablea',sim_sub:'Aldatu parametroak denbora errealean · emaitza berehalakoa kreditu erabilgarrian',sim_lbl_emp:'Langile aktiboak',sim_lbl_v1:'F-003 lanpostua bete (A1 · 48.600 €)',sim_lbl_v2:'L-002 lanpostua bete (A2 · 44.200 €)',sim_lbl_sal:'Soldata igoera gehigarria',sim_lbl_tri:'T4 hirurtekoak barne hartzen ditu',sim_lbl_atr:'Atzerapen pendenteak likidatu (12.650 €)',sim_lbl_mod:'150.00 kreditu aldaketa',sim_lbl_res:'Produktibitate meritu murrizketa',sim_res_cred:'Kreditu erabilgarri egokitua',sim_res_gasto:'T4 gastu estimatua (urr–abe)',sim_res_final:'Azken emaitza estimatua',sim_res_mensual:'Plantilla kostua/hila',sim_res_tri:'T4 hirurtekoen eragina',sim_res_atr:'Atzeraenen eragina',card_comparativa:'Eszenatokien konparaketa',emp_sub:'Langile aktiboen erregistroa antzinatasunarekin, hirurtekoekin eta egoerarekin',kpi_emp_activos:'Langile aktiboak',kpi_emp_sub:'47 lanpostu plantillatik',kpi_tri_anio:'Trienio kostua/urte',kpi_tri_sub:'120.00 / 130.00-ri esleituta',kpi_tri_q4:'T4 hirurtekoak',kpi_tri_q4_sub:'+4.840 €/urte T4tik',kpi_ant_media:'Bataz besteko antzinatasuna',kpi_ant_sub:'3,8 hirurteko/langile',card_reg_emp:'Langileen erregistroa · Antzinatasuna eta hirurtekoak',plan_sub:'47 lanpostu · Art. 126 TRLRHL eta art. 90 EBEP',card_plantilla:'Plantilla · 47 lanpostu',rpt_sub:'Lanpostuaren ordainsari baldintzak · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Lanpostuak RPTn',kpi_rpt_sub1:'Erakundearen lanpostu guztiak',kpi_masa_sal:'Soldata masa gordina',kpi_rpt_cred:'Kapituluaren behin betiko kreditua I 2025',kpi_rpt_ce:'Batez besteko osagarri espezifikoa',kpi_rpt_ce_sub:'Lanpostuka pisatutako batez bestekoa',kpi_rpt_rev:'Azken RPT onarpena',kpi_rpt_rev_sub:'2025eko berrikuspena zain',card_rpt:'RPT · Lanpostuaren ordainsari baldintzak',card_tablas_lpge:'LPGE 2025 ordainsari taulak · Funtzionarioak',card_cd:'Helmuga Osagarriaren mailak · Art. 76 EBEP',tri_sub:'Meritaturikoak, sendotzear daudenak eta eragin ekonomikoa · LPGE 2025',kpi_masa_tri:'Hirurtekoen soldata masa',kpi_masa_tri_sub:'%3,84 soldata masa totala',kpi_tri_q4_2:'T4 hirurtekoak (90 egun)',kpi_tri_q4_sub2:'+4.840 €/urte gehigarri',kpi_imp120:'120.00 eragina',kpi_imp120_sub:'2025 funtzionario hirurtekoak',kpi_imp130:'130.00 eragina',kpi_imp130_sub:'2025 langile hirurtekoak',card_prox_tri:'Hurrengo T4 hirurtekoak · 90 egun',card_cuantias:'Taldearen arabera LPGE 2025 zenbatekoak',atr_sub:'Likidatzeko meritu pendenteak · Hirurtekoak, soldata berrikuspenak, epaiak',kpi_atr_pend:'Likidatzeko zain',kpi_atr_exp:'3 espediente',kpi_atr_tri:'Hirurtekoengatik',kpi_atr_tri_sub:'Aurretiazko zerbitzuen aitorpena',kpi_atr_liq:'2025 likidatuta',kpi_atr_liq_sub:'4 espediente itxita',kpi_atr_cred:'Oraingo kreditua gabe',kpi_atr_cred_sub:'150.00 tartea',card_exp_atrasos:'Atzerapen espedienteak',cons_sub:'I. Kapitulua · Langile gastuak · Arts. 120–169 TRLRHL',card_estado_part:'Partidaren egoera · 2025 ekitaldia',nom_sub:'2025 iraila · 39 langile aktibo',kpi_nom_bruto:'Iraileko guztira gordina',kpi_nom_emp:'39 langile',kpi_nom_irpf:'PFEZ · Mod. 111',kpi_nom_irpf_sub:'Muga 20/10/2025',kpi_nom_ss:'SS enpresa · TC2',kpi_nom_ss_sub:'Muga 31/10/2025',kpi_nom_tri:'Nominako hirurtekoak',kpi_nom_tri_sub:'Irailean meritaturikoak',card_det_nom:'Xehetasuna · 2025 iraila',ctrl_sub:'Semaforoa · Proiekzio lineala · Art. 173 TRLRHL',kpi_ctrl_seg:'Partida seguru gunean',kpi_ctrl_seg_sub:'<%80 9. hilean',kpi_ctrl_at:'Arretapean',kpi_ctrl_at_sub:'120.00 · %81',kpi_ctrl_crit:'Alerta kritikoa',kpi_ctrl_crit_sub:'150.00 · %93',kpi_ctrl_vac:'Erretenituriko lanpostu hutsak',kpi_ctrl_vac_sub:'8 lanpostu huts · berresleiezina',card_proy:'Itxierako proiekzio lineala · Art. 173 TRLRHL',bloq_sub:'Kontrol prebentiboa · Kreditu erabilgarririk gabeko konpromisoak saihestu',kpi_bloq_act:'Blokeo aktiboak',card_bloq_tipos:'Hemendik zer blokeatu daiteke?',inf_sub:'Dokumentu ofizialak prest Interbentziorako · Osoko Bilkurarako · Idazkaritzarako',onb_sub:'Hasierako karga laguntza · 5 urrats · Gutxi gorabeherako denbora: 1–3 egun lan'}},
+  gl:{logo_tag:'xestión orzamentaria · cap. i',nav_decision:'Decisión',nav_personal:'Persoal',nav_presupuesto:'Orzamento',nav_control:'Control',nav_dashboard:'Panel',nav_simulador:'Simulador',nav_empleados:'Empregados',nav_plantilla:'Cadro de persoal',nav_rpt:'RPT',nav_trienios:'Trienios',nav_atrasos:'Atrasos',nav_consignaciones:'Consignacións',nav_nominas:'Nóminas',nav_ccontrol:'Control crédito',nav_bloqueo:'Bloqueo de gasto',nav_informes:'Informes',nav_alta:'Alta concello',tb_title:'Panel · Sistema de Decisión Orzamentaria',mes_lbl:'Mes',btn_informe:'📄 Informe',meses:['Xaneiro','Febreiro','Marzo','Abril','Maio','Xuño','Xullo','Agosto','Setembro','Outubro','Novembro','Decembro'],anio_completo:'📅 Ano completo 2025',back:'← Panel',i18n:{lbl_deficit_previsto:'Déficit previsto',lbl_fecha_ruptura:'Data de ruptura',lbl_credito_real:'Crédito real dispoñible',kpi_ejec:'% Exec. real vs ideal',kpi_desv:'Desviación anual est.',kpi_coste:'Custo estrutural',kpi_coyunt:'Custo conxuntural',kpi_prob:'Prob. desviación',kpi_coste_sub:'Cadro de persoal + trienios',kpi_coyunt_sub:'Produtividade + grat. + atrasos',kpi_coste_delta:'96% do Cap. I',kpi_coyunt_delta:'4% variable',ca_title:'💰 Crédito dispoñible real',ca_badge:'DATO CLAVE',ca_bruto_lbl:'Dispoñible bruto (oficial)',ca_bruto_sub:'Dato sen axustar',ca_atr_lbl:'— Atrasos aprobados',ca_atr_sub:'3 expedientes habilitados',ca_def_lbl:'— Déficit 150.00',ca_def_sub:'Esgotamento produtividade · out.',ca_rev_lbl:'— Revisión salarial',ca_rev_sub:'Impacto estimado 2025',ca_total_lbl:'Crédito real axustado',card_evolucion:'Evolución mensual',card_escenarios:'Escenarios ao peche dec.',card_estado:'Estado por partida',leg_real:'Real',leg_trienios:'Trienios',leg_proyeccion:'Proxección',btn_back:'← Panel',sec_simulador:'Simulador de escenarios',sec_empleados:'Empregados',sec_plantilla:'Cadro de persoal',sec_rpt:'Relación de Postos de Traballo (RPT)',sec_trienios:'Trienios · Antigüidade',sec_atrasos:'Atrasos',sec_consig:'Consignacións Orzamentarias',sec_nominas:'Nóminas · Liquidación mensual',sec_control:'Control de Crédito',sec_bloqueo:'Bloqueo de gasto',sec_informes:'Informes e exportación',sec_onboarding:'Alta de novo concello',risk_actions_title:'⚡ ACCIÓNS RECOMENDADAS · impacto inmediato',act_mod_credito:'🔧 Modificación de crédito 150.00 (produtividade)',act_vacante:'🚫 Non cubrir vacante F-003 este exercicio',act_restringir:'📉 Restrinxir devindicacións produtividade pendentes',act_simular:'◎ Simular combinación de accións',btn_tramitar:'Tramitar →',btn_bloquear:'Bloquear →',btn_restringir:'Restrinxir →',btn_simular:'Simular →',act_ver_esc:'Ver escenarios',msg_critico:'🚨 PARTIDA 150.00 ESGOTADA · {mes} · ACCIÓN URXENTE',msg_alerta:'⚠ RISCO ORZAMENTARIO ACTIVO · {mes}',msg_atencion:'⚡ ATENCIÓN ORZAMENTARIA · {mes}',msg_ok:'✓ EXECUCIÓN CONTROLADA · {mes}',narr_critico:'🚨 Situación crítica.',narr_alerta:'O problema non está onde parece.',narr_atencion:'Sinais de alerta incipientes.',narr_ok:'Execución en liña.',lbl_pct_ejec:'% real',lbl_esperado:'% esperado mes',chip_anual:'📅 Vista anual 2025',resumen_anual:'RESUMO ANUAL 2025 · VISIÓN COMPLETA DO EXERCICIO',kpi_oblig_sub:'Obrigado acumulado mes 9',kpi_oblig_delta:'Dato real contable',sim_sub:'Modifica parámetros en tempo real · resultado inmediato sobre crédito dispoñible',sim_lbl_emp:'Empregados activos',sim_lbl_v1:'Cubrir vacante F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cubrir vacante L-002 (A2 · 44.200 €)',sim_lbl_sal:'Subida salarial adicional',sim_lbl_tri:'Incluír trienios Q4 comprometidos',sim_lbl_atr:'Liquidar atrasos pendentes (12.650 €)',sim_lbl_mod:'Modificación crédito 150.00',sim_lbl_res:'Restrición devindicacións produtividade',sim_res_cred:'Crédito dispoñible axustado',sim_res_gasto:'Gasto estimado Q4 (out–dec)',sim_res_final:'Resultado final estimado',sim_res_mensual:'Custo cadro de persoal/mes',sim_res_tri:'Impacto trienios Q4',sim_res_atr:'Impacto atrasos',card_comparativa:'Comparativa de escenarios',emp_sub:'Rexistro de persoal activo con antigüidade, trienios e situación administrativa',kpi_emp_activos:'Empregados activos',kpi_emp_sub:'De 47 postos en cadro de persoal',kpi_tri_anio:'Custo trienios/ano',kpi_tri_sub:'Imputado a 120.00 / 130.00',kpi_tri_q4:'Trienios Q4',kpi_tri_q4_sub:'+4.840 €/ano dende Q4',kpi_ant_media:'Antigüidade media',kpi_ant_sub:'3,8 trienios/empregado',card_reg_emp:'Rexistro de empregados · Antigüidade e trienios',plan_sub:'47 postos · Art. 126 TRLRHL e art. 90 EBEP',card_plantilla:'Cadro de persoal · 47 postos',rpt_sub:'Condicións retributivas por posto · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Postos en RPT',kpi_rpt_sub1:'Todos os postos do ente',kpi_masa_sal:'Masa salarial bruta',kpi_rpt_cred:'Crédito definitivo Cap. I 2025',kpi_rpt_ce:'Compl. específico medio',kpi_rpt_ce_sub:'Media ponderada por posto',kpi_rpt_rev:'Última aprobación RPT',kpi_rpt_rev_sub:'Pendente revisión 2025',card_rpt:'RPT · Condicións retributivas por posto',card_tablas_lpge:'Táboas retributivas LPGE 2025 · Funcionarios',card_cd:'Niveis de Complemento de Destino · Art. 76 EBEP',tri_sub:'Devindicados, próximos a consolidar e impacto económico · LPGE 2025',kpi_masa_tri:'Masa salarial trienios',kpi_masa_tri_sub:'3,84% masa salarial total',kpi_tri_q4_2:'Trienios Q4 (90 días)',kpi_tri_q4_sub2:'+4.840 €/ano adicional',kpi_imp120:'Impacto 120.00',kpi_imp120_sub:'Trienios funcionarios 2025',kpi_imp130:'Impacto 130.00',kpi_imp130_sub:'Trienios laborais 2025',card_prox_tri:'Próximos trienios Q4 · 90 días',card_cuantias:'Contías LPGE 2025 por grupo',atr_sub:'Devindicacións pendentes de liquidación · Trienios, revisións salariais, sentenzas',kpi_atr_pend:'Pendente liquidar',kpi_atr_exp:'3 expedientes',kpi_atr_tri:'Por trienios',kpi_atr_tri_sub:'Recoñecemento servizos previos',kpi_atr_liq:'Liquidados 2025',kpi_atr_liq_sub:'4 expedientes pechados',kpi_atr_cred:'Sen crédito actual',kpi_atr_cred_sub:'Marxe 150.00',card_exp_atrasos:'Expedientes de atrasos',cons_sub:'Capítulo I · Gastos de persoal · Arts. 120–169 TRLRHL',card_estado_part:'Estado por partida · Exercicio 2025',nom_sub:'Setembro 2025 · 39 empregados activos',kpi_nom_bruto:'Total bruto set.',kpi_nom_emp:'39 empregados',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Vence 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Vence 31/10/2025',kpi_nom_tri:'Trienios en nómina',kpi_nom_tri_sub:'Devindicados set.',card_det_nom:'Detalle · Setembro 2025',ctrl_sub:'Semáforo · Proxección lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partidas zona segura',kpi_ctrl_seg_sub:'<80% no mes 9',kpi_ctrl_at:'En atención',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacantes retidas',kpi_ctrl_vac_sub:'8 vacantes · non reasignable',card_proy:'Proxección lineal ao peche · Art. 173 TRLRHL',bloq_sub:'Control preventivo · Evitar compromisos sen crédito dispoñible',kpi_bloq_act:'Bloqueos activos',card_bloq_tipos:'Que pode bloquearse desde aquí?',inf_sub:'Documentos oficiais listos para Intervención · Pleno · Secretaría',onb_sub:'Asistente de carga inicial · 5 pasos · Tempo estimado: 1–3 días hábiles',kpi_oblig_sub:'Obrigado acumulado mes 9',kpi_oblig_delta:'Dato real contable',sim_sub:'Modifica parámetros en tempo real · resultado inmediato sobre crédito dispoñible',sim_lbl_emp:'Empregados activos',sim_lbl_v1:'Cubrir vacante F-003 (A1 · 48.600 €)',sim_lbl_v2:'Cubrir vacante L-002 (A2 · 44.200 €)',sim_lbl_sal:'Subida salarial adicional',sim_lbl_tri:'Incluír trienios Q4 comprometidos',sim_lbl_atr:'Liquidar atrasos pendentes (12.650 €)',sim_lbl_mod:'Modificación crédito 150.00',sim_lbl_res:'Restrición devindicacións produtividade',sim_res_cred:'Crédito dispoñible axustado',sim_res_gasto:'Gasto estimado Q4 (out–dec)',sim_res_final:'Resultado final estimado',sim_res_mensual:'Custo cadro de persoal/mes',sim_res_tri:'Impacto trienios Q4',sim_res_atr:'Impacto atrasos',card_comparativa:'Comparativa de escenarios',emp_sub:'Rexistro de persoal activo con antigüidade, trienios e situación administrativa',kpi_emp_activos:'Empregados activos',kpi_emp_sub:'De 47 postos en cadro de persoal',kpi_tri_anio:'Custo trienios/ano',kpi_tri_sub:'Imputado a 120.00 / 130.00',kpi_tri_q4:'Trienios Q4',kpi_tri_q4_sub:'+4.840 €/ano dende Q4',kpi_ant_media:'Antigüidade media',kpi_ant_sub:'3,8 trienios/empregado',card_reg_emp:'Rexistro de empregados · Antigüidade e trienios',plan_sub:'47 postos · Art. 126 TRLRHL e art. 90 EBEP',card_plantilla:'Cadro de persoal · 47 postos',rpt_sub:'Condicións retributivas por posto · Art. 74 EBEP · LPGE 2025',kpi_rpt_puestos:'Postos en RPT',kpi_rpt_sub1:'Todos os postos do ente',kpi_masa_sal:'Masa salarial bruta',kpi_rpt_cred:'Crédito definitivo Cap. I 2025',kpi_rpt_ce:'Compl. específico medio',kpi_rpt_ce_sub:'Media ponderada por posto',kpi_rpt_rev:'Última aprobación RPT',kpi_rpt_rev_sub:'Pendente revisión 2025',card_rpt:'RPT · Condicións retributivas por posto',card_tablas_lpge:'Táboas retributivas LPGE 2025 · Funcionarios',card_cd:'Niveis de Complemento de Destino · Art. 76 EBEP',tri_sub:'Devindicados, próximos a consolidar e impacto económico · LPGE 2025',kpi_masa_tri:'Masa salarial trienios',kpi_masa_tri_sub:'3,84% masa salarial total',kpi_tri_q4_2:'Trienios Q4 (90 días)',kpi_tri_q4_sub2:'+4.840 €/ano adicional',kpi_imp120:'Impacto 120.00',kpi_imp120_sub:'Trienios funcionarios 2025',kpi_imp130:'Impacto 130.00',kpi_imp130_sub:'Trienios laborais 2025',card_prox_tri:'Próximos trienios Q4 · 90 días',card_cuantias:'Contías LPGE 2025 por grupo',atr_sub:'Devindicacións pendentes de liquidación · Trienios, revisións salariais, sentenzas',kpi_atr_pend:'Pendente liquidar',kpi_atr_exp:'3 expedientes',kpi_atr_tri:'Por trienios',kpi_atr_tri_sub:'Recoñecemento servizos previos',kpi_atr_liq:'Liquidados 2025',kpi_atr_liq_sub:'4 expedientes pechados',kpi_atr_cred:'Sen crédito actual',kpi_atr_cred_sub:'Marxe 150.00',card_exp_atrasos:'Expedientes de atrasos',cons_sub:'Capítulo I · Gastos de persoal · Arts. 120–169 TRLRHL',card_estado_part:'Estado por partida · Exercicio 2025',nom_sub:'Setembro 2025 · 39 empregados activos',kpi_nom_bruto:'Total bruto set.',kpi_nom_emp:'39 empregados',kpi_nom_irpf:'IRPF · Mod. 111',kpi_nom_irpf_sub:'Vence 20/10/2025',kpi_nom_ss:'SS empresa · TC2',kpi_nom_ss_sub:'Vence 31/10/2025',kpi_nom_tri:'Trienios en nómina',kpi_nom_tri_sub:'Devindicados set.',card_det_nom:'Detalle · Setembro 2025',ctrl_sub:'Semáforo · Proxección lineal · Art. 173 TRLRHL',kpi_ctrl_seg:'Partidas zona segura',kpi_ctrl_seg_sub:'<80% no mes 9',kpi_ctrl_at:'En atención',kpi_ctrl_at_sub:'120.00 · 81%',kpi_ctrl_crit:'Alerta crítica',kpi_ctrl_crit_sub:'150.00 · 93%',kpi_ctrl_vac:'Vacantes retidas',kpi_ctrl_vac_sub:'8 vacantes · non reasignable',card_proy:'Proxección lineal ao peche · Art. 173 TRLRHL',bloq_sub:'Control preventivo · Evitar compromisos sen crédito dispoñible',kpi_bloq_act:'Bloqueos activos',card_bloq_tipos:'Que pode bloquearse desde aquí?',inf_sub:'Documentos oficiais listos para Intervención · Pleno · Secretaría',onb_sub:'Asistente de carga inicial · 5 pasos · Tempo estimado: 1–3 días hábiles'}}
 };
 const TITLES_I18N={
   es:{dashboard:'Dashboard · Sistema de Decisión Presupuestaria',simulador:'Simulador de Escenarios en Tiempo Real',empleados:'Empleados · Antigüedad y Trienios',plantilla:'Plantilla Orgánica · 47 puestos',rpt:'RPT · Relación de Puestos de Trabajo',trienios:'Trienios · Antigüedad · LPGE 2025',atrasos:'Atrasos · Devengos Pendientes',consignaciones:'Consignaciones Presupuestarias · Cap. I',nominas:'Nóminas · Liquidación Mensual',control:'Control de Crédito · Proyección',bloqueo:'Bloqueo de Gasto',informes:'Informes y Exportación',onboarding:'Alta de nuevo ayuntamiento'},
@@ -1368,6 +1368,203 @@ const TITLES_I18N={
 var LANG=localStorage.getItem('tg_lang')||'es';
 var TITLES=Object.assign({},TITLES_I18N.es);
 function refreshTitles(){var src=TITLES_I18N[LANG]||TITLES_I18N.es;Object.keys(src).forEach(function(k){TITLES[k]=src[k];});}
+
+// ── FULL TEXT TRANSLATION TABLE ──────────────────────────────────────
+const TX = {
+  'Empleado':{'ca':'Empleat','eu':'Langilea','gl':'Empregado'},
+  'Empleado · Puesto':{'ca':'Empleat · Lloc','eu':'Langilea · Lanpostua','gl':'Empregado · Posto'},
+  'Puesto / Grupo':{'ca':'Lloc / Grup','eu':'Lanpostua / Taldea','gl':'Posto / Grupo'},
+  'F. Ingreso':{'ca':'Data entrada','eu':'Sarrera data','gl':'Data ingreso'},
+  'Antigüedad':{'ca':'Antiguitat','eu':'Antzinatasuna','gl':'Antigüidade'},
+  'Trienios':{'ca':'Triennis','eu':'Hirurtekoak','gl':'Trienios'},
+  'Próx. trienio':{'ca':'Proper trienni','eu':'Hurrengo hirurtekoa','gl':'Próx. trienio'},
+  'Sit.':{'ca':'Sit.','eu':'Eg.','gl':'Sit.'},
+  'Puesto':{'ca':'Lloc','eu':'Lanpostua','gl':'Posto'},
+  'Grupo / Nivel CD':{'ca':'Grup / Nivell CD','eu':'Taldea / CD maila','gl':'Grupo / Nivel CD'},
+  'Tipo':{'ca':'Tipus','eu':'Mota','gl':'Tipo'},
+  'Estado':{'ca':'Estat','eu':'Egoera','gl':'Estado'},
+  'Empleado asignado':{'ca':'Empleat assignat','eu':'Esleitutako langilea','gl':'Empregado asignado'},
+  'Coste est.':{'ca':'Cost est.','eu':'Est. kostua','gl':'Custo est.'},
+  'Grupo':{'ca':'Grup','eu':'Taldea','gl':'Grupo'},
+  'Denominación':{'ca':'Denominació','eu':'Izendapena','gl':'Denominación'},
+  'Nivel CD':{'ca':'Nivell CD','eu':'CD maila','gl':'Nivel CD'},
+  'Compl. Destino':{'ca':'Compl. Destinació','eu':'Helburu osagarria','gl':'Compl. Destino'},
+  'Compl. Específico':{'ca':'Compl. Específic','eu':'Osagarri espezifikoa','gl':'Compl. Específico'},
+  'Retrib. básicas/año':{'ca':'Retrib. bàsiques/any','eu':'Oinarrizko retrib./urte','gl':'Retrib. básicas/ano'},
+  'Total retrib./año':{'ca':'Total retrib./any','eu':'Retrib. totala/urte','gl':'Total retrib./ano'},
+  'Trienio nº':{'ca':'Trienni nº','eu':'Hirurteko zk.','gl':'Trienio nº'},
+  'Fecha consol.':{'ca':'Data consol.','eu':'Finkatze data','gl':'Data consol.'},
+  'Trienio/mes':{'ca':'Trienni/mes','eu':'Hirurteko/hila','gl':'Trienio/mes'},
+  'Trienio/año':{'ca':'Trienni/any','eu':'Hirurteko/urte','gl':'Trienio/ano'},
+  'Sueldo/mes':{'ca':'Sou/mes','eu':'Soldata/hila','gl':'Soldo/mes'},
+  'Sueldo/año ×14':{'ca':'Sou/any ×14','eu':'Soldata/urte ×14','gl':'Soldo/ano ×14'},
+  'CD/mes':{'ca':'CD/mes','eu':'CD/hila','gl':'CD/mes'},
+  'CD/año':{'ca':'CD/any','eu':'CD/urte','gl':'CD/ano'},
+  'Grupos habituales':{'ca':'Grups habituals','eu':'Ohiko taldeak','gl':'Grupos habituais'},
+  'Expediente':{'ca':'Expedient','eu':'Espedientea','gl':'Expediente'},
+  'Concepto':{'ca':'Concepte','eu':'Kontzeptua','gl':'Concepto'},
+  'Período':{'ca':'Període','eu':'Aldia','gl':'Período'},
+  'Importe':{'ca':'Import','eu':'Zenbatekoa','gl':'Importe'},
+  'Acuerdo habilitante':{'ca':'Acord habilitant','eu':'Gaikuntza akordioa','gl':'Acordo habilitante'},
+  'Partida afectada':{'ca':'Partida afectada','eu':'Kaltetutako partida','gl':'Partida afectada'},
+  'Créd. inicial':{'ca':'Créd. inicial','eu':'Has. kreditua','gl':'Créd. inicial'},
+  'Créd. definitivo':{'ca':'Créd. definitiu','eu':'Behin bet. kreditua','gl':'Créd. definitivo'},
+  'Modif.':{'ca':'Modif.','eu':'Aldat.','gl':'Modif.'},
+  'Obligado':{'ca':'Obligat','eu':'Betebeharra','gl':'Obrigado'},
+  'Disponible':{'ca':'Disponible','eu':'Erabilgarria','gl':'Dispoñible'},
+  'Proy. dic.':{'ca':'Proj. des.','eu':'Abe. proiekzioa','gl':'Proy. dec.'},
+  'Fecha valor':{'ca':'Data valor','eu':'Balio data','gl':'Data valor'},
+  'Sueldo + compl.':{'ca':'Sou + compl.','eu':'Soldata + osagarriak','gl':'Soldo + compl.'},
+  'SS trab.':{'ca':'SS treb.','eu':'SS lan.','gl':'SS trab.'},
+  'Neto':{'ca':'Net','eu':'Garbia','gl':'Neto'},
+  'Bruto':{'ca':'Brut','eu':'Gordina','gl':'Bruto'},
+  'Obligado M9':{'ca':'Obligat M9','eu':'M9 betebeharra','gl':'Obrigado M9'},
+  'Margen ajustado':{'ca':'Marge ajustat','eu':'Tarte egokitua','gl':'Marxe axustado'},
+  'Tipo de bloqueo':{'ca':'Tipus de bloqueig','eu':'Blokeo mota','gl':'Tipo de bloqueo'},
+  'Bloqueo hasta':{'ca':'Bloqueig fins a','eu':'Blokeoa arte','gl':'Bloqueo ata'},
+  'Vigencia hasta':{'ca':'Vigència fins a','eu':'Indarra arte','gl':'Vixencia ata'},
+  'Motivo':{'ca':'Motiu','eu':'Arrazoia','gl':'Motivo'},
+  'Notificar a':{'ca':'Notificar a','eu':'Jakinarazi','gl':'Notificar a'},
+  'Resultado del escenario':{'ca':'Resultat de l\'escenari','eu':'Eszenatokiaren emaitza','gl':'Resultado do escenario'},
+  'Escenario':{'ca':'Escenari','eu':'Eszenatokia','gl':'Escenario'},
+  'Subida':{'ca':'Pujada','eu':'Igoera','gl':'Subida'},
+  'Mod. crédito':{'ca':'Mod. crèdit','eu':'Kred. aldat.','gl':'Mod. crédito'},
+  'Resultado':{'ca':'Resultat','eu':'Emaitza','gl':'Resultado'},
+  'Prob.':{'ca':'Prob.','eu':'Prob.','gl':'Prob.'},
+  'Ruptura':{'ca':'Ruptura','eu':'Haustura','gl':'Ruptura'},
+  'Días':{'ca':'Dies','eu':'Egunak','gl':'Días'},
+  'Vigencia':{'ca':'Vigència','eu':'Indarra','gl':'Vixencia'},
+  'Nombre y apellidos':{'ca':'Nom i cognoms','eu':'Izena eta abizenak','gl':'Nome e apelidos'},
+  'DNI / NIF':{'ca':'DNI / NIF','eu':'NAN / IFK','gl':'DNI / NIF'},
+  'Fecha de ingreso':{'ca':"Data d'entrada",'eu':'Sarrera data','gl':'Data de ingreso'},
+  'Trienios reconocidos':{'ca':'Triennis reconeguts','eu':'Onartutako hirurtekoak','gl':'Trienios recoñecidos'},
+  'Jornada':{'ca':'Jornada','eu':'Lanaldia','gl':'Xornada'},
+  'Situación':{'ca':'Situació','eu':'Egoera','gl':'Situación'},
+  'Nivel':{'ca':'Nivell','eu':'Maila','gl':'Nivel'},
+  'Cancelar':{'ca':'Cancel·lar','eu':'Utzi','gl':'Cancelar'},
+  'Guardar':{'ca':'Desar','eu':'Gorde','gl':'Gardar'},
+  'Cerrar':{'ca':'Tancar','eu':'Itxi','gl':'Pechar'},
+  'Entrar':{'ca':'Entrar','eu':'Sartu','gl':'Entrar'},
+  'Editar':{'ca':'Editar','eu':'Editatu','gl':'Editar'},
+  'Ver':{'ca':'Veure','eu':'Ikusi','gl':'Ver'},
+  'Liquidar':{'ca':'Liquidar','eu':'Likidatu','gl':'Liquidar'},
+  'Registrar':{'ca':'Registrar','eu':'Erregistratu','gl':'Rexistrar'},
+  'Registrar modificación':{'ca':'Registrar modificació','eu':'Aldaketa erregistratu','gl':'Rexistrar modificación'},
+  '+ Nuevo':{'ca':'+ Nou','eu':'+ Berri','gl':'+ Novo'},
+  '+ Nuevo bloqueo':{'ca':'+ Nou bloqueig','eu':'+ Blokeo berria','gl':'+ Novo bloqueo'},
+  '+ Nuevo puesto':{'ca':'+ Nou lloc','eu':'+ Lanpostu berria','gl':'+ Novo posto'},
+  'Aplicar escenario':{'ca':'Aplicar escenari','eu':'Eszenatokia aplikatu','gl':'Aplicar escenario'},
+  'Tramitar modificación crédito':{'ca':'Tramitar modificació crèdit','eu':'Kreditu aldaketa tramitatu','gl':'Tramitar modificación crédito'},
+  'Simular alternativas':{'ca':'Simular alternatives','eu':'Alternatibak simulatu','gl':'Simular alternativas'},
+  'Simular':{'ca':'Simular','eu':'Simulatu','gl':'Simular'},
+  'Modificar crédito':{'ca':'Modificar crèdit','eu':'Kreditua aldatu','gl':'Modificar crédito'},
+  'Bloquear cobertura':{'ca':'Bloquejar cobertura','eu':'Estaldura blokeatu','gl':'Bloquear cobertura'},
+  'Entendido':{'ca':'Entès','eu':'Ulertuta','gl':'Entendido'},
+  'Ver atrasos':{'ca':'Veure endarreriments','eu':'Atzerapenak ikusi','gl':'Ver atrasos'},
+  'Ver trienios':{'ca':'Veure triennis','eu':'Hirurtekoak ikusi','gl':'Ver trienios'},
+  'Ver impacto':{'ca':'Veure impacte','eu':'Eragina ikusi','gl':'Ver impacto'},
+  'Procesar nómina · Septiembre 2025':{'ca':'Processar nòmina · Setembre 2025','eu':'Nomina prozesatu · 2025 iraila','gl':'Procesar nómina · Setembro 2025'},
+  'Activo':{'ca':'Actiu','eu':'Aktiboa','gl':'Activo'},
+  'Vacante':{'ca':'Vacant','eu':'Lanpostu hutsa','gl':'Vacante'},
+  'Cubierto':{'ca':'Cobert','eu':'Beteta','gl':'Cuberto'},
+  'Pendiente':{'ca':'Pendent','eu':'Zain','gl':'Pendente'},
+  'Liquidado':{'ca':'Liquidat','eu':'Likidatua','gl':'Liquidado'},
+  'En curso':{'ca':'En curs','eu':'Martxan','gl':'En curso'},
+  'Levantado':{'ca':'Aixecat','eu':'Altxatua','gl':'Levantado'},
+  'Baja médica':{'ca':'Baixa mèdica','eu':'Mediku baja','gl':'Baixa médica'},
+  'Excedencia':{'ca':'Excedència','eu':'Eszedentzia','gl':'Excedencia'},
+  'Pend. Interventor':{'ca':'Pend. Interventor','eu':'Interb. zain','gl':'Pend. Interventor'},
+  'ALERTA':{'ca':'ALERTA','eu':'ALERTA','gl':'ALERTA'},
+  'Acceso restringido':{'ca':'Accés restringit','eu':'Sarbide mugatu','gl':'Acceso restrinxido'},
+  'Introduce la contraseña para acceder al módulo':{'ca':'Introdueix la contrasenya per accedir al mòdul','eu':'Sartu pasahitza modulura sartzeko','gl':'Introduce o contrasinal para acceder ao módulo'},
+  'Alta de nuevo empleado':{'ca':'Alta de nou empleat','eu':'Langile berriaren alta','gl':'Alta de novo empregado'},
+  '1. RESUMEN EJECUTIVO':{'ca':'1. RESUM EXECUTIU','eu':'1. LABURPEN EXEKUTIBOA','gl':'1. RESUMO EXECUTIVO'},
+  '2. RIESGO PRINCIPAL':{'ca':'2. RISC PRINCIPAL','eu':'2. ARRISKU NAGUSIA','gl':'2. RISCO PRINCIPAL'},
+  '3. TRIENIOS':{'ca':'3. TRIENNIS','eu':'3. HIRURTEKOAK','gl':'3. TRIENIOS'},
+  '4. PROPUESTA DE ACTUACIÓN':{'ca':"4. PROPOSTA D'ACTUACIÓ",'eu':'4. JARDUTEKO PROPOSAMENA','gl':'4. PROPOSTA DE ACTUACIÓN'},
+  'Acciones presupuestarias':{'ca':'Accions pressupostàries','eu':'Aurrekontu ekintzak','gl':'Accións orzamentarias'},
+  'Informe Cap. I completo':{'ca':'Informe Cap. I complet','eu':'I. Kap. txosten osoa','gl':'Informe Cap. I completo'},
+  'Con trienios, atrasos y proyección':{'ca':'Amb triennis, endarreriments i projecció','eu':'Hirurtekoekin eta proiekzioarekin','gl':'Con trienios, atrasos e proxección'},
+  'Informe RPT / Plantilla':{'ca':'Informe RPT / Plantilla','eu':'RPT / Plantilla txostena','gl':'Informe RPT / Cadro de persoal'},
+  'Estado puestos · BOP-ready':{'ca':'Estat llocs · BOP-preparat','eu':'Lanpostuen egoera · BOP-prest','gl':'Estado postos · BOP-listo'},
+  'Certificado Masa Salarial':{'ca':'Certificat Massa Salarial','eu':'Soldata Masa Ziurtagiria','gl':'Certificado Masa Salarial'},
+  'Art. 103 bis EBEP · Firmable':{'ca':'Art. 103 bis EBEP · Signable','eu':'Art. 103 bis EBEP · Sinagarria','gl':'Art. 103 bis EBEP · Firmable'},
+  'PDF firmable':{'ca':'PDF signable','eu':'PDF sinagarria','gl':'PDF firmable'},
+  'Ejercicio 2025':{'ca':'Exercici 2025','eu':'2025 ekitaldia','gl':'Exercicio 2025'},
+  'Datos del ente local':{'ca':"Dades de l'ens local",'eu':'Tokiko erakundearen datuak','gl':'Datos do ente local'},
+  'Plantilla + RPT':{'ca':'Plantilla + RPT','eu':'Plantilla + RPT','gl':'Cadro de persoal + RPT'},
+  'Empleados + trienios':{'ca':'Empleats + triennis','eu':'Langileak + hirurtekoak','gl':'Empregados + trienios'},
+  'Presupuesto Cap. I':{'ca':'Pressupost Cap. I','eu':'I. Kap. aurrekontua','gl':'Orzamento Cap. I'},
+  'Verificación y activación':{'ca':'Verificació i activació','eu':'Egiaztapena eta aktibatzea','gl':'Verificación e activación'},
+  'Peor':{'ca':'Pitjor','eu':'Txarrena','gl':'Peor'},
+  'Base':{'ca':'Base','eu':'Oinarria','gl':'Base'},
+  'Base (sin acción)':{'ca':'Base (sense acció)','eu':'Oinarria (ekintza gabe)','gl':'Base (sen acción)'},
+  'Óptimo':{'ca':'Òptim','eu':'Onena','gl':'Óptimo'},
+  'Óptimo (todas acciones)':{'ca':'Òptim (totes accions)','eu':'Onena (ekintza guztiak)','gl':'Óptimo (todas accións)'},
+  'Importe total (€)':{'ca':'Import total (€)','eu':'Guztirako zenbatekoa (€)','gl':'Importe total (€)'},
+  'Importe (€)':{'ca':'Import (€)','eu':'Zenbatekoa (€)','gl':'Importe (€)'},
+  'Fecha de pago':{'ca':'Data de pagament','eu':'Ordainketa data','gl':'Data de pago'},
+  'Fuente financiación':{'ca':'Font finançament','eu':'Finantzaketa iturria','gl':'Fonte financiamento'},
+  'Nº acuerdo':{'ca':'Nº acord','eu':'Akordio zk.','gl':'Nº acordo'},
+  'Observaciones':{'ca':'Observacions','eu':'Oharrak','gl':'Observacións'},
+  'Neto a percibir':{'ca':'Net a percebre','eu':'Jasotzeko garbia','gl':'Neto a percibir'},
+  'Conceptos':{'ca':'Conceptes','eu':'Kontzeptuak','gl':'Conceptos'},
+  'Trienios · Coste/año · Partida':{'ca':'Triennis · Cost/any · Partida','eu':'Hirurtekoak · Kostu/urte · Partida','gl':'Trienios · Custo/ano · Partida'},
+  '% IRPF':{'ca':'% IRPF','eu':'% PFEZ','gl':'% IRPF'},
+  '% Real':{'ca':'% Real','eu':'% Erreala','gl':'% Real'},
+  '% Esp.':{'ca':'% Esp.','eu':'% Aurreik.','gl':'% Esp.'},
+  'Probabilidad cierre en positivo':{'ca':'Probabilitat tancament en positiu','eu':'Positiboan itxierako probabilitatea','gl':'Probabilidade peche en positivo'},
+  'Retención IRPF estimada':{'ca':'Retenció IRPF estimada','eu':'PFEZ atxikipena estimatua','gl':'Retención IRPF estimada'},
+  'Retribuciones':{'ca':'Retribucions','eu':'Ordaintzapenak','gl':'Retribucións'},
+  'Revisión sal.':{'ca':'Revisió sal.','eu':'Sol. berrikuspena','gl':'Revisión sal.'},
+  'Revisión salarial LPGE 2025':{'ca':'Revisió salarial LPGE 2025','eu':'LPGE 2025 soldata berrikuspena','gl':'Revisión salarial LPGE 2025'},
+  'Convenio col.':{'ca':'Conveni col.','eu':'Hitzarmen kol.','gl':'Convenio col.'},
+  'Complemento convenio colectivo':{'ca':'Complement conveni col·lectiu','eu':'Hitzarmen kolektiboko osagarria','gl':'Complemento convenio colectivo'},
+  'incl. trienios':{'ca':'incl. triennis','eu':'hirurtek. barne','gl':'incl. trienios'},
+  'Ejec.':{'ca':'Exec.','eu':'Betearaz.','gl':'Exec.'},
+  'TOTAL':{'ca':'TOTAL','eu':'GUZTIRA','gl':'TOTAL'},
+  'Partida':{'ca':'Partida','eu':'Partida','gl':'Partida'},
+  'Descripción':{'ca':'Descripció','eu':'Deskribapena','gl':'Descrición'},
+  'Personal':{'ca':'Personal','eu':'Pertsonala','gl':'Persoal'},
+  'Crédito disponible actual':{'ca':'Crèdit disponible actual','eu':'Oraingo kreditu erabilgarria','gl':'Crédito dispoñible actual'},
+  'Fecha del acuerdo':{'ca':"Data de l'acord",'eu':'Akordioaren data','gl':'Data do acordo'},
+  'Período desde':{'ca':'Període des de','eu':'Aldiak','gl':'Período dende'},
+  'Período hasta':{'ca':'Període fins a','eu':'Aldia arte','gl':'Período ata'},
+  'Puesto a bloquear':{'ca':'Lloc a bloquejar','eu':'Blokeatzeko lanpostua','gl':'Posto a bloquear'},
+  'Ahorro estimado en el ejercicio':{'ca':"Estalvi estimat en l'exercici",'eu':'Ekitaldiko estimatutako aurrezpena','gl':'Aforro estimado no exercicio'},
+  'Mod. crédito mínima':{'ca':'Mod. crèdit mínima','eu':'Gutxieneko kred. aldat.','gl':'Mod. crédito mínima'},
+  'Generado desde los datos reales del sistema · listo para Intervención / Pleno':{'ca':"Generat des de les dades reals · llest per a Intervenció / Ple",'eu':'Sistemako datuetatik sortua · Interbentziorako prest','gl':'Xerado dos datos reais · listo para Intervención / Pleno'},
+  'Simulación en tiempo real · Capítulo I 2025':{'ca':'Simulació en temps real · Capítol I 2025','eu':'Denbora errealeko simulazioa · I. Kap. 2025','gl':'Simulación en tempo real · Capítulo I 2025'},
+  'Requiere integración con SicalWin/Seres. Disponible en roadmap 2026.':{'ca':'Requereix integració amb SicalWin/Seres. Disponible en roadmap 2026.','eu':'SicalWin/Seresekin integrazioa behar du. 2026 bidean.','gl':'Require integración con SicalWin/Seres. Dispoñible no roadmap 2026.'},
+};
+
+function translateNode(node, lang) {
+  try {
+    if (node.nodeType === 3) {
+      var orig = node.textContent;
+      var trimmed = orig.trim();
+      if (trimmed.length > 1 && TX[trimmed] && TX[trimmed][lang]) {
+        node.textContent = orig.replace(trimmed, TX[trimmed][lang]);
+      }
+    } else if (node.nodeType === 1) {
+      var tag = node.tagName ? node.tagName.toLowerCase() : '';
+      if (['script','style','input','select','textarea'].indexOf(tag) >= 0) return;
+      var children = Array.prototype.slice.call(node.childNodes);
+      for (var i = 0; i < children.length; i++) {
+        translateNode(children[i], lang);
+      }
+    }
+  } catch(e) {}
+}
+
+function translateDOM(lang) {
+  if (!lang || lang === 'es') return;
+  document.querySelectorAll('.view, .modal-ov, #pw-overlay').forEach(function(el) {
+    translateNode(el, lang);
+  });
+  var sidebar = document.querySelector('.sidebar');
+  if (sidebar) translateNode(sidebar, lang);
+}
 
 function applyLang(l){
   LANG=l;localStorage.setItem('tg_lang',l);refreshTitles();
@@ -1389,9 +1586,13 @@ function applyLang(l){
       if(T.i18n[key]!==undefined)el.textContent=T.i18n[key];
     });
   }
+  // Translate all remaining DOM text nodes
+  translateDOM(l);
   // Refresh dynamic dashboard content with new language
-  var sel=document.getElementById('sel-mes');
-  if(sel){var m=parseInt(sel.value);if(!isNaN(m)){if(m===12)setMesAnual();else setMes(m);}}
+  try {
+    var sel=document.getElementById('sel-mes');
+    if(sel){var m=parseInt(sel.value);if(!isNaN(m)){if(m===12)setMesAnual();else setMes(m);}}
+  } catch(e) { console.warn('applyLang refresh error:', e.message); }
 }
 
 // ── DATOS MENSUALES ──────────────────────────────────────────────────
@@ -1564,9 +1765,9 @@ function updateSim(){
   var atr=document.getElementById('si-atr').checked;
   var mod=parseInt(document.getElementById('si-mod').value);
   var res=document.getElementById('si-res').checked;
-  document.getElementById('sv-emp').textContent=emp;
-  document.getElementById('sv-sal').textContent=sal.toFixed(1)+'%';
-  document.getElementById('sv-mod').textContent=mod.toLocaleString('es-ES')+' €';
+  var sve=document.getElementById('sv-emp');if(sve)sve.textContent=emp;
+  var svs=document.getElementById('sv-sal');if(svs)svs.textContent=sal.toFixed(1)+'%';
+  var svm=document.getElementById('sv-mod');if(svm)svm.textContent=mod.toLocaleString('es-ES')+' €';
   var base=317910;var gastoBase=298470;
   var dEmp=(emp-39)*2800;var dSal=97860*(sal/100)*3;
   var credito=base+mod+(tri?0:1453)+(atr?0:12650);
@@ -1652,6 +1853,298 @@ function verEmp(id){
 }
 
 // ── NAV + UTILS ───────────────────────────────────────────────────────
+
+
+function descargarCSV(filename, csvContent) {
+  try {
+    var blob = new Blob(['\uFEFF' + csvContent], {type: 'text/csv;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename; a.style.display = 'none';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);}, 3000);
+  } catch(e) {
+    var a = document.createElement('a');
+    a.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent));
+    a.setAttribute('download', filename);
+    a.style.display = 'none';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+}
+
+function generarExcel(){
+  var T=LANGS[LANG]||LANGS.es;
+  var nomMes=T.meses[MES_ACTUAL]||MESES[MES_ACTUAL];
+  var credTot=PARTIDAS.reduce(function(s,p){return s+p.cred;},0);
+  var rows=[
+    ['INFORME PRESUPUESTARIO CAP. I · PERSONAL'],
+    ['Ayuntamiento de Villanueva del Río · Ejercicio 2025 · '+nomMes],
+    ['Generado',''+new Date().toLocaleDateString('es-ES')],
+    [''],
+    ['RESUMEN'],
+    ['Crédito definitivo',credTot],
+    ['Obligado acumulado',getTotalObligado(MES_ACTUAL)],
+    ['Crédito disponible bruto',credTot-getTotalObligado(MES_ACTUAL)],
+    ['Crédito ajustado real',Math.max(0,getCreditoAjustado(MES_ACTUAL))],
+    ['Déficit proyectado',getDeficit(MES_ACTUAL)],
+    ['Probabilidad desviación (%)',Math.round(getProbDesviacion(MES_ACTUAL))],
+    [''],
+    ['PARTIDAS PRESUPUESTARIAS'],
+    ['Código','Descripción','Crédito (€)','Obligado est. (€)','% Ejecución','Estado'],
+  ];
+  PARTIDAS.forEach(function(p){
+    var pct=p.pct[MES_ACTUAL];var pctV=pct===null?100:pct;
+    var lbl=pctV>=100?'AGOTADA':pctV>=85?'ALERTA':pctV>=75?'ATENCIÓN':'OK';
+    rows.push([p.cod,p.desc,p.cred,Math.round(pctV/100*p.cred),pctV,lbl]);
+  });
+  rows.push([''],['TRIENIOS Q4']);
+  rows.push(['Trienios que consolidan en Q4','4']);
+  rows.push(['Impacto trimestral (€)','1453']);
+  rows.push(['Impacto anual adicional (€)','4840']);
+  
+  var csv=rows.map(function(r){
+    return r.map(function(c){
+      var s=String(c===undefined?'':c);
+      return (s.indexOf(',')>=0||s.indexOf('"')>=0)?'"'+s.replace(/"/g,'""')+'"':s;
+    }).join(';');
+  }).join('\r\n');
+  
+  descargarCSV('informe-cap1-'+nomMes.toLowerCase().replace(/ /g,'-')+'-2025.csv', csv);
+  toast('📊 CSV descargado · abre con Excel');
+}
+
+
+function exportarEscenario(){
+  // Build scenario data from current sim values
+  var emp=parseInt(document.getElementById('si-emp').value)||39;
+  var sal=parseFloat(document.getElementById('si-sal').value)||0;
+  var tri=document.getElementById('si-tri').checked;
+  var atr=document.getElementById('si-atr').checked;
+  var mod=parseInt(document.getElementById('si-mod').value)||0;
+  var res=document.getElementById('si-res').checked;
+  var T=LANGS[LANG]||LANGS.es;
+  var nomMes=T.meses[MES_ACTUAL]||MESES[MES_ACTUAL];
+
+  var credito=317910+mod+(tri?0:1453)+(atr?0:12650);
+  var gasto=298470+(emp-39)*2800+97860*(sal/100)*3+(atr?12650:0)-(res?5200:0);
+  var resultado=credito-gasto;
+
+  var rows=[
+    ['ESCENARIO SIMULADO · CAP. I PERSONAL'],
+    ['Ayuntamiento de Villanueva del Río · Ejercicio 2025 · '+nomMes],
+    ['Exportado',''+new Date().toLocaleDateString('es-ES')],
+    [''],
+    ['PARÁMETROS DEL ESCENARIO'],
+    ['Empleados activos',emp],
+    ['Subida salarial adicional (%)',sal],
+    ['Incluir trienios Q4',tri?'Sí':'No'],
+    ['Liquidar atrasos pendientes',atr?'Sí':'No'],
+    ['Modificación crédito 150.00 (€)',mod],
+    ['Restringir devengos productividad',res?'Sí':'No'],
+    [''],
+    ['RESULTADO DEL ESCENARIO'],
+    ['Crédito disponible ajustado (€)',credito],
+    ['Gasto estimado Q4 (€)',gasto],
+    ['Resultado final (€)',resultado],
+    ['Probabilidad cierre positivo (%)',resultado>=0?Math.min(95,50+resultado/800*10):Math.max(5,50+resultado/800*10)],
+    [''],
+    ['INTERPRETACIÓN'],
+    ['Estado',resultado>=0?'VIABLE':'DÉFICIT PROYECTADO'],
+    ['Acción recomendada',resultado>=0?'Ejecución controlada':'Revisar partidas o tramitar modificación crédito'],
+  ];
+
+  var csv=rows.map(function(r){
+    return r.map(function(c){
+      var s=String(c===undefined?'':c);
+      return (s.indexOf(';')>=0||s.indexOf('"')>=0)?'"'+s.replace(/"/g,'""')+'"':s;
+    }).join(';');
+  }).join('\r\n');
+
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='escenario-simulador-'+nomMes.toLowerCase()+'-2025.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},5000);
+  toast('↓ Escenario exportado como CSV · abre con Excel');
+}
+
+function generarInformeEscenario(){
+  var emp=parseInt(document.getElementById('si-emp').value)||39;
+  var sal=parseFloat(document.getElementById('si-sal').value)||0;
+  var tri=document.getElementById('si-tri').checked;
+  var atr=document.getElementById('si-atr').checked;
+  var mod=parseInt(document.getElementById('si-mod').value)||0;
+  var res=document.getElementById('si-res').checked;
+  var T=LANGS[LANG]||LANGS.es;
+  var nomMes=T.meses[MES_ACTUAL]||MESES[MES_ACTUAL];
+
+  var credito=317910+mod+(tri?0:1453)+(atr?0:12650);
+  var gasto=298470+(emp-39)*2800+97860*(sal/100)*3+(atr?12650:0)-(res?5200:0);
+  var resultado=credito-gasto;
+  var ok=resultado>=0;
+  var col=ok?'var(--green)':'var(--red)';
+
+  var bodyHTML=
+    '<div style="padding-bottom:16px;border-bottom:2px solid var(--acc);margin-bottom:20px">'+
+      '<div style="font-size:20px;font-weight:900;color:var(--acc)">tugesto</div>'+
+      '<div style="font-size:16px;font-weight:800;margin-top:2px">Informe de Escenario Simulado · Cap. I</div>'+
+      '<div style="font-size:12px;color:var(--t3);margin-top:2px">Ayuntamiento de Villanueva del Río · '+nomMes+' 2025 · '+new Date().toLocaleDateString('es-ES')+'</div>'+
+    '</div>'+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin-bottom:10px">PARÁMETROS SIMULADOS</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px">'+
+      '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:5px 8px;color:var(--t3)">Empleados activos</td><td style="padding:5px 8px;font-family:var(--mono);text-align:right">'+emp+'</td></tr>'+
+      '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:5px 8px;color:var(--t3)">Subida salarial adicional</td><td style="padding:5px 8px;font-family:var(--mono);text-align:right">'+sal.toFixed(1)+'%</td></tr>'+
+      '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:5px 8px;color:var(--t3)">Trienios Q4 incluidos</td><td style="padding:5px 8px;font-family:var(--mono);text-align:right">'+(tri?'✓ Sí':'✗ No')+'</td></tr>'+
+      '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:5px 8px;color:var(--t3)">Atrasos liquidados</td><td style="padding:5px 8px;font-family:var(--mono);text-align:right">'+(atr?'✓ Sí':'✗ No')+'</td></tr>'+
+      '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:5px 8px;color:var(--t3)">Modificación crédito 150.00</td><td style="padding:5px 8px;font-family:var(--mono);text-align:right">'+fmt(mod)+' €</td></tr>'+
+      '<tr><td style="padding:5px 8px;color:var(--t3)">Restricción devengos productividad</td><td style="padding:5px 8px;font-family:var(--mono);text-align:right">'+(res?'✓ Sí':'✗ No')+'</td></tr>'+
+    '</table>'+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin-bottom:10px">RESULTADO DEL ESCENARIO</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center">'+
+        '<div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Crédito disponible</div>'+
+        '<div style="font-size:16px;font-weight:800;font-family:var(--mono)">'+fmt(credito)+' €</div>'+
+      '</div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center">'+
+        '<div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Gasto estimado Q4</div>'+
+        '<div style="font-size:16px;font-weight:800;font-family:var(--mono)">'+fmt(gasto)+' €</div>'+
+      '</div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center">'+
+        '<div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Resultado final</div>'+
+        '<div style="font-size:16px;font-weight:800;font-family:var(--mono);color:'+col+'">'+(ok?'+':'')+fmt(resultado)+' €</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="background:'+(ok?'rgba(46,234,138,.1)':'rgba(255,90,90,.1)')+';border:1px solid '+(ok?'rgba(46,234,138,.3)':'rgba(255,90,90,.3)')+';border-radius:6px;padding:12px 16px;font-size:12px">'+
+      (ok?'<strong style="color:var(--green)">✓ ESCENARIO VIABLE:</strong> Con estos parámetros el Capítulo I cierra en positivo. Margen de '+fmt(resultado)+' €.':
+          '<strong style="color:var(--red)">⚠ ESCENARIO CON DÉFICIT:</strong> Se proyecta un déficit de '+fmt(Math.abs(resultado))+' €. Revisar parámetros o tramitar modificación presupuestaria.')+
+    '</div>'+
+    '<div style="margin-top:20px;padding-top:12px;border-top:1px solid var(--b2);font-size:10px;color:var(--t3)">'+
+      'Simulación generada por tugesto · Módulo Gestión Presupuestaria · Datos orientativos para toma de decisión'+
+    '</div>';
+
+  var titleEl=document.getElementById('m-informe-title');
+  if(titleEl)titleEl.textContent='📄 Informe Escenario Simulado · '+nomMes+' 2025';
+  var bodyEl=document.getElementById('m-informe-body');
+  if(bodyEl)bodyEl.innerHTML=bodyHTML;
+  openM('m-informe');
+}
+
+function generarCertificadoMasa(){
+  var credTot=PARTIDAS.reduce(function(s,p){return s+p.cred;},0);
+  var masaSalarial=559400;
+  var bodyHTML=
+    '<div style="padding-bottom:16px;border-bottom:2px solid var(--acc);margin-bottom:20px">'+
+      '<div style="font-size:20px;font-weight:900;color:var(--acc)">tugesto</div>'+
+      '<div style="font-size:16px;font-weight:800;margin-top:2px">Certificado de Masa Salarial</div>'+
+      '<div style="font-size:12px;color:var(--t3);margin-top:2px">Ayuntamiento de Villanueva del Río · Ejercicio 2025 · Art. 103 bis EBEP</div>'+
+    '</div>'+
+    '<div style="background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:8px;padding:16px;margin-bottom:16px;font-size:12px;line-height:2">'+
+      '<div style="font-weight:700;margin-bottom:10px;font-size:13px">D./Dña. <span style="border-bottom:1px solid var(--t3);padding:0 40px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>, Interventor/a del Ayuntamiento de Villanueva del Río,</div>'+
+      '<p style="margin:0 0 10px"><strong>CERTIFICA</strong> que la masa salarial del personal de este Ayuntamiento para el ejercicio 2025, aprobada por el Pleno en sesión de <span style="border-bottom:1px solid var(--t3)">03/2024</span>, asciende a las cuantías que se detallan:</p>'+
+    '</div>'+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin-bottom:8px">DESGLOSE DE LA MASA SALARIAL 2025</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px">'+
+      '<thead><tr style="background:rgba(255,255,255,.05)">'+
+        '<th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--t3)">Concepto</th>'+
+        '<th style="padding:6px 8px;text-align:right;font-size:10px;text-transform:uppercase;color:var(--t3)">Importe anual (€)</th>'+
+        '<th style="padding:6px 8px;text-align:right;font-size:10px;text-transform:uppercase;color:var(--t3)">% sobre total</th>'+
+      '</tr></thead>'+
+      '<tbody>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px">Retribuciones básicas (sueldos y pagas extra)</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">432.000 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">77,2%</td></tr>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px">Complemento de destino</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">68.400 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">12,2%</td></tr>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px">Complemento específico</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">42.500 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">7,6%</td></tr>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px">Trienios consolidados</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">16.500 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">3,0%</td></tr>'+
+        '<tr style="font-weight:800;border-top:2px solid var(--b1)"><td style="padding:6px 8px">TOTAL MASA SALARIAL</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono);color:var(--acc)">559.400 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">100%</td></tr>'+
+      '</tbody>'+
+    '</table>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px">'+
+        '<div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Personal funcionario</div>'+
+        '<div style="font-size:14px;font-weight:800;font-family:var(--mono)">432.000 €/año</div>'+
+        '<div style="font-size:11px;color:var(--t3)">Part. 120.00 y 121.00 · 33 puestos</div>'+
+      '</div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px">'+
+        '<div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Personal laboral</div>'+
+        '<div style="font-size:14px;font-weight:800;font-family:var(--mono)">127.400 €/año</div>'+
+        '<div style="font-size:11px;color:var(--t3)">Part. 130.00 y 131.00 · 6 puestos</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:8px;padding:16px;font-size:12px;line-height:1.8;margin-bottom:16px">'+
+      '<p style="margin:0 0 8px">Lo que se certifica a los efectos previstos en el <strong>artículo 103 bis de la Ley 7/2007, de 12 de abril, del Estatuto Básico del Empleado Público</strong> (TREBEP, RDL 5/2015) y concordantes de la Ley de Presupuestos Generales del Estado 2025.</p>'+
+      '<p style="margin:0">La masa salarial no supera los límites establecidos por la LPGE 2025 para el conjunto de las Administraciones Públicas.</p>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;font-size:12px">'+
+      '<div style="text-align:center;padding:16px;border:1px solid var(--b1);border-radius:8px">'+
+        '<div style="color:var(--t3);margin-bottom:40px">El/La Interventor/a Municipal</div>'+
+        '<div style="border-top:1px solid var(--t2);padding-top:8px">Firma y sello</div>'+
+      '</div>'+
+      '<div style="text-align:center;padding:16px;border:1px solid var(--b1);border-radius:8px">'+
+        '<div style="color:var(--t3);margin-bottom:8px">Villanueva del Río, a</div>'+
+        '<div style="border-bottom:1px solid var(--t3);margin:0 16px 8px"></div>'+
+        '<div style="color:var(--t3);font-size:11px">de 2025</div>'+
+        '<div style="margin-top:30px;border-top:1px solid var(--t2);padding-top:8px">El/La Alcalde/sa</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--b2);font-size:10px;color:var(--t3)">'+
+      'Art. 103 bis TREBEP (RDL 5/2015) · LPGE 2025 · Pleno 03/2024 · tugesto módulo presupuestario v5'+
+    '</div>';
+
+  var titleEl=document.getElementById('m-informe-title');
+  if(titleEl)titleEl.textContent='📋 Certificado Masa Salarial · Ayto. Villanueva del Río · 2025';
+  var bodyEl=document.getElementById('m-informe-body');
+  if(bodyEl)bodyEl.innerHTML=bodyHTML;
+  openM('m-informe');
+}
+
+function generarInformeRPT(){
+
+
+  var T=LANGS[LANG]||LANGS.es;
+  var bodyHTML=
+    '<div style="padding-bottom:16px;border-bottom:2px solid var(--acc);margin-bottom:20px">'+
+      '<div style="font-size:20px;font-weight:900;color:var(--acc)">tugesto</div>'+
+      '<div style="font-size:16px;font-weight:800;margin-top:2px">Relación de Puestos de Trabajo (RPT)</div>'+
+      '<div style="font-size:12px;color:var(--t3);margin-top:2px">Ayuntamiento de Villanueva del Río · Ejercicio 2025 · Aprobada Pleno 03/2024</div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center"><div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Puestos totales</div><div style="font-size:18px;font-weight:800">47</div></div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center"><div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Cubiertos</div><div style="font-size:18px;font-weight:800;color:var(--green)">39</div></div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center"><div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Vacantes</div><div style="font-size:18px;font-weight:800;color:var(--yellow)">8</div></div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center"><div style="font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Masa salarial</div><div style="font-size:14px;font-weight:800;font-family:var(--mono)">559.400 €/a</div></div>'+
+    '</div>'+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin-bottom:8px">DISTRIBUCIÓN POR GRUPOS</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px">'+
+      '<thead><tr style="background:rgba(255,255,255,.05)">'+
+        '<th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--t3)">Grupo</th>'+
+        '<th style="padding:6px 8px;text-align:center;font-size:10px;text-transform:uppercase;color:var(--t3)">Puestos</th>'+
+        '<th style="padding:6px 8px;text-align:right;font-size:10px;text-transform:uppercase;color:var(--t3)">Sueldo base/mes</th>'+
+        '<th style="padding:6px 8px;text-align:right;font-size:10px;text-transform:uppercase;color:var(--t3)">Trienio/mes</th>'+
+      '</tr></thead>'+
+      '<tbody>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px"><span class="badge b-b">A1</span></td><td style="padding:6px 8px;text-align:center">3</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">1.676,96 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">55 €</td></tr>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px"><span class="badge b-b">A2</span></td><td style="padding:6px 8px;text-align:center">2</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">1.438,47 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">44 €</td></tr>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px"><span class="badge b-g">C1</span></td><td style="padding:6px 8px;text-align:center">31</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">1.171,00 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">35 €</td></tr>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px"><span class="badge b-y">C2</span></td><td style="padding:6px 8px;text-align:center">9</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">997,00 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">26 €</td></tr>'+
+        '<tr><td style="padding:6px 8px"><span class="badge b-x">E/AP</span></td><td style="padding:6px 8px;text-align:center">2</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">848,00 €</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">21 €</td></tr>'+
+      '</tbody>'+
+    '</table>'+
+    '<div style="font-size:11px;color:var(--t3);padding:10px;background:rgba(255,255,255,.04);border-radius:6px;margin-bottom:12px">'+
+      'RPT aprobada en sesión plenaria 03/2024. Cuantías según LPGE 2025. '+
+      '8 vacantes con crédito retenido total de 119.200 €, no disponible para reasignación sin expediente de modificación presupuestaria.'+
+    '</div>'+
+    '<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--b2);font-size:10px;color:var(--t3)">'+
+      'Art. 74 EBEP · Art. 126 TRLRHL 2/2004 · LPGE 2025 · Datos según acuerdo Pleno 03/2024'+
+    '</div>';
+
+  var titleEl=document.getElementById('m-informe-title');
+  if(titleEl)titleEl.textContent='📄 Informe RPT · Ayto. Villanueva del Río · 2025';
+  var bodyEl=document.getElementById('m-informe-body');
+  if(bodyEl)bodyEl.innerHTML=bodyHTML;
+  openM('m-informe');
+}
+
+
 function nav(el,id){document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('active');});var v=document.getElementById('view-'+id);if(v)v.classList.add('active');if(el&&el.classList)el.classList.add('active');refreshTitles();document.getElementById('tb-title').textContent=TITLES[id]||'';}
 function navTo(id){var ni=document.querySelector('[data-ni="nav_'+id+'"]')||document.querySelector('.ni[onclick*="\''+id+'\'"]');nav(ni,id);}
 function openM(id){var m=document.getElementById(id);if(m)m.classList.add('open');}
@@ -1661,7 +2154,146 @@ function toast(msg,col){var t=document.getElementById('toast');t.textContent=msg
 function filterTable(inp,id){var q=inp.value.toLowerCase();document.querySelectorAll('#'+id+' tbody tr').forEach(function(r){r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});}
 function verPuesto(cod,denom,grupo,nivel,tipo,estado,empleado,coste,partida,provision,trieniosInfo){document.getElementById('dpuesto-title').textContent=cod+' · '+denom;var esVac=estado==='Vacante';document.getElementById('dp-tipo').innerHTML='<span class="badge b-b">'+tipo+'</span> <span class="badge '+(esVac?'b-y':'b-g')+'">'+estado+'</span>';document.getElementById('dp-emp').textContent=empleado;document.getElementById('dp-grupo').textContent='Grupo '+grupo+' · Nivel CD '+nivel;document.getElementById('dp-prov').textContent=provision+' · '+trieniosInfo;document.getElementById('dp-coste').innerHTML='<div style="display:flex;gap:24px;flex-wrap:wrap"><div><div class="kpi-lbl">Coste anual estimado</div><div class="mono c-a" style="font-size:18px;font-weight:800">'+coste+' €</div></div><div><div class="kpi-lbl">Partida</div><div class="mono" style="font-size:16px">'+partida+'</div></div>'+(esVac?'<div><div class="kpi-lbl">Crédito retenido</div><div class="mono c-y">'+coste+' € · No reasignable sin mod.</div></div>':'')+'</div>';openM('m-detalle-puesto');}
 function confirmarNomina(){closeM('m-procesar-nomina');var el=document.getElementById('nomina-estado');if(el){el.textContent='Procesada';el.className='badge b-g';}toast('✓ Nómina procesada');}
-function generarInforme(){toast('📄 Generando informe '+MESES[MES_ACTUAL]+' 2025...');}
+function generarInforme(){
+  var T=LANGS[LANG]||LANGS.es;
+  var nomMes=T.meses[MES_ACTUAL]||MESES[MES_ACTUAL];
+  var credTot=PARTIDAS.reduce(function(s,p){return s+p.cred;},0);
+  var obligado=getTotalObligado(MES_ACTUAL);
+  var creditoAjustado=getCreditoAjustado(MES_ACTUAL);
+  var deficit=getDeficit(MES_ACTUAL);
+  var nivel=getNivelRiesgo(MES_ACTUAL);
+  var prob=getProbDesviacion(MES_ACTUAL);
+  var pctReal=(obligado/credTot*100).toFixed(1);
+  var nivelLabel={critico:'CRÍTICO',alerta:'RIESGO ACTIVO',atencion:'ATENCIÓN',ok:'EN CONTROL'}[nivel];
+  var nivelColor={critico:'#ff5a5a',alerta:'#ff5a5a',atencion:'#ffd033',ok:'#2eea8a'}[nivel];
+
+  var filaPartidas=PARTIDAS.map(function(p){
+    var pct=p.pct[MES_ACTUAL];var pctV=pct===null?100:pct;
+    var col=pctV>=100?'#ff5a5a':pctV>=85?'#ff5a5a':pctV>=75?'#ffd033':'#2eea8a';
+    var lbl=pctV>=100?'AGOTADA':pctV>=85?'ALERTA':pctV>=75?'ATENCIÓN':'OK';
+    return '<tr style="border-bottom:1px solid #eee"><td style="font-family:monospace;padding:6px 8px">'+p.cod+'</td>'+
+      '<td style="padding:6px 8px">'+p.desc+'</td>'+
+      '<td style="text-align:right;font-family:monospace;padding:6px 8px">'+fmt(p.cred)+' €</td>'+
+      '<td style="text-align:right;font-family:monospace;padding:6px 8px">'+fmt(Math.round(pctV/100*p.cred))+' €</td>'+
+      '<td style="text-align:center;padding:6px 8px"><span style="background:'+col+'33;color:'+col+';padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700">'+lbl+'</span></td></tr>';
+  }).join('');
+
+  var bodyHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:2px solid var(--acc);margin-bottom:20px">'+
+      '<div>'+
+        '<div style="font-size:20px;font-weight:900;color:var(--acc)">tugesto</div>'+
+        '<div style="font-size:16px;font-weight:800;margin-top:2px">Informe Presupuestario · Capítulo I Personal</div>'+
+        '<div style="font-size:12px;color:var(--t3);margin-top:2px">Ayuntamiento de Villanueva del Río · Ejercicio 2025 · '+nomMes+'</div>'+
+      '</div>'+
+      '<div style="text-align:right">'+
+        '<span style="background:'+nivelColor+'22;color:'+nivelColor+';padding:4px 12px;border-radius:4px;font-size:12px;font-weight:700;border:1px solid '+nivelColor+'66">'+nivelLabel+'</span>'+
+        '<div style="font-size:11px;color:var(--t3);margin-top:6px">'+new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})+'</div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center">'+
+        '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">Crédito definitivo</div>'+
+        '<div style="font-size:15px;font-weight:800;font-family:var(--mono)">'+fmt(credTot)+' €</div>'+
+      '</div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center">'+
+        '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">Obligado '+nomMes+'</div>'+
+        '<div style="font-size:15px;font-weight:800;font-family:var(--mono);color:'+(pctReal>80?'var(--red)':'var(--green)')+'">'+fmt(obligado)+' €</div>'+
+        '<div style="font-size:10px;color:var(--t3)">'+pctReal+'% ejecutado</div>'+
+      '</div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center">'+
+        '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">Crédito ajustado</div>'+
+        '<div style="font-size:15px;font-weight:800;font-family:var(--mono);color:'+(creditoAjustado<100000?'var(--yellow)':'var(--green)')+'">'+fmt(Math.max(0,creditoAjustado))+' €</div>'+
+      '</div>'+
+      '<div style="border:1px solid var(--b1);border-radius:8px;padding:12px;text-align:center">'+
+        '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">Prob. desviación</div>'+
+        '<div style="font-size:15px;font-weight:800;font-family:var(--mono);color:'+(prob>70?'var(--red)':prob>40?'var(--yellow)':'var(--green)')+'">'+Math.round(prob)+'%</div>'+
+      '</div>'+
+    '</div>'+
+
+    (deficit>0?
+      '<div style="background:rgba(255,90,90,.12);border:1px solid rgba(255,90,90,.4);border-radius:6px;padding:12px 16px;margin-bottom:16px;font-size:12px">'+
+        '<strong style="color:var(--red)">⚠ ATENCIÓN INTERVENTOR/A:</strong> Déficit proyectado a cierre de diciembre de <strong>'+fmt(deficit)+' €</strong>. '+
+        'Partida 150.00 (Productividad) se agota en octubre 2025. Se recomienda tramitar modificación presupuestaria urgente (art. 179 TRLRHL).'+
+      '</div>':
+      '<div style="background:rgba(46,234,138,.1);border:1px solid rgba(46,234,138,.3);border-radius:6px;padding:12px 16px;margin-bottom:16px;font-size:12px">'+
+        '<strong style="color:var(--green)">✓ EJECUCIÓN CONTROLADA:</strong> No se prevén desviaciones significativas a cierre del ejercicio.'+
+      '</div>')+
+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--b1)">1. RESUMEN EJECUTIVO</div>'+
+    '<p style="margin:0 0 10px;font-size:12px">El Capítulo I presenta una ejecución del <strong>'+pctReal+'%</strong> sobre el crédito definitivo de '+fmt(credTot)+' €, '+
+    (MES_ACTUAL>=9?'proyección a cierre de diciembre.':'coherente con el mes '+(MES_ACTUAL+1)+'.')+
+    ' El crédito disponible ajustado real es de <strong>'+fmt(Math.max(0,creditoAjustado))+' €</strong>'+
+    (deficit>0?', con un déficit proyectado de <strong>'+fmt(deficit)+' €</strong> en la partida 150.00.':'.')+
+    '</p>'+
+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--b1)">2. ESTADO POR PARTIDA</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px">'+
+      '<thead><tr style="background:rgba(255,255,255,.05)">'+
+        '<th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)">Código</th>'+
+        '<th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)">Descripción</th>'+
+        '<th style="padding:6px 8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)">Crédito</th>'+
+        '<th style="padding:6px 8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)">Obligado est.</th>'+
+        '<th style="padding:6px 8px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--t3)">Estado</th>'+
+      '</tr></thead>'+
+      '<tbody>'+filaPartidas+'</tbody>'+
+    '</table>'+
+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--b1)">3. CRÉDITO DISPONIBLE REAL (AJUSTADO)</div>'+
+    '<div style="font-size:12px">'+
+      '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b2)"><span>Crédito disponible bruto (oficial)</span><span style="font-family:var(--mono)">'+fmt(credTot-obligado)+' €</span></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b2);color:var(--red)"><span>— Trienios Q4 comprometidos</span><span style="font-family:var(--mono)">−1.453 €</span></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b2);color:var(--red)"><span>— Atrasos aprobados pendientes</span><span style="font-family:var(--mono)">−12.650 €</span></div>'+
+      (deficit>0?'<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b2);color:var(--red)"><span>— Déficit proyectado 150.00</span><span style="font-family:var(--mono)">−'+fmt(deficit)+' €</span></div>':'')+
+      '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b2);color:var(--red)"><span>— Revisión salarial estimada</span><span style="font-family:var(--mono)">−5.737 €</span></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:800;font-size:13px"><span>Crédito real ajustado disponible</span><span style="font-family:var(--mono);color:'+(creditoAjustado<50000?'var(--red)':creditoAjustado<100000?'var(--yellow)':'var(--green)')+'">'+fmt(Math.max(0,creditoAjustado))+' €</span></div>'+
+    '</div>'+
+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--b1)">4. TRIENIOS · Q4 2025</div>'+
+    '<p style="font-size:12px;margin:0 0 10px">4 trienios consolidan entre octubre y diciembre de 2025. Impacto adicional: <strong>1.453 €/trimestre · +4.840 €/año</strong>. '+
+    'Regla normativa: cada trienio se abona a la cuantía del grupo en que consolidó (LPGE 2025 · RD 14/2025). La partida 120.00 dispone de margen suficiente para absorberlos.</p>'+
+
+    '<div style="font-size:13px;font-weight:700;color:var(--acc);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--b1)">5. ACCIONES RECOMENDADAS</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px">'+
+      '<thead><tr style="background:rgba(255,255,255,.05)">'+
+        '<th style="padding:6px 8px;font-size:10px;text-transform:uppercase;color:var(--t3)">#</th>'+
+        '<th style="padding:6px 8px;font-size:10px;text-transform:uppercase;color:var(--t3)">Acción</th>'+
+        '<th style="padding:6px 8px;font-size:10px;text-transform:uppercase;color:var(--t3)">Impacto</th>'+
+        '<th style="padding:6px 8px;font-size:10px;text-transform:uppercase;color:var(--t3)">Urgencia</th>'+
+      '</tr></thead>'+
+      '<tbody>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px">1</td><td style="padding:6px 8px">Modificación crédito partida 150.00 (Productividad)</td><td style="padding:6px 8px;font-family:var(--mono);color:var(--green)">+8.400 €</td><td style="padding:6px 8px"><span style="background:rgba(255,90,90,.15);color:var(--red);padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700">URGENTE</span></td></tr>'+
+        '<tr style="border-bottom:1px solid var(--b2)"><td style="padding:6px 8px">2</td><td style="padding:6px 8px">No cubrir vacante F-003 este ejercicio</td><td style="padding:6px 8px;font-family:var(--mono);color:var(--green)">+12.150 €</td><td style="padding:6px 8px"><span style="background:rgba(255,208,51,.15);color:var(--yellow);padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700">RECOMENDADO</span></td></tr>'+
+        '<tr><td style="padding:6px 8px">3</td><td style="padding:6px 8px">Restringir devengos productividad pendientes</td><td style="padding:6px 8px;font-family:var(--mono);color:var(--green)">+5.200 €</td><td style="padding:6px 8px"><span style="background:rgba(255,208,51,.15);color:var(--yellow);padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700">RECOMENDADO</span></td></tr>'+
+      '</tbody>'+
+    '</table>'+
+
+    '<div style="margin-top:24px;padding-top:12px;border-top:1px solid var(--b2);font-size:10px;color:var(--t3);display:flex;justify-content:space-between">'+
+      '<span>tugesto · Gestión Presupuestaria Cap. I · uso restringido</span>'+
+      '<span>TRLRHL 2/2004 · RD 500/1990 · LO 2/2012 · EBEP · LPGE 2025</span>'+
+    '</div>';
+
+  var titleEl=document.getElementById('m-informe-title');
+  if(titleEl)titleEl.textContent='📄 Informe Cap. I · '+nomMes+' 2025';
+  var bodyEl=document.getElementById('m-informe-body');
+  if(bodyEl)bodyEl.innerHTML=bodyHTML;
+  openM('m-informe');
+}
+
+function imprimirInforme(){
+  var body=document.getElementById('m-informe-body');
+  if(!body)return;
+  var w=window.open('','_blank','width=800,height=900');
+  if(!w){toast('⚠ Activa las ventanas emergentes para imprimir','var(--yellow)');return;}
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Informe Cap. I 2025</title>'+
+    '<style>body{font-family:Arial,sans-serif;font-size:13px;color:#111;background:#fff;padding:32px;max-width:760px;margin:0 auto}'+
+    '@media print{@page{margin:1.5cm}}'+
+    '.mono{font-family:monospace}</style></head>'+
+    '<body>'+body.innerHTML+'</body></html>');
+  w.document.close();
+  w.focus();
+  setTimeout(function(){w.print();},400);
+}
 
 // ── PASSWORD ──────────────────────────────────────────────────────────
 (function(){
@@ -1695,9 +2327,9 @@ function updateSim(){
   const atr=document.getElementById('si-atr').checked;
   const mod=parseInt(document.getElementById('si-mod').value);
   const res=document.getElementById('si-res').checked;
-  document.getElementById('sv-emp').textContent=emp;
-  document.getElementById('sv-sal').textContent=sal.toFixed(1)+'%';
-  document.getElementById('sv-mod').textContent=mod.toLocaleString('es-ES')+' €';
+  var sve=document.getElementById('sv-emp');if(sve)sve.textContent=emp;
+  var svs=document.getElementById('sv-sal');if(svs)svs.textContent=sal.toFixed(1)+'%';
+  var svm=document.getElementById('sv-mod');if(svm)svm.textContent=mod.toLocaleString('es-ES')+' €';
   const base=317910;
   const gastoBase=298470;
   const dEmp=(emp-39)*2800;
@@ -1761,8 +2393,25 @@ function verPuesto(cod,denom,grupo,nivel,tipo,estado,empleado,coste,partida,prov
 // Nómina
 function confirmarNomina(){closeM('m-procesar-nomina');const el=document.getElementById('nomina-estado');if(el){el.textContent='Procesada';el.className='badge b-g';}toast('✓ Nómina septiembre 2025 procesada · 39 empleados · 97.042 € neto');}
 
-function generarInforme(){toast('📄 Generando informe justificativo... (PDF vía Laravel/DomPDF en producción)');}
+
 
 </script>
+
+<!-- ═══ MODAL INFORME ═══ -->
+<div class="modal-ov" id="m-informe">
+  <div class="modal" style="width:760px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-hd" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--b1)">
+      <div style="font-weight:700;font-size:15px" id="m-informe-title">📄 Informe Cap. I · Septiembre 2025</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-acc btn-sm" onclick="imprimirInforme()">🖨️ Imprimir / Guardar PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeM('m-informe')">✕ Cerrar</button>
+      </div>
+    </div>
+    <div id="m-informe-body" style="flex:1;overflow-y:auto;padding:24px;font-size:13px;line-height:1.7;color:var(--t1)">
+      <!-- filled by generarInforme() -->
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
