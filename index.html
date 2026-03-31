@@ -1539,6 +1539,155 @@ const TX = {
 };
 
 function translateNode(node, lang) {
+  if (node.nodeType === 3) {
+    var orig = node.textContent;
+    var trimmed = orig.trim();
+    if (trimmed.length > 1 && TX[trimmed] && TX[trimmed][lang]) {
+      node.textContent = orig.replace(trimmed, TX[trimmed][lang]);
+    }
+  } else if (node.nodeType === 1) {
+    var tag = node.tagName ? node.tagName.toLowerCase() : '';
+    if (['script','style','input','select','textarea'].indexOf(tag) >= 0) return;
+    for (var i = 0; i < node.childNodes.length; i++) {
+      translateNode(node.childNodes[i], lang);
+    }
+  }
+}
+
+function translateDOM(lang) {
+  if (!lang || lang === 'es') return;
+  document.querySelectorAll('.view, .modal-ov, #pw-overlay').forEach(function(el) {
+    translateNode(el, lang);
+  });
+  var sidebar = document.querySelector('.sidebar');
+  if (sidebar) translateNode(sidebar, lang);
+}
+
+// ── ADDITIONAL TRANSLATIONS (batch 2) ────────────────────────────────
+var TX2 = {
+  '+ Guardar actual':{'ca':'+ Desar actual','eu':'+ Gorde unekoa','gl':'+ Gardar actual'},
+  '+ Modificar RPT':{'ca':'+ Modificar RPT','eu':'+ RPT aldatu','gl':'+ Modificar RPT'},
+  '+5% adicional':{'ca':'+5% addicional','eu':'+%5 gehigarri','gl':'+5% adicional'},
+  '+€/año':{'ca':'+€/any','eu':'+€/urte','gl':'+€/ano'},
+  '1 crítica':{'ca':'1 crítica','eu':'1 kritiko','gl':'1 crítica'},
+  '12.650 € en atrasos pendientes':{'ca':'12.650 € en endarreriments pendents','eu':'12.650 € atzerapen zain','gl':'12.650 € en atrasos pendentes'},
+  '4 trienios':{'ca':'4 triennis','eu':'4 hirurteko','gl':'4 trienios'},
+  '4 trienios consolidan en Q4':{'ca':'4 triennis consoliden al T4','eu':'4 hirurteko finkatzen dira T4n','gl':'4 trienios consolidan en Q4'},
+  '4 trienios oct–dic · obligatorio':{'ca':'4 triennis oct–des · obligatori','eu':'4 hirurteko urr–abe · nahitaezkoa','gl':'4 trienios oct–dec · obrigatorio'},
+  '4 vacantes visibles':{'ca':'4 vacants visibles','eu':'4 lanpostu huts ikusgai','gl':'4 vacantes visibles'},
+  '47 (máx.)':{'ca':'47 (màx.)','eu':'47 (gehien.)','gl':'47 (máx.)'},
+  '39 activos':{'ca':'39 actius','eu':'39 aktibo','gl':'39 activos'},
+  '39 empleados':{'ca':'39 empleats','eu':'39 langile','gl':'39 empregados'},
+  '39 empleados activos · Trienios devengados incluidos automáticamente · Imputación directa':{'ca':'39 empleats actius · Triennis meritats inclosos · Imputació directa','eu':'39 langile aktibo · Meritaturiko hirurtekoak barne · Esleipen zuzena','gl':'39 empregados activos · Trienios devindicados incluídos · Imputación directa'},
+  'ATENCIÓN':{'ca':'ATENCIÓ','eu':'ARRETA','gl':'ATENCIÓN'},
+  'Administrativo/a':{'ca':'Administratiu/iva','eu':'Administrazioko langilea','gl':'Administrativo/a'},
+  'Agotamiento productividad · oct':{'ca':'Esgotament productivitat · oct','eu':'Produktibitate agortzea · urr.','gl':'Esgotamento produtividade · out.'},
+  'Ahorro estimado (€)':{'ca':'Estalvi estimat (€)','eu':'Estimatutako aurrezpena (€)','gl':'Aforro estimado (€)'},
+  'Ajustado por trienios + atrasos':{'ca':'Ajustat per triennis + endarreriments','eu':'Hirurtekoekin eta atzerapenak egokituta','gl':'Axustado por trienios + atrasos'},
+  'Alta certeza':{'ca':'Alta certesa','eu':'Ziurtasun altua','gl':'Alta certeza'},
+  'Alta de nuevo ayuntamiento':{'ca':'Alta de nou ajuntament','eu':'Udal berriaren alta','gl':'Alta de novo concello'},
+  'Antigüedad media':{'ca':'Antiguitat mitjana','eu':'Bataz besteko antzinatasuna','gl':'Antigüidade media'},
+  'Arquitecto/a Técnico':{'ca':'Arquitecte/a Tècnic','eu':'Arkitekto teknikoa','gl':'Arquitecto/a Técnico'},
+  'Asesor/a de Alcaldía':{'ca':"Assessor/a d'Alcaldia",'eu':'Alkate aholkularia','gl':'Asesor/a de Alcaldía'},
+  'Asistente de carga inicial · 5 pasos · Tiempo estimado: 1–3 días hábiles':{'ca':'Assistent de càrrega · 5 passos · Temps estimat: 1–3 dies hàbils','eu':'Hasierako karga · 5 urrats · 1–3 egun lan','gl':'Asistente de carga · 5 pasos · 1–3 días hábiles'},
+  'Auxiliar Administrativo/a':{'ca':'Auxiliar Administratiu/iva','eu':'Administrazio laguntzailea','gl':'Auxiliar Administrativo/a'},
+  'Ayto. Villanueva del Río':{'ca':'Aj. Villanueva del Río','eu':'Villanueva del Río Ud.','gl':'Conc. Villanueva del Río'},
+  'Bloquear cobertura de vacante':{'ca':'Bloquejar cobertura de vacant','eu':'Lanpostu hutsaren estaldura blokeatu','gl':'Bloquear cobertura de vacante'},
+  'Bloqueo de gasto':{'ca':'Bloqueig de despesa','eu':'Gastu blokeoa','gl':'Bloqueo de gasto'},
+  'Bloqueo directo en sistema contable':{'ca':'Bloqueig directe al sistema comptable','eu':'Zuzeneko blokeoa sistema kontablean','gl':'Bloqueo directo no sistema contable'},
+  'Bloqueo temporal 151.00 · Resuelto tras suplemento':{'ca':'Bloqueig temporal 151.00 · Resolt amb suplement','eu':'151.00 aldi baterako blokeoa · Osagarriarekin ebatzita','gl':'Bloqueo temporal 151.00 · Resolto tras suplemento'},
+  'Capítulo I':{'ca':'Capítol I','eu':'I. Kapitulua','gl':'Capítulo I'},
+  'Cobertura de vacantes':{'ca':'Cobertura de vacants','eu':'Lanpostu hutsak betetzea','gl':'Cobertura de vacantes'},
+  'Consignaciones':{'ca':'Consignacions','eu':'Kontsignazioak','gl':'Consignacións'},
+  'Control crédito':{'ca':'Control crèdit','eu':'Kreditu kontrola','gl':'Control crédito'},
+  'Convenio col.':{'ca':'Conveni col.','eu':'Hit. kol.','gl':'Convenio col.'},
+  'Decisión':{'ca':'Decisió','eu':'Erabakia','gl':'Decisión'},
+  'Desde 01/09/2025':{'ca':'Des del 01/09/2025','eu':'2025/09/01etik','gl':'Desde 01/09/2025'},
+  'Devengos de productividad':{'ca':'Meritaments de productivitat','eu':'Produktibitate merituak','gl':'Devindicacións de produtividade'},
+  'Devengos pendientes a retener':{'ca':'Meritaments pendents a retenir','eu':'Erretentzioa dagokien merituak','gl':'Devindicacións pendentes a reter'},
+  'Déficit proyectado 8.400 €. Requiere acuerdo JGL o Pleno (art. 179 TRLRHL). Si se aprueba la modificación, el déficit queda absorbido.':{'ca':'Dèficit projectat 8.400 €. Requereix acord JGL o Ple (art. 179 TRLRHL).','eu':'8.400 € defizit proiektatua. TKB edo Osoko Bilkuraren akordioa behar da.','gl':'Déficit proxectado 8.400 €. Require acordo JGL ou Pleno (art. 179 TRLRHL).'},
+  'En plazo · Pend. Interventor':{'ca':'En termini · Pend. Interventor','eu':'Epean · Interb. zain','gl':'En prazo · Pend. Interventor'},
+  'Entidad y ejercicio':{'ca':'Entitat i exercici','eu':'Erakundea eta ekitaldia','gl':'Entidade e exercicio'},
+  'Eventual':{'ca':'Eventual','eu':'Behin-behineako','gl':'Eventual'},
+  'Funcionario':{'ca':'Funcionari','eu':'Funtzionarioa','gl':'Funcionario'},
+  'Generar informe completo →':{'ca':'Generar informe complet →','eu':'Txosten osoa sortu →','gl':'Xerar informe completo →'},
+  'Horas extra julio 2025':{'ca':'Hores extra juliol 2025','eu':'2025 uztaileko ordu gehigarriak','gl':'Horas extra xullo 2025'},
+  'Importe total (€)':{'ca':'Import total (€)','eu':'Guztirako zenbatekoa (€)','gl':'Importe total (€)'},
+  'Incluir en nómina de':{'ca':'Incloure en nòmina de','eu':'Nominan sartu','gl':'Incluír en nómina de'},
+  'Interventor':{'ca':'Interventor','eu':'Interventor','gl':'Interventor'},
+  'Interventor/a':{'ca':'Interventor/a','eu':'Interventor/a','gl':'Interventor/a'},
+  'Introduce la contraseña para acceder al módulo':{'ca':'Introdueix la contrasenya per accedir al mòdul','eu':'Sartu pasahitza modulura sartzeko','gl':'Introduce o contrasinal para acceder ao módulo'},
+  'Laboral':{'ca':'Laboral','eu':'Laborala','gl':'Laboral'},
+  'Laboral fijo':{'ca':'Laboral fix','eu':'Langile finkoa','gl':'Laboral fixo'},
+  'Liquidar en nómina':{'ca':'Liquidar en nòmina','eu':'Nominan likidatu','gl':'Liquidar en nómina'},
+  'Mesa Negociación 08/06/2025 · Personal laboral':{'ca':'Taula Negociació 08/06/2025 · Personal laboral','eu':'Negoziazio Mahaia 08/06/2025 · Langile laborala','gl':'Mesa Negociación 08/06/2025 · Persoal laboral'},
+  'Mostrando 6 de 39 empleados · Clic en fila para detalle':{'ca':'Mostrant 6 de 39 empleats · Clic a la fila per detall','eu':'39tik 6 langile · Sakatu errenkadan xehetasunerako','gl':'Mostrando 6 de 39 empregados · Clic en fila para detalle'},
+  'No aprobar nuevos devengos 150.00 hasta resolución mod. crédito · +5.200 €':{'ca':'No aprovar nous meritaments 150.00 fins resolució mod. crèdit · +5.200 €','eu':'Ez onartu 150.00 meritu berririk kreditu aldat. ebatzi arte · +5.200 €','gl':'Non aprobar novos devindicacións 150.00 ata resolución mod. crédito · +5.200 €'},
+  'No es una restricción automática del sistema contable':{'ca':'No és una restricció automàtica del sistema comptable','eu':'Ez da sistema kontablearen murrizketa automatikoa','gl':'Non é unha restrición automática do sistema contable'},
+  'Nóminas':{'ca':'Nòmines','eu':'Nominak','gl':'Nóminas'},
+  'Nóminas · Liquidación mensual':{'ca':'Nòmines · Liquidació mensual','eu':'Nominak · Hileko likidazioa','gl':'Nóminas · Liquidación mensual'},
+  'Oficial 1ª Mant.':{'ca':'Oficial 1r Mant.','eu':'1. mailako ofiziala Mant.','gl':'Oficial 1ª Mant.'},
+  'Oficial 1ª Mantenimiento':{'ca':'Oficial 1r Manteniment','eu':'1. mailako ofiziala Mantentze','gl':'Oficial 1ª Mantemento'},
+  'Pleno 03/2024':{'ca':'Ple 03/2024','eu':'Osoko Bilkura 03/2024','gl':'Pleno 03/2024'},
+  'Policía Local':{'ca':'Policia Local','eu':'Udaltzaingoa','gl':'Policía Local'},
+  'Policía Local (Agente)':{'ca':'Policia Local (Agent)','eu':'Udaltzain agentea','gl':'Policía Local (Axente)'},
+  'Policía Local (Oficial)':{'ca':'Policia Local (Oficial)','eu':'Udaltzain ofiziala','gl':'Policía Local (Oficial)'},
+  'Prestaciones sociales':{'ca':'Prestacions socials','eu':'Gizarte prestazioak','gl':'Prestacións sociais'},
+  'Presupuesto':{'ca':'Pressupost','eu':'Aurrekontua','gl':'Orzamento'},
+  'Proyección cierre sin acción':{'ca':'Projecció tancament sense acció','eu':'Ekintza gabeko itxiera proiekzioa','gl':'Proxección peche sen acción'},
+  'Puesto a bloquear':{'ca':'Lloc a bloquejar','eu':'Blokeatzeko lanpostua','gl':'Posto a bloquear'},
+  'Registrar nuevo atraso':{'ca':'Registrar nou endarreriment','eu':'Atzerapen berria erregistratu','gl':'Rexistrar novo atraso'},
+  'Registrar nuevo bloqueo':{'ca':'Registrar nou bloqueig','eu':'Blokeo berria erregistratu','gl':'Rexistrar novo bloqueo'},
+  'Registrar restricción':{'ca':'Registrar restricció','eu':'Muga erregistratu','gl':'Rexistrar restrición'},
+  'Requiere integración con SicalWin/Seres. Disponible en roadmap 2026.':{'ca':'Requereix integració amb SicalWin/Seres. Disponible en roadmap 2026.','eu':'SicalWin/Seresekin integrazioa behar du. 2026.','gl':'Require integración con SicalWin/Seres. Dispoñible en 2026.'},
+  'Restricción devengos · Partida 150.00':{'ca':'Restricció meritaments · Partida 150.00','eu':'Meritu muga · 150.00 partida','gl':'Restrición devindicacións · Partida 150.00'},
+  'Restricción formal de nuevos devengos hasta modificación crédito':{'ca':'Restricció formal de nous meritaments fins modificació crèdit','eu':'Meritu berrien muga formala kreditu aldaketara arte','gl':'Restrición formal de novos devindicacións ata modificación crédito'},
+  'Retrib. complement. lab.':{'ca':'Retrib. compl. lab.','eu':'Osagarrizko retrib. lab.','gl':'Retrib. compl. lab.'},
+  'Retrib. complementarias func.':{'ca':'Retrib. complementàries func.','eu':'Osagarrizko retrib. funk.','gl':'Retrib. complementarias func.'},
+  'Revisión salarial LPGE 2025':{'ca':'Revisió salarial LPGE 2025','eu':'LPGE 2025 soldata berrikuspena','gl':'Revisión salarial LPGE 2025'},
+  'Secretaria General':{'ca':'Secretari/ària General','eu':'Idazkari nagusia','gl':'Secretaria Xeral'},
+  'Secretario/a General':{'ca':'Secretari/ària General','eu':'Idazkari nagusia','gl':'Secretario/a Xeral'},
+  'Seg. Social empresa':{'ca':'Seg. Social empresa','eu':'Enpresaren Gizarte Segurantza','gl':'Seg. Social empresa'},
+  'Semáforo · Proyección lineal · Art. 173 TRLRHL':{'ca':'Semàfor · Projecció lineal · Art. 173 TRLRHL','eu':'Semaforoa · Proiekzio lineala · Art. 173 TRLRHL','gl':'Semáforo · Proxección lineal · Art. 173 TRLRHL'},
+  'Servicios previos CCAA · Resol. 22/07/2025':{'ca':'Serveis previs CCAA · Resol. 22/07/2025','eu':'CCAA aurreko zerbitzuak · Ebazp. 22/07/2025','gl':'Servizos previos CCAA · Resol. 22/07/2025'},
+  'Si no se actúa en octubre':{'ca':'Si no s\'actua a l\'octubre','eu':'Urrian ekintzarik hartzen ez bada','gl':'Se non se actúa en outubro'},
+  'Simulación en tiempo real · Capítulo I 2025':{'ca':'Simulació en temps real · Capítol I 2025','eu':'Denbora errealeko simulazioa · I. Kap. 2025','gl':'Simulación en tempo real · Capítulo I 2025'},
+  'Sin convocar hasta diciembre · Ahorro estimado: 12.150 €':{'ca':'Sense convocar fins al desembre · Estalvi estimat: 12.150 €','eu':'Abendura arte deitu gabe · Aurrezpen estimatua: 12.150 €','gl':'Sen convocar ata decembro · Aforro estimado: 12.150 €'},
+  'Sin crédito actual':{'ca':'Sense crèdit actual','eu':'Oraingo kreditua gabe','gl':'Sen crédito actual'},
+  'Sin ruptura':{'ca':'Sense ruptura','eu':'Haustura gabe','gl':'Sen ruptura'},
+  'Suspensión temporal de autorización mientras hay déficit':{'ca':'Suspensió temporal d\'autorització mentre hi ha dèficit','eu':'Baimenaren aldi baterako etendura defizita dagoen bitartean','gl':'Suspensión temporal de autorización mentres hai déficit'},
+  'Técnico Informática':{'ca':'Tècnic Informàtica','eu':'Informatika teknikaria','gl':'Técnico Informática'},
+  'Técnico/a Admin. Gral.':{'ca':'Tècnic/a Admin. Gral.','eu':'Administrazio teknikaria','gl':'Técnico/a Admin. Xral.'},
+  'Técnico/a Informática':{'ca':'Tècnic/a Informàtica','eu':'Informatika teknikaria','gl':'Técnico/a Informática'},
+  'Vacante F-003 · Técnico Admin. A1':{'ca':'Vacant F-003 · Tècnic Admin. A1','eu':'F-003 lanpostu hutsa · Administrazio teknikaria A1','gl':'Vacante F-003 · Técnico Admin. A1'},
+  'Verificación y activación':{'ca':'Verificació i activació','eu':'Egiaztapena eta aktibatzea','gl':'Verificación e activación'},
+  'bloquear preventivamente':{'ca':'bloquejar preventivament','eu':'prebentzio blokeoa','gl':'bloquear preventivamente'},
+  'gestión presupuestaria · cap. i':{'ca':'gestió pressupostària · cap. i','eu':'aurrekontu kudeaketa · i. kap.','gl':'xestión orzamentaria · cap. i'},
+  'tugesto · Módulo demo · Uso restringido':{'ca':'tugesto · Mòdul demo · Ús restringit','eu':'tugesto · Demo modulua · Erabilera mugatua','gl':'tugesto · Módulo demo · Uso restrinxido'},
+  '2025 · 47 puestos · mes 9/12':{'ca':'2025 · 47 llocs · mes 9/12','eu':'2025 · 47 lanpostu · 9/12 hila','gl':'2025 · 47 postos · mes 9/12'},
+  'Coste trienios visible: 16.488 €/año':{'ca':'Cost triennis visible: 16.488 €/any','eu':'Ikusgaiko trienio kostua: 16.488 €/urte','gl':'Custo trienios visible: 16.488 €/ano'},
+  'Masa salarial visible: 559.400 €/año':{'ca':'Massa salarial visible: 559.400 €/any','eu':'Ikusgaiko soldata masa: 559.400 €/urte','gl':'Masa salarial visible: 559.400 €/ano'},
+  'Mostrando 14 de 47 puestos · Datos según acuerdo Pleno 03/2024':{'ca':'Mostrant 14 de 47 llocs · Dades acord Ple 03/2024','eu':'47tik 14 lanpostu · 03/2024 Batzarr. arabera','gl':'Mostrando 14 de 47 postos · Datos Pleno 03/2024'},
+  '+ 35 empleados más · Clic en fila para recibo':{'ca':'+ 35 empleats més · Clic per rebut','eu':'+ 35 langile gehiago · Klik errenkadan','gl':'+ 35 empregados máis · Clic para recibo'},
+  'Impacto trienios Q4 sobre crédito':{'ca':'Impacte triennis T4 sobre crèdit','eu':'T4 hirurtekoen eragina kredituan','gl':'Impacto trienios Q4 sobre crédito'},
+  'Completa los 5 pasos en orden. Los datos pueden editarse en cualquier momento tras la activación.':{'ca':'Completa els 5 passos en ordre. Les dades es poden editar després.','eu':'Osatu 5 urratsak orduan. Datuak gero editatu daitezke.','gl':'Completa os 5 pasos en orde. Os datos pódense editar despois.'},
+  'Datos del ente local':{'ca':"Dades de l'ens local",'eu':'Tokiko erakundearen datuak','gl':'Datos do ente local'},
+  'Empleados + trienios':{'ca':'Empleats + triennis','eu':'Langileak + hirurtekoak','gl':'Empregados + trienios'},
+  'Plantilla + RPT':{'ca':'Plantilla + RPT','eu':'Plantilla + RPT','gl':'Cadro de persoal + RPT'},
+  'Presupuesto Cap. I':{'ca':'Pressupost Cap. I','eu':'I. Kap. aurrekontua','gl':'Orzamento Cap. I'},
+  'Nombre, CIF, ejercicio, régimen, provincia':{'ca':'Nom, CIF, exercici, règim, província','eu':'Izena, IFK, ekitaldia, erregimena, probintzia','gl':'Nome, CIF, exercicio, réxime, provincia'},
+  'Importar puestos, grupos, niveles, RPT':{'ca':'Importar llocs, grups, nivells, RPT','eu':'Lanpostuak, taldeak, mailak, RPT inportatu','gl':'Importar postos, grupos, niveis, RPT'},
+  'Partidas, créditos, saldo inicial':{'ca':'Partides, crèdits, saldo inicial','eu':'Partidak, kredituak, hasierako saldoa','gl':'Partidas, créditos, saldo inicial'},
+  'Checklist, validaciones y activar':{'ca':'Checklist, validacions i activar','eu':'Zerrenda, egiaztapenak eta aktibatu','gl':'Checklist, validacións e activar'},
+  'Completado':{'ca':'Completat','eu':'Osatuta','gl':'Completado'},
+  'Fecha ingreso, trienios, IRPF, situación':{'ca':'Data entrada, triennis, IRPF, situació','eu':'Sarr. data, hirurtekoak, PFEZ, egoera','gl':'Data ingreso, trienios, IRPF, situación'},
+  'Documento formal para Intervención y RRHH bloqueando la convocatoria':{'ca':'Document formal per a Intervenció i RRHH bloquejant la convocatòria','eu':'Deialdia blokeatzeko Interbentzio eta GGRRrako dokumentu formala','gl':'Documento formal para Intervención e RRHH bloqueando a convocatoria'},
+  'Generado desde los datos reales del sistema · listo para Intervención / Pleno':{'ca':"Generat des de les dades reals · llest per a Intervenció / Ple",'eu':'Sistemako datuetatik sortua · prest Interbentziorako/Batzarrerako','gl':'Xerado dos datos reais · listo para Intervención / Pleno'},
+};
+// Merge TX2 into TX
+Object.assign(TX, TX2);
+
+function translateNode(node, lang) {
   try {
     if (node.nodeType === 3) {
       var orig = node.textContent;
@@ -1593,6 +1742,11 @@ function applyLang(l){
     var sel=document.getElementById('sel-mes');
     if(sel){var m=parseInt(sel.value);if(!isNaN(m)){if(m===12)setMesAnual();else setMes(m);}}
   } catch(e) { console.warn('applyLang refresh error:', e.message); }
+  // Re-render informe modal if open
+  var modal = document.getElementById('m-informe');
+  if(modal && modal.classList.contains('open') && window._lastInformeFn) {
+    try { window._lastInformeFn(); } catch(e) {}
+  }
 }
 
 // ── DATOS MENSUALES ──────────────────────────────────────────────────
@@ -1969,7 +2123,7 @@ function exportarEscenario(){
   toast('↓ Escenario exportado como CSV · abre con Excel');
 }
 
-function generarInformeEscenario(){
+function generarInformeEscenario(){window._lastInformeFn=generarInformeEscenario;
   var emp=parseInt(document.getElementById('si-emp').value)||39;
   var sal=parseFloat(document.getElementById('si-sal').value)||0;
   var tri=document.getElementById('si-tri').checked;
@@ -2030,7 +2184,7 @@ function generarInformeEscenario(){
   openM('m-informe');
 }
 
-function generarCertificadoMasa(){
+function generarCertificadoMasa(){window._lastInformeFn=generarCertificadoMasa;
   var credTot=PARTIDAS.reduce(function(s,p){return s+p.cred;},0);
   var masaSalarial=559400;
   var bodyHTML=
@@ -2097,7 +2251,7 @@ function generarCertificadoMasa(){
   openM('m-informe');
 }
 
-function generarInformeRPT(){
+function generarInformeRPT(){window._lastInformeFn=generarInformeRPT;
 
 
   var T=LANGS[LANG]||LANGS.es;
@@ -2154,7 +2308,7 @@ function toast(msg,col){var t=document.getElementById('toast');t.textContent=msg
 function filterTable(inp,id){var q=inp.value.toLowerCase();document.querySelectorAll('#'+id+' tbody tr').forEach(function(r){r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});}
 function verPuesto(cod,denom,grupo,nivel,tipo,estado,empleado,coste,partida,provision,trieniosInfo){document.getElementById('dpuesto-title').textContent=cod+' · '+denom;var esVac=estado==='Vacante';document.getElementById('dp-tipo').innerHTML='<span class="badge b-b">'+tipo+'</span> <span class="badge '+(esVac?'b-y':'b-g')+'">'+estado+'</span>';document.getElementById('dp-emp').textContent=empleado;document.getElementById('dp-grupo').textContent='Grupo '+grupo+' · Nivel CD '+nivel;document.getElementById('dp-prov').textContent=provision+' · '+trieniosInfo;document.getElementById('dp-coste').innerHTML='<div style="display:flex;gap:24px;flex-wrap:wrap"><div><div class="kpi-lbl">Coste anual estimado</div><div class="mono c-a" style="font-size:18px;font-weight:800">'+coste+' €</div></div><div><div class="kpi-lbl">Partida</div><div class="mono" style="font-size:16px">'+partida+'</div></div>'+(esVac?'<div><div class="kpi-lbl">Crédito retenido</div><div class="mono c-y">'+coste+' € · No reasignable sin mod.</div></div>':'')+'</div>';openM('m-detalle-puesto');}
 function confirmarNomina(){closeM('m-procesar-nomina');var el=document.getElementById('nomina-estado');if(el){el.textContent='Procesada';el.className='badge b-g';}toast('✓ Nómina procesada');}
-function generarInforme(){
+function generarInforme(){window._lastInformeFn=generarInforme;
   var T=LANGS[LANG]||LANGS.es;
   var nomMes=T.meses[MES_ACTUAL]||MESES[MES_ACTUAL];
   var credTot=PARTIDAS.reduce(function(s,p){return s+p.cred;},0);
